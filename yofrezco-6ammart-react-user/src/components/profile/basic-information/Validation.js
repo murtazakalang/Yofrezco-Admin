@@ -10,6 +10,9 @@ const ValidationSechemaProfile = () => {
       .email(t("Must be a valid email"))
       .max(255)
       .required(t("Email is required")),
+    gender: Yup.string().nullable(),
+    nationality: Yup.string().nullable(),
+    birthdate: Yup.date().nullable(),
     password: Yup.string()
       .min(6, t("Password must be at least 6 characters"))
       .required(t("Password is required")),

@@ -48,12 +48,17 @@ const SignUp = ({
 
   const signUpFormik = useFormik({
     initialValues: {
-      name: "",
+      f_
+      l_
+      
       email: "",
       phone: "",
       password: "",
       confirm_password: "",
       ref_code: "",
+      gender: "",
+      nationality: "",
+      birthdate: "",
       tandc: false,
     },
     validationSchema: SignUpValidation(),
@@ -150,7 +155,10 @@ const SignUp = ({
   const { mutate, isLoading, error } = useSignUp();
   const formSubmitHandler = (values) => {
     const signUpData = {
-      name: values.name,
+      name: values.f_name + " " + values.l_name,
+      gender: values.gender,
+      nationality: values.nationality,
+      birthdate: values.birthdate,
       email: values.email,
       phone: values.phone,
       password: values.password,

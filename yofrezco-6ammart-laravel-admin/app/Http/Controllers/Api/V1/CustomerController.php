@@ -561,6 +561,9 @@ class CustomerController extends Controller
         $user->password = $pass;
         $user->phone = $request->phone;
         $user->email = $request->email;
+        $user->gender = $request->gender;
+        $user->nationality = $request->nationality;
+        $user->birthdate = $request->birthdate;
         $user->save();
 
         if ($user->userinfo) {

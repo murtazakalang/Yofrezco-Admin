@@ -483,7 +483,10 @@ class CustomerAuthController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'ref_by' =>   $ref_by,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+            'gender' => $request->gender,
+            'nationality' => $request->nationality,
+            'birthdate' => $request->birthdate
         ]);
         $user->ref_code = Helpers::generate_referer_code($user);
         $user->save();

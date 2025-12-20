@@ -89,6 +89,9 @@ export const convertValuesToFormData = (values, resData, verificationId) => {
     }
 
     formData.append("password", password ?? resData?.password);
+    formData.append("gender", values.gender ?? resData?.gender ?? null);
+    formData.append("nationality", values.nationality ?? resData?.nationality ?? null);
+    formData.append("birthdate", values.birthdate ?? resData?.birthdate ?? null);
   }
   return formData;
 };
