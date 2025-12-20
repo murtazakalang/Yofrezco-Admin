@@ -348,6 +348,18 @@
                                             <div>{{ translate('email') }}</div>:
                                             <a href="mailto:{{ $customer['email'] }}" class="text-dark font-semibold">{{$customer['email'] ?? translate('messages.N/A')}}</a>
                                         </div>
+                                        <div class="key-val-list-item d-flex gap-3">
+                                            <div>{{ translate("gender") }}</div>:
+                                            <div class="font-semibold">{{ ucfirst($customer["gender"]) ?? translate("messages.N/A") }}</div>
+                                        </div>
+                                        <div class="key-val-list-item d-flex gap-3">
+                                            <div>{{ translate("nationality") }}</div>:
+                                            <div class="font-semibold">{{ $customer["nationality"] ?? translate("messages.N/A") }}</div>
+                                        </div>
+                                        <div class="key-val-list-item d-flex gap-3">
+                                            <div>{{ translate("date_of_birth") }}</div>:
+                                            <div class="font-semibold">{{ $customer["birthdate"] ? date("d M Y", strtotime($customer["birthdate"])) : translate("messages.N/A") }}</div>
+                                        </div>
                                         @foreach($customer->addresses as $address)
                                             <div class="key-val-list-item d-flex gap-3">
                                                 <div>{{ translate('address') }}</div>:
