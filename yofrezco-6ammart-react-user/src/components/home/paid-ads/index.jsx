@@ -1,4 +1,4 @@
-import {Grid, Skeleton, Typography, useMediaQuery, useTheme} from "@mui/material";
+import { Grid, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { useGetAdds } from "api-manage/hooks/react-query/useGetAds";
 import SpecialOfferCardShimmer from "components/Shimmer/SpecialOfferCardSimmer";
@@ -10,12 +10,46 @@ import AdsCard from "components/home/paid-ads/AdsCard";
 import Subtitle1 from "components/typographies/Subtitle1";
 import { getModuleId } from "helper-functions/getModuleId";
 import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import {
   CustomStackFullWidth,
   SliderCustom,
 } from "styled-components/CustomStyles.style";
+
+// Localized Title Image Component for Highlights
+const LocalizedHighlightsTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/highlights_spanish.png"
+    : "/highlights_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Highlights for you"
+        style={{
+          height: "80px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 const PaidAds = () => {
   const theme = useTheme();
@@ -188,66 +222,54 @@ const PaidAds = () => {
   return (
     <>
       {isFetched && data?.length === 0 ? null : (
+        <Box
+          sx={{
+            marginTop: "10px",
+            borderRadius: "10px",
+          }}
+        >
           <Box
             sx={{
-              marginTop: "10px",
-              borderRadius: "10px",
+              borderRadius: "inherit",
             }}
           >
-            <Box
-              sx={{
-                borderRadius: "inherit",
-              }}
-            >
-              <Stack padding="20px 20px 0px 20px">
-                <Typography
-                  fontSize={{ xs: "16px", md: "20px" }}
-                  fontWeight={{ xs: "500", md: "700" }}
-                  mb="5px"
-                  component="h2"
-                >
-                  {t("Highlights for you")}
-                </Typography>
-                <Subtitle1
-                  textAlign="left"
-                  text="See our most popular restaurant and foods"
-                  component="p"
-                />
-              </Stack>
+            <Stack padding="20px 20px 0px 20px" alignItems="center">
+              <LocalizedHighlightsTitle />
+            </Stack>
+            <CustomStackFullWidth>
               <CustomStackFullWidth>
-                <CustomStackFullWidth>
-                  <SliderCustom padding={isSmall ? "5px" : "16px"}>
-                      {data?.length > 0 ? (
-                          <Slider {...settings} ref={sliderRef}>
-                            {data?.map((item, index) => (
-                                <AdsCard
-                                    key={item?.id}
-                                    data={data}
-                                    activeSlideData={activeSlideData}
-                                    itemLength={data?.length}
-                                    item={item}
-                                    index={index}
-                                    sliderRef={sliderRef}
-                                />
-                            ))}
-                          </Slider>
-                      ) : (
-                          <Slider {...settings} ref={sliderRef}>
-                            {[...Array(4)].map((_, index) => {
-                              return (
-                                  <AdsCard
-                                      key={index}
-                                      onlyShimmer
-                                  />
-                              );
-                            })}
-                          </Slider>
-                      )}
-                  </SliderCustom>
-                </CustomStackFullWidth>
+                <SliderCustom padding={isSmall ? "5px" : "16px"}>
+                  {data?.length > 0 ? (
+                    <Slider {...settings} ref={sliderRef}>
+                      {data?.map((item, index) => (
+                        <AdsCard
+                          key={item?.id}
+                          data={data}
+                          activeSlideData={activeSlideData}
+                          itemLength={data?.length}
+                          item={item}
+                          index={index}
+                          sliderRef={sliderRef}
+                        />
+                      ))}
+                    </Slider>
+                  ) : (
+                    <Slider {...settings} ref={sliderRef}>
+                      {[...Array(4)].map((_, index) => {
+                        return (
+                          <AdsCard
+                            key={index}
+                            onlyShimmer
+                          />
+                        );
+                      })}
+                    </Slider>
+                  )}
+                </SliderCustom>
               </CustomStackFullWidth>
-            </Box>
+            </CustomStackFullWidth>
           </Box>
+        </Box>
       )}
     </>
   );

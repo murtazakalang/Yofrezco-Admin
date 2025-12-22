@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { Grid, Skeleton, useMediaQuery, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import useNewArrivals from "../../../../api-manage/hooks/react-query/product-details/useNewArrivals";
 import {
   CustomBoxFullWidth,
@@ -15,6 +16,39 @@ import ProductCard from "../../../cards/ProductCard";
 import H2 from "../../../typographies/H2";
 import { HomeComponentsWrapper } from "../../HomePageComponents";
 import TabMenu from "../../best-reviewed-items/TabMenu";
+
+// Localized Title Image Component for New Arrivals
+const LocalizedNewArrivalsTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/new_arrival_spanish.png"
+    : "/new_arrival_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="New Arrivals"
+        style={{
+          height: "80px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 const NewArrivals = ({ bannerData }) => {
   const [menu, setMenu] = useState([]);
@@ -77,7 +111,7 @@ const NewArrivals = ({ bannerData }) => {
                 ) : (
                   <>
                     {data?.products ? (
-                      <H2 text="New Arrivals" component="h2" />
+                      <LocalizedNewArrivalsTitle />
                     ) : null}
                   </>
                 )}
@@ -124,7 +158,7 @@ const NewArrivals = ({ bannerData }) => {
           ) : (
             <>
               {data?.products ? (
-                <H2 text="New Arrivals" component="h2" />
+                <LocalizedNewArrivalsTitle />
               ) : null}
             </>
           )}
@@ -217,7 +251,7 @@ const NewArrivals = ({ bannerData }) => {
                             cardheight="300px"
                             cardFor="vertical"
                             noMargin
-                            // cardFor="popular items"
+                          // cardFor="popular items"
                           />
                         </Grid>
                       ))}

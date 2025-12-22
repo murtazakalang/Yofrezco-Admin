@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useGetPopularItemsNearby from "../../../api-manage/hooks/react-query/useGetPopularItemsNearby";
 
-import { Grid, Skeleton } from "@mui/material";
+import { Grid, Skeleton, Box } from "@mui/material";
 import Slider from "react-slick";
 
 import { useTranslation } from "react-i18next";
@@ -25,6 +25,39 @@ import Subtitle1 from "../../typographies/Subtitle1";
 import { NextFood, PrevFood } from "../best-reviewed-items/SliderSettings";
 import { HomeComponentsWrapper } from "../HomePageComponents";
 import ItemsCampaign from "./items-campaign-slide";
+
+// Localized Title Image Component for Popular Products
+const LocalizedPopularProductsTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/popular_products_spanish.png"
+    : "/popular_products_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Most Popular Products"
+        style={{
+          height: "80px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 const PopularItemsNearby = ({ title, subTitle }) => {
   const { popularItemsNearby } = useSelector((state) => state.storedData);
@@ -172,12 +205,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
             {isLoading ? (
               <Skeleton varient="text" width="110px" />
             ) : (
-              <H2 text={title} component="h2" />
-            )}
-            {isLoading ? (
-              <Skeleton varient="text" width="310px" />
-            ) : (
-              <Subtitle1 text={t(subTitle)} component="p" />
+              <LocalizedPopularProductsTitle />
             )}
             <CustomBoxFullWidth>
               <Grid container spacing={2} sx={{ marginTop: "1px" }}>

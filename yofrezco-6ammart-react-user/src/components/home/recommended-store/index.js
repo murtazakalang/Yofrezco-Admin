@@ -4,15 +4,49 @@ import {
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
 import H2 from "../../typographies/H2";
-import { Skeleton, styled } from "@mui/material";
+import { Skeleton, styled, Box } from "@mui/material";
 import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 import { HomeComponentsWrapper } from "../HomePageComponents";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
 import StoreCard from "components/cards/StoreCard";
-import {useGetRecommendStores} from "api-manage/hooks/react-query/store/useGetRecommendStores";
+import { useGetRecommendStores } from "api-manage/hooks/react-query/store/useGetRecommendStores";
+
+// Localized Title Image Component for Recommended Store
+const LocalizedRecommendedStoreTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/recommed_spanish.png"
+    : "/recommend english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Recommended Store"
+        style={{
+          height: "80px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 
 
@@ -32,7 +66,7 @@ const RecommendedStore = () => {
   const [isSliderHovered, setIsSliderHovered] = useState(false);
   const {
     data: popularData,
-    isLoading:popularIsLoading ,
+    isLoading: popularIsLoading,
   } = useGetRecommendStores();
 
   // Enhanced slider settings
@@ -42,7 +76,7 @@ const RecommendedStore = () => {
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
-    ...createEnhancedArrows(isSliderHovered, { 
+    ...createEnhancedArrows(isSliderHovered, {
       displayNoneOnMobile: true,
       variant: "primary"
     }),
@@ -109,7 +143,7 @@ const RecommendedStore = () => {
       },
     ],
   };
-  
+
   const sliderItems = (
     <SliderWrapper
       sx={{
@@ -129,7 +163,7 @@ const RecommendedStore = () => {
         </Slider>
       ) : (
         <>
-          { popularData?.stores?.length>0 &&  (
+          {popularData?.stores?.length > 0 && (
             <Slider {...enhancedSettings} ref={slider}>
               {popularData?.stores?.map((item, index) => {
                 return (
@@ -150,21 +184,21 @@ const RecommendedStore = () => {
   const getLayout = () => {
     return (
 
-          <>
-            <CustomStackFullWidth
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              {popularIsLoading ? (
-                <Skeleton variant="text" width="110px" />
-              ) : (
-                <H2 text={t("Recommended Store")} component="h2" />
-              )}
-            </CustomStackFullWidth>
-            {sliderItems}
+      <>
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {popularIsLoading ? (
+            <Skeleton variant="text" width="110px" />
+          ) : (
+            <LocalizedRecommendedStoreTitle />
+          )}
+        </CustomStackFullWidth>
+        {sliderItems}
 
-          </>
+      </>
 
     );
   };

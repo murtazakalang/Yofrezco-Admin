@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import H2 from "components/typographies/H2";
 import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 
@@ -25,6 +26,40 @@ import { setBrands } from "redux/slices/brands";
 import AtoZ from "sort/AtoZ";
 import BrandCard from "./BrandCard";
 import { getModuleId } from "helper-functions/getModuleId";
+
+// Localized Title Image Component for Brands
+const LocalizedBrandsTitle = () => {
+	const { i18n } = useTranslation();
+	const currentLang = i18n.language || "en";
+	const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+	const imageSrc = isSpanish
+		? "/brands_spanish.png"
+		: "/brands_english.png";
+
+	return (
+		<Box
+			sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				width: "100%",
+				mb: 1
+			}}
+		>
+			<img
+				src={imageSrc}
+				alt="Brands"
+				style={{
+					height: "80px",
+					width: "auto",
+					objectFit: "contain"
+				}}
+			/>
+		</Box>
+	);
+};
+
 export const CustomSkeleton = styled(Skeleton)(({ theme }) => ({
 	background: theme.palette.background.sklenton,
 	maxWidth: "100%",
@@ -46,7 +81,7 @@ const Brands = ({ viewAll }) => {
 
 	useEffect(() => {
 		refetch();
-	}, [data,getModuleId()]);
+	}, [data, getModuleId()]);
 
 	const baseUrl = configData?.base_urls?.brand_image_url;
 
@@ -103,14 +138,7 @@ const Brands = ({ viewAll }) => {
 									}}
 									flexGrow={"1"}
 								>
-									<H2
-										text={"Brands"}
-										textAlign={"left"}
-										component="h2"
-									/>
-									<Typography variant={"body1"}>
-										{t("Explore the Trusted and Trendsetting Brands")}
-									</Typography>
+									<LocalizedBrandsTitle />
 								</Box>
 								<AtoZ handleSortBy={handleSortBy} sortBy={sortBy} />
 							</Stack>
@@ -157,7 +185,7 @@ const Brands = ({ viewAll }) => {
 			>
 				{data?.length > 0 ? (
 					<>
-						<H2 text={"Brands"} component="h2" />
+						<LocalizedBrandsTitle />
 
 						<Link
 							href={{

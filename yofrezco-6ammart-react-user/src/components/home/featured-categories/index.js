@@ -5,7 +5,7 @@ import {
   CustomBoxFullWidth,
   SliderCustom,
 } from "styled-components/CustomStyles.style";
-import { styled } from "@mui/material";
+import { styled, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import { useGetFeaturedCategories } from "api-manage/hooks/react-query/all-category/all-categorys";
@@ -19,6 +19,40 @@ import ShopCategoryCard from "../../cards/ShopCategoryCard";
 import { HomeComponentsWrapper } from "../HomePageComponents";
 import FeaturedItemCard from "./card";
 import { moduleWiseNext, moduleWisePrev } from "./sliderSettings";
+import { useTranslation } from "react-i18next";
+
+// Localized Title Image Component for Categories
+const LocalizedCategoryTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/categories_spanish.png"
+    : "/categories_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 2
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Categories"
+        style={{
+          height: "80px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 export const ButtonLeft = styled(CustomButtonPrimary)(
   ({ theme, language_direction }) => ({
@@ -535,6 +569,7 @@ const FeaturedCategories = () => {
         data?.data &&
         data?.data.length > 0 && (
           <HomeComponentsWrapper>
+            <LocalizedCategoryTitle />
             {data?.data && data?.data.length > 0 && (
               <SliderCustom
                 sx={{
