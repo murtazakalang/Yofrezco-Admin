@@ -108,7 +108,7 @@ const ItemsCampaign = ({ flashSales }) => {
       justifyContent="flex-start"
 
       sx={{
-        backgroundColor: (theme) => alpha(theme.palette.neutral[400], 0.1),
+        backgroundColor: "transparent",
         padding: "4px",
         // margin: { xs: "none", md: "10px 15px" },
         borderRadius: "10px",

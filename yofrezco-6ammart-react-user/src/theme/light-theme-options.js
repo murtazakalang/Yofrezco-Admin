@@ -16,17 +16,17 @@ const neutral = {
 };
 
 const background = {
-	default: "#F9FAFC",
+	default: "#FFFFFF",
 	paper: "#FFFFFF",
-	custom: "#f1f2f5",
+	custom: "#FFFFFF",
 	custom2: "#FFFFFF",
 	custom3: "#FFFFFF",
 	custom4: "#ffffff",
 	footer1: "#9f9f9f1a",
 	footer2: "#9f9f9f0d",
-	custom5: "#F4F6F8",
+	custom5: "#FFFFFF",
 	custom6: "#FFFFFF",
-	custom7: "#F6F6F6",
+	custom7: "#FFFFFF",
 };
 
 const divider = "#E6E8F0";

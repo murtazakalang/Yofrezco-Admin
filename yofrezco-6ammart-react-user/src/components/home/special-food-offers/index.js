@@ -213,8 +213,7 @@ const SpecialFoodOffers = ({ title }) => {
                 sx={{
                   paddingTop: { xs: "0px", sm: "0px" },
                   padding: { xs: "10px", md: "20px" },
-                  backgroundColor: (theme) =>
-                    alpha(theme.palette.neutral[400], 0.1),
+                  backgroundColor: "transparent",
                 }}
               >
                 <>
