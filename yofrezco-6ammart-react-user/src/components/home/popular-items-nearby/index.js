@@ -50,7 +50,7 @@ const LocalizedPopularProductsTitle = () => {
         src={imageSrc}
         alt="Most Popular Products"
         style={{
-          height: "80px",
+          height: "180px",
           width: "auto",
           objectFit: "contain"
         }}
@@ -210,7 +210,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
             <CustomBoxFullWidth>
               <Grid container spacing={2} sx={{ marginTop: "1px" }}>
                 {isLoading ? (
-                  <Grid item xs={12} sm={12} md={9}>
+                  <Grid item xs={12} sm={12} md={12}>
                     <SliderCustom
                       nopadding="true"
                       sx={{
@@ -227,7 +227,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
                     </SliderCustom>
                   </Grid>
                 ) : (
-                  <Grid item xs={12} sm={12} md={flashSaleslength() ? 9 : 12}>
+                  <Grid item xs={12} sm={12} md={12}>
                     <SliderCustom
                       nopadding="true"
                       sx={{
@@ -252,20 +252,21 @@ const PopularItemsNearby = ({ title, subTitle }) => {
                     </SliderCustom>
                   </Grid>
                 )}
-
-                {flashSalesIsLoading ? (
-                  <Grid item xs={12} sm={5} md={3}>
-                    <CampaignSimmerTimmer />
-                  </Grid>
-                ) : (
-                  <Grid item xs={12} sm={5} md={3}>
-                    {flashSaleslength() && (
-                      <ItemsCampaign flashSales={flashSales} />
-                    )}
-                  </Grid>
-                )}
               </Grid>
             </CustomBoxFullWidth>
+
+            {/* Flash Sale Section - Below Popular Products */}
+            {flashSalesIsLoading ? (
+              <CustomBoxFullWidth sx={{ mt: 3 }}>
+                <CampaignSimmerTimmer />
+              </CustomBoxFullWidth>
+            ) : (
+              flashSaleslength() && (
+                <CustomBoxFullWidth sx={{ mt: 3 }}>
+                  <ItemsCampaign flashSales={flashSales} />
+                </CustomBoxFullWidth>
+              )
+            )}
           </CustomStackFullWidth>
         </>
       )}

@@ -3,6 +3,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getToken } from "helper-functions/getToken";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
 import {
   CustomStackFullWidth,
@@ -14,6 +15,39 @@ import CustomContainer from "../../container";
 import H1 from "../../typographies/H1";
 import Subtitle1 from "../../typographies/Subtitle1";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
+
+// Localized Title Image Component for What's New
+const LocalizedWhatsNewTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/new_spanish.png"
+    : "/new_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="What's New"
+        style={{
+          height: "180px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 const VisitAgainShimmerCard = () => {
   const theme = useTheme();
@@ -123,7 +157,7 @@ const VisitAgain = ({ configData, visitedStores, isVisited, isLoading }) => {
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
-    ...createEnhancedArrows(isSliderHovered, { 
+    ...createEnhancedArrows(isSliderHovered, {
       displayNoneOnMobile: true,
       variant: "white"
     }),
@@ -224,70 +258,78 @@ const VisitAgain = ({ configData, visitedStores, isVisited, isLoading }) => {
   return (
     <>
       <CustomStackFullWidth
-          alignItems={getModuleWiseData?.()?.mainPosition}
-          justyfyContent={getModuleWiseData?.()?.mainPosition}
-          mt={isSmallScreen ? "2px" : "16px"}
-          spacing={{ xs: 2, md: 1 }}
-         
-        >
-          {isSmallScreen ? (
-            <CustomContainer>
-              <CustomStackFullWidth
-                alignItems={getModuleWiseData?.()?.mainPosition}
-                justyfyContent={getModuleWiseData?.()?.mainPosition}
-                mt="10px"
-                spacing={1}
-              >
+        alignItems={getModuleWiseData?.()?.mainPosition}
+        justyfyContent={getModuleWiseData?.()?.mainPosition}
+        mt={isSmallScreen ? "2px" : "16px"}
+        spacing={{ xs: 2, md: 1 }}
+
+      >
+        {isSmallScreen ? (
+          <CustomContainer>
+            <CustomStackFullWidth
+              alignItems={getModuleWiseData?.()?.mainPosition}
+              justyfyContent={getModuleWiseData?.()?.mainPosition}
+              mt="10px"
+              spacing={1}
+            >
+              {isVisited ? (
                 <H1 text={getModuleWiseData?.()?.heading} component="h2" />
-                {isVisited && (
-                  <Subtitle1
-                    textAlign={getModuleWiseData?.()?.mainPosition}
-                    text={getModuleWiseData?.()?.subHeading}
-                    component="p"
-                  />
-                )}
-              </CustomStackFullWidth>
-            </CustomContainer>
-          ) : (
-            <>
-              <H1 text={getModuleWiseData?.()?.heading} component="h2" />
+              ) : (
+                <LocalizedWhatsNewTitle />
+              )}
               {isVisited && (
                 <Subtitle1
+                  textAlign={getModuleWiseData?.()?.mainPosition}
                   text={getModuleWiseData?.()?.subHeading}
                   component="p"
                 />
               )}
-            </>
-          )}
-          <SliderCustom
-            nopadding="true"
-            sx={{
-              padding: { xs: "0px", md: "17px" },
-               minHeight:"200px"
-            }}
-            onMouseEnter={() => setIsSliderHovered(true)}
-            onMouseLeave={() => setIsSliderHovered(false)}
-          >
-            <Slider {...enhancedSettings}>
-              {isLoading ? (
-                [...Array(5)].map((_, index) => (
-                  <VisitAgainShimmerCard key={index} />
-                ))
-              ) : (
-                visitedStores?.map((item, index) => {
-                  return (
-                    <VisitAgainCard
-                      key={index}
-                      item={item}
-                      configData={configData}
-                      isVisited={isVisited}
-                    />
-                  );
-                })
-              )}
-            </Slider>
-          </SliderCustom>
-        </CustomStackFullWidth>
+            </CustomStackFullWidth>
+          </CustomContainer>
+        ) : (
+          <>
+            {isVisited ? (
+              <H1 text={getModuleWiseData?.()?.heading} component="h2" />
+            ) : (
+              <LocalizedWhatsNewTitle />
+            )}
+            {isVisited && (
+              <Subtitle1
+                text={getModuleWiseData?.()?.subHeading}
+                component="p"
+              />
+            )}
+          </>
+        )}
+        <SliderCustom
+          nopadding="true"
+          sx={{
+            padding: { xs: "0px", md: "17px" },
+            minHeight: "200px"
+          }}
+          onMouseEnter={() => setIsSliderHovered(true)}
+          onMouseLeave={() => setIsSliderHovered(false)}
+        >
+          <Slider {...enhancedSettings}>
+            {isLoading ? (
+              [...Array(5)].map((_, index) => (
+                <VisitAgainShimmerCard key={index} />
+              ))
+            ) : (
+              visitedStores?.map((item, index) => {
+                return (
+                  <VisitAgainCard
+                    key={index}
+                    item={item}
+                    configData={configData}
+                    isVisited={isVisited}
+                  />
+                );
+              })
+            )}
+          </Slider>
+        </SliderCustom>
+      </CustomStackFullWidth>
     </>
   );
 };

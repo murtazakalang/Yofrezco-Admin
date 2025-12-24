@@ -1,4 +1,4 @@
-import { alpha, Button, Skeleton } from "@mui/material";
+import { alpha, Button, Skeleton, Box } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
@@ -15,7 +15,40 @@ import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 import H2 from "../../typographies/H2";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
 import { HomeComponentsWrapper } from "../HomePageComponents";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
+
+// Localized Title Image Component for Special Offer
+const LocalizedSpecialOfferTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/special_offer_spanish.png"
+    : "/special_offer_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Special Offer"
+        style={{
+          height: "180px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
 
 const SpecialFoodOffers = ({ title }) => {
   const { t } = useTranslation();
@@ -28,7 +61,7 @@ const SpecialFoodOffers = ({ title }) => {
     useGetDiscountedItems(params);
   const [isHover, setIsHover] = useState(false);
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
-  const router =useRouter()
+  const router = useRouter()
 
   // useEffect(() => {
   //   refetch();
@@ -43,7 +76,7 @@ const SpecialFoodOffers = ({ title }) => {
     speed: 800,
     autoplaySpeed: 4000,
     variableHeight: true,
-    ...createEnhancedArrows(isHover, { 
+    ...createEnhancedArrows(isHover, {
       displayNoneOnMobile: true,
       variant: "primary",
       noBackground: true
@@ -143,7 +176,7 @@ const SpecialFoodOffers = ({ title }) => {
               {isFetching ? (
                 <Skeleton variant="text" width="110px" />
               ) : (
-                <H2 text={title ? title : t("Special Offer")} component="h2" />
+                <LocalizedSpecialOfferTitle />
               )}
               {isFetching ? (
                 <Skeleton width="100px" variant="80px" />
@@ -159,19 +192,19 @@ const SpecialFoodOffers = ({ title }) => {
                 //   }}
                 //   scroll={true}
                 // >
-                  <Button
-                    onClick={navigateToHome}
-                    variant="text"
-                    sx={{
-                      transition: "all ease 0.5s",
-                      textTransform: "capitalize",
-                      "&:hover": {
-                        letterSpacing: "0.03em",
-                      },
-                    }}
-                  >
-                    {t("View all")}
-                  </Button>
+                <Button
+                  onClick={navigateToHome}
+                  variant="text"
+                  sx={{
+                    transition: "all ease 0.5s",
+                    textTransform: "capitalize",
+                    "&:hover": {
+                      letterSpacing: "0.03em",
+                    },
+                  }}
+                >
+                  {t("View all")}
+                </Button>
                 // </Link>
               )}
             </CustomStackFullWidth>

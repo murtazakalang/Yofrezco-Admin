@@ -5,13 +5,13 @@ const neutral = {
 	100: "#FFFFFF",
 	200: "#E5E7EB",
 	300: "#FFFFFF",
-	400: "#9CA3AF",
-	500: "#6B7280",
-	600: "#4B5563",
-	700: "#374151",
-	800: "#1F2937",
-	900: "#111827",
-	1000: "#212E28",
+	400: "#000000",
+	500: "#000000",
+	600: "#000000",
+	700: "#000000",
+	800: "#000000",
+	900: "#000000",
+	1000: "#000000",
 	1100: "#D6D6D6",
 };
 
@@ -97,11 +97,11 @@ const error = {
 };
 
 const text = {
-	primary: "#3E594D",
-	secondary: "#93A2AE",
-	disabled: "rgba(55, 65, 81, 0.48)",
-	custom: "#3F3F3F",
-	customText1: "#4B5563",
+	primary: "#000000",
+	secondary: "#000000",
+	disabled: "rgba(0, 0, 0, 0.48)",
+	custom: "#000000",
+	customText1: "#000000",
 };
 
 const footer = {
@@ -115,8 +115,8 @@ const footer = {
 	foodFooterBg: "#414141",
 };
 const customColor = {
-	textGray: "#9c9c9c",
-	textGrayDeep: "#787676",
+	textGray: "#000000",
+	textGrayDeep: "#000000",
 	buyButton: "#F9E091",
 	parcelWallet: "#8B3FFD",
 };

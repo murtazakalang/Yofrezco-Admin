@@ -1,4 +1,5 @@
-import { Skeleton } from "@mui/material";
+import { Skeleton, Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import {
 	WhiteNext,
 	WhitePrev,
@@ -14,6 +15,39 @@ import PharmacyFeaturedStoreCard from "../../../../cards/PharmacyFeaturedStoreCa
 import SpecialOfferCardShimmer from "../../../../Shimmer/SpecialOfferCardSimmer";
 import H2 from "../../../../typographies/H2";
 import { HomeComponentsWrapper } from "../../../HomePageComponents";
+
+// Localized Title Image Component for Popular Store
+const LocalizedPopularStoreTitle = () => {
+	const { i18n } = useTranslation();
+	const currentLang = i18n.language || "en";
+	const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+	const imageSrc = isSpanish
+		? "/popular_stores_spanish.png"
+		: "/popular_stores_english.png";
+
+	return (
+		<Box
+			sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				width: "100%",
+				mb: 1
+			}}
+		>
+			<img
+				src={imageSrc}
+				alt="Popular Store"
+				style={{
+					height: "180px",
+					width: "auto",
+					objectFit: "contain"
+				}}
+			/>
+		</Box>
+	);
+};
 
 const FeaturedStores = (props) => {
 	const { title, configData, slide } = props;
@@ -131,7 +165,7 @@ const FeaturedStores = (props) => {
 								{isLoading ? (
 									<Skeleton variant="text" width="110px" />
 								) : (
-									<H2 text={title} component="h2" />
+									<LocalizedPopularStoreTitle />
 								)}
 								<SliderCustom
 									nopadding="true"

@@ -2,9 +2,6 @@ import { Grid, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { Box, alpha } from "@mui/system";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import ractangle from "../../../../public/static/footer/Rectangle.svg";
-import magnifying from "../../../../public/static/footer/magnifying.svg";
-import phone from "../../../../public/static/footer/phone.svg";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
@@ -88,6 +85,32 @@ const FooterMiddle = (props) => {
                     ?.download_user_app_links?.playstore_url_status,
               }}
             />
+            {/* Payment Methods */}
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              sx={{ mt: 2 }}
+            >
+              <Box
+                component="img"
+                src="/Visa Mastercard.png"
+                alt="Visa Mastercard"
+                sx={{ height: "30px", width: "auto", objectFit: "contain" }}
+              />
+              <Box
+                component="img"
+                src="/Yappy.png"
+                alt="Yappy"
+                sx={{ height: "30px", width: "auto", objectFit: "contain" }}
+              />
+              <Box
+                component="img"
+                src="/Rapidpay.png"
+                alt="Rapidpay"
+                sx={{ height: "30px", width: "auto", objectFit: "contain" }}
+              />
+            </Stack>
           </CustomStackFullWidth>
         </Grid>
         <Grid item xs={12} sm={6} md={7.8}>
@@ -139,7 +162,7 @@ const FooterMiddle = (props) => {
                   item
                   xs={12}
                   sm={6}
-                  md={3}
+                  md={4.5}
                   sx={{
                     display: { xs: "flex", sm: "none", md: "flex" },
                     alignItems: "flex-start",
@@ -147,8 +170,8 @@ const FooterMiddle = (props) => {
                   }}
                 >
                   <SomeInfo
-                    image={ractangle}
-                    alt="rantangle"
+                    image="/email_footer.png"
+                    alt="Email"
                     title="Send us mails"
                     info={configData?.email}
                     t={t}
@@ -159,7 +182,7 @@ const FooterMiddle = (props) => {
                   item
                   xs={12}
                   sm={6}
-                  md={3}
+                  md={4.5}
                   sx={{
                     display: { xs: "flex", sm: "none", md: "flex" },
                     alignItems: "flex-start",
@@ -167,35 +190,14 @@ const FooterMiddle = (props) => {
                   }}
                 >
                   <SomeInfo
-                    image={phone}
-                    alt="Phone"
+                    image="/Whatsapp_footer.png"
+                    alt="WhatsApp"
                     title="Contact us"
-                    info={configData?.phone}
+                    info="Info & Support"
                     t={t}
-                    href={`tel:${configData?.phone}`}
+                    href="https://wa.link/yofrezco"
+                    isExternal={true}
                   />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={3}
-                  sx={{
-                    display: { xs: "flex", sm: "none", md: "flex" },
-                    alignItems: "flex-start",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Box onClick={handleOpenCloseMap}>
-                    <SomeInfo
-                      image={magnifying}
-                      alt="magnifying"
-                      title="Find us here"
-                      info={configData?.address}
-                      t={t}
-                      href={false}
-                    />
-                  </Box>
                 </Grid>
               </Grid>
             </Box>
@@ -222,37 +224,26 @@ const FooterMiddle = (props) => {
             }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={4}>
+              <Grid item xs={6}>
                 <SomeInfo
-                  image={ractangle}
-                  alt="rantangle"
+                  image="/email_footer.png"
+                  alt="Email"
                   title="Send us mails"
                   info={configData?.email}
                   t={t}
                   href={`mailto:${configData?.email}`}
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={6}>
                 <SomeInfo
-                  image={phone}
-                  alt="Phone"
+                  image="/Whatsapp_footer.png"
+                  alt="WhatsApp"
                   title="Contact us"
-                  info={configData?.phone}
+                  info="Info & Support"
                   t={t}
-                  href={`tel:${configData?.phone}`}
+                  href="https://wa.link/yofrezco"
+                  isExternal={true}
                 />
-              </Grid>
-              <Grid item xs={4}>
-                <Box onClick={handleOpenCloseMap}>
-                  <SomeInfo
-                    image={magnifying}
-                    alt="magnifying"
-                    title="Find us here"
-                    info={configData?.address}
-                    href={false}
-                    t={t}
-                  />
-                </Box>
               </Grid>
             </Grid>
           </Box>
