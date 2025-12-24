@@ -120,19 +120,18 @@ const TopBanner = () => {
             height: "100%",
             width: "100%",
             display: "flex",
-            justifyContent: "center", // ⭐ centers image horizontally
-            alignItems: "center", // ⭐ centers vertically
+            justifyContent: "center",
+            alignItems: "center",
             overflow: "hidden",
           }}
         >
           <Image
             src={banngerBg}
             alt="banner"
-            width={1200}
-            height={270}
+            fill
             style={{
-              objectFit: "contain",
-              objectPosition: "center 20px", // ⭐ moves image UP
+              objectFit: "cover",
+              objectPosition: "center",
             }}
             priority
           />
