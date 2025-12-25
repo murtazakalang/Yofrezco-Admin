@@ -48,7 +48,7 @@ const LocalizedFlashSaleTitle = () => {
         src={imageSrc}
         alt="Flash Sale"
         style={{
-          height: "180px",
+          height: "220px",
           width: "auto",
           objectFit: "contain"
         }}

@@ -42,7 +42,7 @@ const LocalizedHighlightsTitle = () => {
         src={imageSrc}
         alt="Highlights for you"
         style={{
-          height: "180px",
+          height: "220px",
           width: "auto",
           objectFit: "contain"
         }}

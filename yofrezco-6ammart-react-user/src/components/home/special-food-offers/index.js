@@ -41,7 +41,7 @@ const LocalizedSpecialOfferTitle = () => {
         src={imageSrc}
         alt="Special Offer"
         style={{
-          height: "180px",
+          height: "220px",
           width: "auto",
           objectFit: "contain"
         }}

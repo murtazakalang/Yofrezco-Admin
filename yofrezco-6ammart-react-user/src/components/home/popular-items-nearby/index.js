@@ -50,7 +50,7 @@ const LocalizedPopularProductsTitle = () => {
         src={imageSrc}
         alt="Most Popular Products"
         style={{
-          height: "180px",
+          height: "220px",
           width: "auto",
           objectFit: "contain"
         }}

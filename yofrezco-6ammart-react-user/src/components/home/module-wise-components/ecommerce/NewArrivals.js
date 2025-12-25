@@ -41,7 +41,7 @@ const LocalizedNewArrivalsTitle = () => {
         src={imageSrc}
         alt="New Arrivals"
         style={{
-          height: "180px",
+          height: "220px",
           width: "auto",
           objectFit: "contain"
         }}

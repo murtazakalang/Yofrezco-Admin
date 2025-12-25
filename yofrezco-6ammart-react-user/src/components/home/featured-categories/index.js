@@ -45,7 +45,7 @@ const LocalizedCategoryTitle = () => {
         src={imageSrc}
         alt="Categories"
         style={{
-          height: "180px",
+          height: "220px",
           width: "auto",
           objectFit: "contain"
         }}

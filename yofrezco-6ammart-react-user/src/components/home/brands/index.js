@@ -51,7 +51,7 @@ const LocalizedBrandsTitle = () => {
 				src={imageSrc}
 				alt="Brands"
 				style={{
-					height: "180px",
+					height: "220px",
 					width: "auto",
 					objectFit: "contain"
 				}}
