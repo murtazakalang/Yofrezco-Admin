@@ -32,6 +32,7 @@ import AddressForm from "./AddressForm";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 export const AddAddressSearchBox = styled(Box)(({ theme }) => ({
   position: "absolute",
   zIndex: "999",
@@ -99,6 +100,7 @@ const AddAddressComponent = ({
       if (zoneData) {
         // dispatch(setZoneData(zoneData?.data?.zone_data));
         localStorage.setItem("zoneid", zoneData?.zone_id);
+        invalidateHeaderCache();
       }
     }
   }, [zoneData]);

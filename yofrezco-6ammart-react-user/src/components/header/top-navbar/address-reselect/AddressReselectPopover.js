@@ -10,6 +10,7 @@ import { useGeolocated } from "react-geolocated";
 import ControlPointOutlinedIcon from "@mui/icons-material/ControlPointOutlined";
 import useGetGeoCode from "../../../../api-manage/hooks/react-query/google-api/useGetGeoCode";
 import useGetZoneId from "../../../../api-manage/hooks/react-query/google-api/useGetZone";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 import dynamic from "next/dynamic";
 const MapModal = dynamic(() => import("../../../Map/MapModal"));
 const AddressReselectPopover = (props) => {
@@ -70,6 +71,7 @@ const AddressReselectPopover = (props) => {
     if (typeof window !== "undefined") {
       if (zoneData) {
         localStorage.setItem("zoneid", zoneData?.zone_id);
+        invalidateHeaderCache();
       }
     }
   }, [zoneData]);

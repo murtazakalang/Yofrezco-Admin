@@ -3,14 +3,15 @@ import MainApi from "../../MainApi";
 import { onSingleErrorResponse } from "../../api-error-response/ErrorResponses";
 import { visit_again } from "api-manage/ApiRoutes";
 import {getToken} from "helper-functions/getToken";
-import {getModuleId} from "helper-functions/getModuleId";
+import { getModuleId } from "helper-functions/getModuleId";
+import { getZoneId } from "helper-functions/getZoneId";
 
 export const getData = async () => {
   const { data } = await MainApi.get(`${visit_again}`);
   return data;
 };
 export const useGetVisitAgain = () => {
-  return useQuery(["visit again", getToken(), getModuleId()], () => getData(), {
+  return useQuery(["visit again", getToken(), getModuleId(), getZoneId()], () => getData(), {
     enabled:!!getToken(),
       cacheTime: 1000 * 60 * 5,   // 5 minutes
       staleTime: 1000 * 60 * 4,   // 4 minutes

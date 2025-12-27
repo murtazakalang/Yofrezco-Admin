@@ -7,6 +7,7 @@ import useGetZoneId from "../../api-manage/hooks/react-query/google-api/useGetZo
 import useGetModule from "../../api-manage/hooks/react-query/useGetModule";
 import { setSelectedModule } from "../../redux/slices/utils";
 import { zoneWiseModule } from "../../components/module-select/ModuleSelect";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 
 // Default location: Panama City, Panama
 const DEFAULT_LOCATION = {
@@ -134,6 +135,7 @@ const AutoLocationDetector = ({ onRedirectStart }) => {
     if (hasZoneId && hasLocation && hasModules && noModuleSelected && location) {
       // Store zone ID immediately
       localStorage.setItem("zoneid", zoneData.zone_id);
+      invalidateHeaderCache();
 
       // Get zone-wise modules and select first one
       const zoneWiseModules = zoneWiseModule(availableModules);

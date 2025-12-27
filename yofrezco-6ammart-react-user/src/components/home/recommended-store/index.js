@@ -39,7 +39,7 @@ const LocalizedRecommendedStoreTitle = () => {
         src={imageSrc}
         alt="Recommended Store"
         style={{
-          height: "220px",
+          height: "280px",
           width: "auto",
           objectFit: "contain"
         }}

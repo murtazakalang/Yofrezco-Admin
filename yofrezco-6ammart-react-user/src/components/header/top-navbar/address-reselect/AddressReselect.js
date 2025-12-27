@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { CustomStackFullWidth } from "../../../../styled-components/CustomStyles.style";
 import AddressReselectPopover from "./AddressReselectPopover";
 import { getModule } from "helper-functions/getLanguage";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 
 const AddressReselect = ({ location, setOpenDrawer }) => {
   const theme = useTheme();
@@ -44,6 +45,7 @@ const AddressReselect = ({ location, setOpenDrawer }) => {
         const value = [address.zone_ids];
 
         localStorage.setItem("zoneid", JSON.stringify(address.zone_ids));
+        invalidateHeaderCache();
         toast.success(t(`New ${getModule()?.module_type==="rental" ? "Pickup" : "Delivery"} address selected.`));
         handleClosePopover();
       }

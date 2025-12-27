@@ -40,6 +40,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MapMarkerIcon from "../assets/MapMarkerIcon";
 import dynamic from "next/dynamic";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 const MapModal = dynamic(() => import("../../Map/MapModal"));
 const HeroLocationForm = () => {
   const theme = useTheme();
@@ -175,6 +176,7 @@ const HeroLocationForm = () => {
       if (zoneData) {
         // dispatch(setZoneData(zoneData?.data?.zone_data));
         localStorage.setItem("zoneid", zoneData?.zone_id);
+        invalidateHeaderCache();
       }
     }
   }, [zoneData]);

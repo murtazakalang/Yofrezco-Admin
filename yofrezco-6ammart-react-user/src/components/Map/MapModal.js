@@ -47,6 +47,7 @@ import { getToken } from "src/helper-functions/getToken";
 import ModalExtendShrink from "./ModalExtendShrink";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { useGetWishList } from "api-manage/hooks/react-query/rental-wishlist/useGetWishlist";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 
 const MapModal = ({
   open,
@@ -136,6 +137,7 @@ const MapModal = ({
         setZoneId(zoneData?.zone_id);
         if (fromReceiver !== "1") {
           localStorage.setItem("zoneid", zoneData?.zone_id);
+          invalidateHeaderCache();
         }
       }
       if (!zoneData) {
@@ -202,6 +204,7 @@ const MapModal = ({
       }
       if (fromReceiver !== "1" && toparcel !== "1") {
         localStorage.setItem("zoneid", zoneId);
+        invalidateHeaderCache();
       }
       if (fromReceiver !== "1" && toparcel !== "1") {
         localStorage.setItem(
@@ -437,6 +440,7 @@ const MapModal = ({
                     onClick={() => {
                       if (zoneId) {
                         localStorage.setItem("zoneid", zoneId);
+                        invalidateHeaderCache();
                       }
                       handleClose();
                     }}

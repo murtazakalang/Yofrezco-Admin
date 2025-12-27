@@ -3,6 +3,7 @@ import { data_limit, moduleList, popular_items } from "../../ApiRoutes";
 import { useQuery } from "react-query";
 import { onErrorResponse } from "../../api-error-response/ErrorResponses";
 import { getModuleId } from "helper-functions/getModuleId";
+import { getZoneId } from "helper-functions/getZoneId";
 const getData = async (pageParams) => {
   const { offset, type } = pageParams;
   const { data } = await MainApi.get(
@@ -12,7 +13,7 @@ const getData = async (pageParams) => {
 };
 
 export default function useGetPopularItemsNearby(pageParams) {
-  return useQuery(["popular-items-nearby",getModuleId()], () => getData(pageParams), {
+  return useQuery(["popular-items-nearby", getModuleId(), getZoneId()], () => getData(pageParams), {
     enabled: true,
     cacheTime: 300000,
     staleTime: 1000 * 60 * 5, // 5 minutes

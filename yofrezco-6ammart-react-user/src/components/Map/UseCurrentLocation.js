@@ -4,6 +4,7 @@ import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import { t } from "i18next";
 import AllowLocationDialog from "./AllowLocationDialog";
 import { IconButton } from "@mui/material";
+import { invalidateHeaderCache } from "api-manage/MainApi";
 const UseCurrentLocation = ({
   isLoadingCurrentLocation,
   setLoadingCurrentLocation,
@@ -47,6 +48,7 @@ const UseCurrentLocation = ({
             if(!fromMapModal){
               if (zoneId) {
                 localStorage.setItem("zoneid", zoneId);
+                invalidateHeaderCache();
                 // router.push('/home')
                 // handleClose()
               }
