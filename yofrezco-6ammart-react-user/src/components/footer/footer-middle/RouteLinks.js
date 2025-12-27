@@ -55,7 +55,7 @@ const RouteLinks = (props) => {
   return (
     <CustomStackFullWidth spacing={2} alignItems={{ xs: "start" }}>
       {RouteLinksData.map((item, index) => {
-        if((!configData?.toggle_dm_registration && item.value==="delivery_man") || (!configData?.toggle_dm_registration && item?.value==="restaurant_owner") )
+        if ((!configData?.toggle_dm_registration && item.value === "delivery_man") || (!configData?.toggle_dm_registration && item?.value === "restaurant_owner"))
           return null
 
         return (
@@ -63,10 +63,10 @@ const RouteLinks = (props) => {
             key={index}
             onClick={() => handleClick(item.link, item.value)}
             sx={{
-              textAlign:"left",
+              textAlign: "left",
               cursor: "pointer",
               "&:hover": {
-                color: theme.palette.primary.main,
+                color: "#888888",
               },
             }}
           >
@@ -80,7 +80,7 @@ const RouteLinks = (props) => {
         sx={{
           cursor: "pointer",
           "&:hover": {
-            color: theme.palette.primary.main,
+            color: "#888888",
           },
         }}
       >
@@ -91,11 +91,11 @@ const RouteLinks = (props) => {
         sx={{
           cursor: "pointer",
           "&:hover": {
-            color: theme.palette.primary.main,
+            color: "#888888",
           },
         }}
       >
-        {selectedModule?.module_type==="rental" ? t("Track Trip"):t("Track Order")}
+        {selectedModule?.module_type === "rental" ? t("Track Trip") : t("Track Order")}
       </Typography>
     </CustomStackFullWidth>
   );

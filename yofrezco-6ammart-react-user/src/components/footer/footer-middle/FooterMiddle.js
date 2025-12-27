@@ -61,7 +61,7 @@ const FooterMiddle = (props) => {
                 src={businessLogo}
                 alt={`${configData?.business_name}`}
                 width="auto"
-                height="50px"
+                height="180px"
                 objectfit="contain"
               />
             </Box>

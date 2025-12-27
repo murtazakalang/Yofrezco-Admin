@@ -35,7 +35,7 @@ const SomeInfo = (props) => {
         },
       }}
     >
-      <CustomImageContainer src={imageSrc} alt={alt} height={50} width={50} />
+      <CustomImageContainer src={imageSrc} alt={alt} height={100} width={100} />
       <CustomStackFullWidth
         alignItems="center"
         justifyContent="center"
