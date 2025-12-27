@@ -1,4 +1,4 @@
-<?php return array (
+<?php return array(
   'attributes' => 'Attributes',
   'add_new_attribute' => 'Add new attribute',
   'default' => 'Default',
@@ -8466,4 +8466,5 @@ Smartly or Earn. ',
   'atleast_one_method_must_be_active' => 'Atleast one method must be active',
   'Item added to favorites' => 'Item added to favorites',
   'tilopay' => 'Tilopay',
+  'cybersource' => 'CyberSource',
 );

@@ -77,9 +77,10 @@ Route::get('payment-cancel', 'PaymentController@cancel')->name('payment-cancel')
 
 $is_published = 0;
 try {
-$full_data = include('Modules/Gateways/Addon/info.php');
-$is_published = $full_data['is_published'] == 1 ? 1 : 0;
-} catch (\Exception $exception) {}
+    $full_data = include('Modules/Gateways/Addon/info.php');
+    $is_published = $full_data['is_published'] == 1 ? 1 : 0;
+} catch (\Exception $exception) {
+}
 
 if (!$is_published) {
     Route::group(['prefix' => 'payment'], function () {
@@ -104,29 +105,31 @@ if (!$is_published) {
                 ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
         });
 
-      //RAZOR-PAY
-      Route::group(['prefix' => 'razor-pay', 'as' => 'razor-pay.'], function () {
-        Route::get('pay', [RazorPayController::class, 'index']);
-        Route::post('payment', [RazorPayController::class, 'payment'])->name('payment')
-            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-        Route::post('callback', [RazorPayController::class, 'callback'])->name('callback')
-            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-        Route::any('cancel', [RazorPayController::class, 'cancel'])->name('cancel')
-            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+        //RAZOR-PAY
+        Route::group(['prefix' => 'razor-pay', 'as' => 'razor-pay.'], function () {
+            Route::get('pay', [RazorPayController::class, 'index']);
+            Route::post('payment', [RazorPayController::class, 'payment'])->name('payment')
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            Route::post('callback', [RazorPayController::class, 'callback'])->name('callback')
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            Route::any('cancel', [RazorPayController::class, 'cancel'])->name('cancel')
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
-        Route::any('create-order', [RazorPayController::class, 'createOrder'])->name('create-order')
-            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-        Route::any('verify-payment', [RazorPayController::class, 'verifyPayment'])->name('verify-payment')
-            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-    });
+            Route::any('create-order', [RazorPayController::class, 'createOrder'])->name('create-order')
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            Route::any('verify-payment', [RazorPayController::class, 'verifyPayment'])->name('verify-payment')
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+        });
 
         //PAYPAL
         Route::group(['prefix' => 'paypal', 'as' => 'paypal.'], function () {
             Route::get('pay', [PaypalPaymentController::class, 'payment']);
             Route::any('success', [PaypalPaymentController::class, 'success'])->name('success')
-                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            ;
             Route::any('cancel', [PaypalPaymentController::class, 'cancel'])->name('cancel')
-                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            ;
         });
 
         //SENANG-PAY
@@ -139,7 +142,7 @@ if (!$is_published) {
         Route::group(['prefix' => 'paytm', 'as' => 'paytm.'], function () {
             Route::get('pay', [PaytmController::class, 'payment']);
             Route::any('response', [PaytmController::class, 'callback'])->name('response')
-            ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
         });
 
         //FLUTTERWAVE
@@ -193,12 +196,21 @@ if (!$is_published) {
             Route::any('callback', [PaytabsController::class, 'callback'])->name('callback');
             Route::any('response', [PaytabsController::class, 'response'])->name('response');
         });
+
+        //CYBERSOURCE
+        Route::group(['prefix' => 'cybersource', 'as' => 'cybersource.'], function () {
+            Route::get('pay', [\App\Http\Controllers\CyberSourcePaymentController::class, 'index'])->name('pay');
+            Route::post('process', [\App\Http\Controllers\CyberSourcePaymentController::class, 'processPayment'])->name('process')
+                ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            Route::get('success', [\App\Http\Controllers\CyberSourcePaymentController::class, 'success'])->name('success');
+            Route::get('canceled', [\App\Http\Controllers\CyberSourcePaymentController::class, 'canceled'])->name('canceled');
+        });
     });
 }
 
 
 Route::get('/test', function () {
-dd('Hello tester');
+    dd('Hello tester');
 });
 
 Route::get('module-test', function () {

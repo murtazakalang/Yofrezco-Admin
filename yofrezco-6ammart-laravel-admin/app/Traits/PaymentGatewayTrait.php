@@ -335,11 +335,28 @@ trait PaymentGatewayTrait
                 "PLN" => "Polish Zloty",
                 "CZK" => "Czech Koruna",
                 "HUF" => "Hungarian Forint"
+            ],
+            "cybersource" => [
+                "USD" => "United States Dollar",
+                "EUR" => "Euro",
+                "GBP" => "Pound Sterling",
+                "CAD" => "Canadian Dollar",
+                "AUD" => "Australian Dollar",
+                "JPY" => "Japanese Yen",
+                "CHF" => "Swiss Franc",
+                "NZD" => "New Zealand Dollar",
+                "SGD" => "Singapore Dollar",
+                "HKD" => "Hong Kong Dollar",
+                "MXN" => "Mexican Peso",
+                "BRL" => "Brazilian Real",
+                "INR" => "Indian Rupee",
+                "AED" => "United Arab Emirates Dirham",
+                "SAR" => "Saudi Riyal"
             ]
         ];
 
         if ($key) {
-            return array_key_exists($key,$paymentGateway) ?  $paymentGateway[$key] : [];
+            return array_key_exists($key, $paymentGateway) ? $paymentGateway[$key] : [];
         }
         return $paymentGateway;
     }
