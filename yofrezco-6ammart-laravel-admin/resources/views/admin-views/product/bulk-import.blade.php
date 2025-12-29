@@ -77,6 +77,9 @@
                                     <li>
                                         {{ translate('Copy_the_value_and_paste_the_the_spread_sheet_file_column_name_variation_in_the_selected_product_row.') }}
                                     </li>
+                                    <li class="text-warning font-weight-bold">
+                                        {{ translate('Enter_Name_and_Description_in_Spanish._The_system_will_automatically_translate_to_English.') }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>

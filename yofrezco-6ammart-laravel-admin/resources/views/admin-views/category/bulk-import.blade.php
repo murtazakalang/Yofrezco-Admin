@@ -72,6 +72,9 @@
                                     <li>
                                         {{ translate('For_a_sub_category_module_id_will_it`s_parents_module_id') }}
                                     </li>
+                                    <li class="text-warning font-weight-bold">
+                                        {{ translate('Enter_Name_in_Spanish._The_system_will_automatically_translate_to_English.') }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>

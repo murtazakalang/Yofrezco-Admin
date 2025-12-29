@@ -13,8 +13,10 @@ use App\Http\Requests\Admin\CategoryAddRequest;
 use App\Http\Requests\Admin\CategoryBulkExportRequest;
 use App\Http\Requests\Admin\CategoryBulkImportRequest;
 use App\Http\Requests\Admin\CategoryUpdateRequest;
+use App\Services\BulkImportTranslationService;
 use App\Services\CategoryService;
 use App\Traits\ImportExportTrait;
+use Illuminate\Support\Facades\Log;
 use Brian2694\Toastr\Facades\Toastr;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -205,24 +207,51 @@ class CategoryController extends BaseController
 
     public function importBulkData(CategoryBulkImportRequest $request): RedirectResponse
     {
-        $data = $this->categoryService->getImportData(request: $request);
+        $result = $this->categoryService->getImportDataWithTranslations(request: $request);
 
-        if (array_key_exists('flag', $data) && $data['flag'] == 'wrong_format') {
+        if (array_key_exists('flag', $result) && $result['flag'] == 'wrong_format') {
             Toastr::error(translate('messages.you_have_uploaded_a_wrong_format_file'));
             return back();
         }
 
-        if (array_key_exists('flag', $data) && $data['flag'] == 'required_fields') {
+        if (array_key_exists('flag', $result) && $result['flag'] == 'required_fields') {
             Toastr::error(translate('messages.please_fill_all_required_fields'));
             return back();
         }
 
+        $data = $result['data'];
+        $translationFields = $result['translations'];
+        $translationService = new BulkImportTranslationService('es', 'en');
+
         try {
             DB::beginTransaction();
-            $this->categoryRepo->addByChunk(data: $data);
+
+            // Insert categories and get IDs
+            $insertedIds = $this->categoryRepo->addByChunk(data: $data);
+
+            // Process translations with auto-translation (Spanish → English)
+            $allTranslations = $translationService->processTranslationsForRecords(
+                $insertedIds,
+                $translationFields,
+                'App\Models\Category'
+            );
+
+            // Bulk insert translations
+            if (!empty($allTranslations)) {
+                $this->translationRepo->addBulk($allTranslations);
+            }
+
             DB::commit();
-        } catch (Exception) {
+
+            // Report any translation failures
+            $failureCount = $translationService->getFailureCount();
+            if ($failureCount > 0) {
+                Toastr::warning(translate('messages.some_translations_failed') . ': ' . $failureCount);
+            }
+
+        } catch (Exception $e) {
             DB::rollBack();
+            Log::error('Category bulk import failed', ['error' => $e->getMessage()]);
             Toastr::error(translate('messages.failed_to_import_data'));
             return back();
         }
@@ -233,24 +262,57 @@ class CategoryController extends BaseController
 
     public function updateBulkData(CategoryBulkImportRequest $request): RedirectResponse
     {
-        $data = $this->categoryService->getImportData(request: $request, toAdd: false);
+        $result = $this->categoryService->getImportDataWithTranslations(request: $request, toAdd: false);
 
-        if (array_key_exists('flag', $data) && $data['flag'] == 'wrong_format') {
+        if (array_key_exists('flag', $result) && $result['flag'] == 'wrong_format') {
             Toastr::error(translate('messages.you_have_uploaded_a_wrong_format_file'));
             return back();
         }
 
-        if (array_key_exists('flag', $data) && $data['flag'] == 'required_fields') {
+        if (array_key_exists('flag', $result) && $result['flag'] == 'required_fields') {
             Toastr::error(translate('messages.please_fill_all_required_fields'));
             return back();
         }
 
+        $data = $result['data'];
+        $translationFields = $result['translations'];
+        $translationService = new BulkImportTranslationService('es', 'en');
+
         try {
             DB::beginTransaction();
-            $this->categoryRepo->updateByChunk(data: $data);
+
+            // Update categories and get affected IDs
+            $affectedIds = $this->categoryRepo->updateByChunk(data: $data);
+
+            // Delete existing translations for these categories
+            DB::table('translations')
+                ->where('translationable_type', 'App\Models\Category')
+                ->whereIn('translationable_id', $affectedIds)
+                ->delete();
+
+            // Process new translations with auto-translation (Spanish → English)
+            $allTranslations = $translationService->processTranslationsForRecords(
+                $affectedIds,
+                $translationFields,
+                'App\Models\Category'
+            );
+
+            // Bulk insert translations
+            if (!empty($allTranslations)) {
+                $this->translationRepo->addBulk($allTranslations);
+            }
+
             DB::commit();
-        } catch (Exception) {
+
+            // Report any translation failures
+            $failureCount = $translationService->getFailureCount();
+            if ($failureCount > 0) {
+                Toastr::warning(translate('messages.some_translations_failed') . ': ' . $failureCount);
+            }
+
+        } catch (Exception $e) {
             DB::rollBack();
+            Log::error('Category bulk update failed', ['error' => $e->getMessage()]);
             Toastr::error(translate('messages.failed_to_import_data'));
             return back();
         }

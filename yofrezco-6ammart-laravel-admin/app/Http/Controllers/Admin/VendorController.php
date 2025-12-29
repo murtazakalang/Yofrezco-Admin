@@ -40,7 +40,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use Modules\Rental\Entities\TripTransaction;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use App\Services\BulkImportTranslationService;
 use Illuminate\Validation\Rules\Password;
 use App\Exports\DisbursementHistoryExport;
 use App\Exports\StoreWiseItemReviewExport;
@@ -1373,6 +1375,7 @@ class VendorController extends Controller
 
             $vendors = [];
             $stores = [];
+            $translationFields = [];
             $vendor = Vendor::orderBy('id', 'desc')->first('id');
             $vendor_id = $vendor?$vendor->id:0;
             $store = Store::orderBy('id', 'desc')->first('id');
@@ -1466,6 +1469,13 @@ class VendorController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                // Store translatable fields for auto-translation
+                $translationFields[$key] = [
+                    'name' => $collection['storeName'],
+                    'address' => $collection['Address'] ?? '',
+                ];
+
                 if($module = Module::select('module_type')->where('id', $collection['module_id'])->first())
                 {
                     if(config('module.'.$module->module_type))
@@ -1476,11 +1486,8 @@ class VendorController extends Controller
 
             }
 
-            // $data = array_map(function($id){
-            //     return array_map(function($item)use($id){
-            //         return     ['store_id'=>$id,'day'=>$item,'opening_time'=>'00:00:00','closing_time'=>'23:59:59'];
-            //     },[0,1,2,3,4,5,6]);
-            // },$store_ids);
+            $translationService = new BulkImportTranslationService('es', 'en');
+            $insertedIds = [];
 
             try{
                 DB::beginTransaction();
@@ -1491,19 +1498,42 @@ class VendorController extends Controller
 
                 foreach($chunk_stores as $key=> $chunk_store){
                     DB::table('vendors')->insert($chunk_vendors[$key]);
-//                    DB::table('stores')->insert($chunk_store);
                     foreach ($chunk_store as $store) {
                         $insertedId = DB::table('stores')->insertGetId($store);
                         Helpers::updateStorageTable(get_class(new Store), $insertedId, $store['logo']);
                         Helpers::updateStorageTable(get_class(new Store), $insertedId, $store['cover_photo']);
                         StoreLogic::insert_schedule($insertedId);
+                        $insertedIds[] = $insertedId;
                     }
                 }
-                // DB::table('store_schedule')->insert(array_merge(...$data));
+
+                // Process translations with auto-translation (Spanish → English)
+                $allTranslations = $translationService->processTranslationsForRecords(
+                    $insertedIds,
+                    $translationFields,
+                    'App\Models\Store'
+                );
+
+                // Bulk insert translations
+                if (!empty($allTranslations)) {
+                    $chunks = array_chunk($allTranslations, 100);
+                    foreach ($chunks as $chunk) {
+                        DB::table('translations')->insert($chunk);
+                    }
+                }
+
                 DB::commit();
+
+                // Report any translation failures
+                $failureCount = $translationService->getFailureCount();
+                if ($failureCount > 0) {
+                    Toastr::warning(translate('messages.some_translations_failed') . ': ' . $failureCount);
+                }
+
             }catch(\Exception $e)
             {
                 DB::rollBack();
+                Log::error('Store bulk import failed', ['error' => $e->getMessage()]);
                 info(["line___{$e->getLine()}",$e->getMessage()]);
                 Toastr::error(translate('messages.failed_to_import_data'));
                 return back();
@@ -1522,6 +1552,7 @@ class VendorController extends Controller
 
         $vendors = [];
             $stores = [];
+            $translationFields = [];
             $vendor = Vendor::orderBy('id', 'desc')->first('id');
             $vendor_id = $vendor?$vendor->id:0;
             $store = Store::orderBy('id', 'desc')->first('id');
@@ -1615,7 +1646,16 @@ class VendorController extends Controller
                     'vendor_id' => $collection['id'],
                     'updated_at' => now(),
                 ]);
+
+                // Store translatable fields for auto-translation
+                $translationFields[$key] = [
+                    'name' => $collection['storeName'],
+                    'address' => $collection['Address'] ?? '',
+                ];
             }
+
+            $translationService = new BulkImportTranslationService('es', 'en');
+            $affectedIds = [];
 
             try{
                 $chunkSize = 100;
@@ -1627,23 +1667,54 @@ class VendorController extends Controller
 
                 foreach($chunk_stores as $key=> $chunk_store){
                     DB::table('vendors')->upsert($chunk_vendors[$key],['id','email','phone'],['f_name','l_name','password']);
-//                    DB::table('stores')->upsert($chunk_store,['id','email','phone','vendor_id'],['name','logo','cover_photo','latitude','longitude','address','zone_id','module_id','minimum_order','comission','tax','delivery_time','minimum_shipping_charge','per_km_shipping_charge','maximum_shipping_charge','schedule_order','status','self_delivery_system','veg','non_veg','free_delivery','take_away','delivery','reviews_section','pos_system','active','featured']);
                     foreach ($chunk_store as $store) {
-                        if (isset($store['id']) && DB::table('items')->where('id', $store['id'])->exists()) {
+                        if (isset($store['id']) && DB::table('stores')->where('id', $store['id'])->exists()) {
                             DB::table('stores')->where('id', $store['id'])->update($store);
                             Helpers::updateStorageTable(get_class(new Store), $store['id'], $store['logo']);
                             Helpers::updateStorageTable(get_class(new Store), $store['id'], $store['cover_photo']);
+                            $affectedIds[] = $store['id'];
                         } else {
                             $insertedId = DB::table('stores')->insertGetId($store);
                             Helpers::updateStorageTable(get_class(new Store), $insertedId, $store['logo']);
                             Helpers::updateStorageTable(get_class(new Store), $insertedId, $store['cover_photo']);
+                            $affectedIds[] = $insertedId;
                         }
                     }
                 }
+
+                // Delete existing translations for these stores
+                DB::table('translations')
+                    ->where('translationable_type', 'App\Models\Store')
+                    ->whereIn('translationable_id', $affectedIds)
+                    ->delete();
+
+                // Process new translations with auto-translation (Spanish → English)
+                $allTranslations = $translationService->processTranslationsForRecords(
+                    $affectedIds,
+                    $translationFields,
+                    'App\Models\Store'
+                );
+
+                // Bulk insert translations
+                if (!empty($allTranslations)) {
+                    $chunks = array_chunk($allTranslations, 100);
+                    foreach ($chunks as $chunk) {
+                        DB::table('translations')->insert($chunk);
+                    }
+                }
+
                 DB::commit();
+
+                // Report any translation failures
+                $failureCount = $translationService->getFailureCount();
+                if ($failureCount > 0) {
+                    Toastr::warning(translate('messages.some_translations_failed') . ': ' . $failureCount);
+                }
+
             }catch(\Exception $e)
             {
                 DB::rollBack();
+                Log::error('Store bulk update failed', ['error' => $e->getMessage()]);
                 info(["line___{$e->getLine()}",$e->getMessage()]);
                 Toastr::error(translate('messages.failed_to_import_data'));
                 return back();

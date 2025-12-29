@@ -21,4 +21,11 @@ interface TranslationRepositoryInterface extends RepositoryInterface
      * @return bool
      */
     public function updateByModel(Request $request, object $model, string $modelPath, string $attribute): bool;
+
+    /**
+     * Add translations in bulk
+     * @param array $translations Array of translation records
+     * @return bool
+     */
+    public function addBulk(array $translations): bool;
 }

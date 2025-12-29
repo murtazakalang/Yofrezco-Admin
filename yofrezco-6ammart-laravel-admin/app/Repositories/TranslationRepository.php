@@ -108,4 +108,25 @@ class TranslationRepository implements TranslationRepositoryInterface
     {
         // TODO: Implement delete() method.
     }
+
+    /**
+     * Add translations in bulk
+     * @param array $translations Array of translation records
+     * @return bool
+     */
+    public function addBulk(array $translations): bool
+    {
+        if (empty($translations)) {
+            return true;
+        }
+
+        $chunkSize = 100;
+        $chunks = array_chunk($translations, $chunkSize);
+
+        foreach ($chunks as $chunk) {
+            $this->translation->insert($chunk);
+        }
+
+        return true;
+    }
 }

@@ -102,4 +102,57 @@ class CategoryService
         }
         return $data;
     }
+
+    /**
+     * Get import data with translation fields separated
+     * Returns both base data and translatable fields for auto-translation
+     */
+    public function getImportDataWithTranslations(Request $request, bool $toAdd = true): array
+    {
+        try {
+            $collections = (new FastExcel)->import($request->file('products_file'));
+        } catch (Exception) {
+            return ['flag' => 'wrong_format'];
+        }
+        $moduleId = Config::get('module.current_module_id');
+
+        $data = [];
+        $translationFields = [];
+
+        foreach ($collections as $index => $collection) {
+            if ($collection['Name'] === "") {
+                return ['flag' => 'required_fields'];
+            }
+            $parentId = is_numeric($collection['ParentId']) ? $collection['ParentId'] : 0;
+
+            // Base data for categories table
+            $array = [
+                'name' => $collection['Name'],
+                'image' => $collection['Image'],
+                'parent_id' => $parentId,
+                'module_id' => $moduleId,
+                'position' => $collection['Position'],
+                'priority' => is_numeric($collection['Priority']) ? $collection['Priority'] : 0,
+                'status' => $collection['Status'] == 'active' ? 1 : 0,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+
+            if (!$toAdd) {
+                $array['id'] = $collection['Id'];
+            }
+
+            $data[] = $array;
+
+            // Store translatable fields separately for auto-translation
+            $translationFields[$index] = [
+                'name' => $collection['Name'],
+            ];
+        }
+
+        return [
+            'data' => $data,
+            'translations' => $translationFields
+        ];
+    }
 }

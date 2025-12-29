@@ -77,6 +77,9 @@
                                     <li>
                                         {{ translate('Latitude_must_be_a_number_between_-90_to_90_and_Longitude_must_a_number_between_-180_to_180._Otherwise_it_will_create_server_error') }}
                                     </li>
+                                    <li class="text-warning font-weight-bold">
+                                        {{ translate('Enter_Store_Name_and_Address_in_Spanish._The_system_will_automatically_translate_to_English.') }}
+                                    </li>
 
                                 </ul>
                             </div>

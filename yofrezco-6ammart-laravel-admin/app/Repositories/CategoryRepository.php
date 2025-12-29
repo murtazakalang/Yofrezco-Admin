@@ -33,37 +33,44 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $category;
     }
 
-    public function addByChunk(array $data): void
+    public function addByChunk(array $data): array
     {
         $chunkSize = 100;
         $chunkCategories = array_chunk($data, $chunkSize);
+        $insertedIds = [];
 
         foreach ($chunkCategories as $key => $chunkCategory) {
-//            DB::table('categories')->insert($chunkCategory);
             foreach ($chunkCategory as $category) {
                 $insertedId = DB::table('categories')->insertGetId($category);
                 Helpers::updateStorageTable(get_class(new Category), $insertedId, $category['image']);
+                $insertedIds[] = $insertedId;
             }
         }
+
+        return $insertedIds;
     }
 
-    public function updateByChunk(array $data): void
+    public function updateByChunk(array $data): array
     {
         $chunkSize = 100;
         $chunkCategories = array_chunk($data, $chunkSize);
+        $affectedIds = [];
 
         foreach ($chunkCategories as $key => $chunkCategory) {
-//            DB::table('categories')->upsert($chunkCategory, ['id', 'module_id'], ['name', 'image', 'parent_id', 'position', 'priority', 'status']);
             foreach ($chunkCategory as $category) {
                 if (isset($category['id']) && DB::table('categories')->where('id', $category['id'])->exists()) {
                     DB::table('categories')->where('id', $category['id'])->update($category);
                     Helpers::updateStorageTable(get_class(new Category), $category['id'], $category['image']);
+                    $affectedIds[] = $category['id'];
                 } else {
                     $insertedId = DB::table('categories')->insertGetId($category);
                     Helpers::updateStorageTable(get_class(new Category), $insertedId, $category['image']);
+                    $affectedIds[] = $insertedId;
                 }
             }
         }
+
+        return $affectedIds;
     }
 
     public function getFirstWhere(array $params, array $relations = []): ?Model

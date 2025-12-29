@@ -12,15 +12,15 @@ interface CategoryRepositoryInterface extends RepositoryInterface
 {
     /**
      * @param array $data
-     * @return void
+     * @return array Inserted IDs
      */
-    public function addByChunk(array $data): void;
+    public function addByChunk(array $data): array;
 
     /**
      * @param array $data
-     * @return void
+     * @return array Affected IDs
      */
-    public function updateByChunk(array $data): void;
+    public function updateByChunk(array $data): array;
 
     /**
      * @param CategoryBulkExportRequest $request

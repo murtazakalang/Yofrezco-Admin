@@ -35,8 +35,10 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Services\BulkImportTranslationService;
 
 class ItemController extends Controller
 {
@@ -1333,8 +1335,9 @@ class ItemController extends Controller
         }
         if ($request->button == 'import') {
             $data = [];
+            $translationFields = [];
             try {
-                foreach ($collections as $collection) {
+                foreach ($collections as $index => $collection) {
                     if ($collection['Id'] === "" || $collection['Name'] === "" || $collection['CategoryId'] === "" || $collection['SubCategoryId'] === "" || $collection['Price'] === "" || $collection['StoreId'] === "" || $collection['ModuleId'] === "" || $collection['Discount'] === "" || $collection['DiscountType'] === "") {
                         Toastr::error(translate('messages.please_fill_all_required_fields'));
                         return back();
@@ -1390,26 +1393,60 @@ class ItemController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+
+                    // Store translatable fields for auto-translation
+                    $translationFields[$index] = [
+                        'name' => $collection['Name'],
+                        'description' => $collection['Description'] ?? '',
+                    ];
                 }
             } catch (\Exception $e) {
                 info(["line___{$e->getLine()}", $e->getMessage()]);
                 Toastr::error($e->getMessage());
                 return back();
             }
+
+            $translationService = new BulkImportTranslationService('es', 'en');
+            $insertedIds = [];
+
             try {
                 DB::beginTransaction();
                 $chunkSize = 100;
                 $chunk_items = array_chunk($data, $chunkSize);
                 foreach ($chunk_items as $key => $chunk_item) {
-                    //                    DB::table('items')->insert($chunk_item);
                     foreach ($chunk_item as $item) {
                         $insertedId = DB::table('items')->insertGetId($item);
                         Helpers::updateStorageTable(get_class(new Item), $insertedId, $item['image']);
+                        $insertedIds[] = $insertedId;
                     }
                 }
+
+                // Process translations with auto-translation (Spanish → English)
+                $allTranslations = $translationService->processTranslationsForRecords(
+                    $insertedIds,
+                    $translationFields,
+                    'App\Models\Item'
+                );
+
+                // Bulk insert translations
+                if (!empty($allTranslations)) {
+                    $chunks = array_chunk($allTranslations, 100);
+                    foreach ($chunks as $chunk) {
+                        DB::table('translations')->insert($chunk);
+                    }
+                }
+
                 DB::commit();
+
+                // Report any translation failures
+                $failureCount = $translationService->getFailureCount();
+                if ($failureCount > 0) {
+                    Toastr::warning(translate('messages.some_translations_failed') . ': ' . $failureCount);
+                }
+
             } catch (\Exception $e) {
                 DB::rollBack();
+                Log::error('Item bulk import failed', ['error' => $e->getMessage()]);
                 info(["line___{$e->getLine()}", $e->getMessage()]);
                 Toastr::error($e->getMessage());
                 return back();
@@ -1418,8 +1455,9 @@ class ItemController extends Controller
             return back();
         }
         $data = [];
+        $translationFields = [];
         try {
-            foreach ($collections as $collection) {
+            foreach ($collections as $index => $collection) {
                 if ($collection['Id'] === "" || $collection['Name'] === "" || $collection['CategoryId'] === "" || $collection['SubCategoryId'] === "" || $collection['Price'] === "" || $collection['StoreId'] === "" || $collection['ModuleId'] === "" || $collection['Discount'] === "" || $collection['DiscountType'] === "") {
                     Toastr::error(translate('messages.please_fill_all_required_fields'));
                     return back();
@@ -1479,6 +1517,12 @@ class ItemController extends Controller
                     'recommended' => $collection['Recommended'] == 'yes' ? 1 : 0,
                     'updated_at' => now()
                 ]);
+
+                // Store translatable fields for auto-translation
+                $translationFields[$index] = [
+                    'name' => $collection['Name'],
+                    'description' => $collection['Description'] ?? '',
+                ];
             }
             $id = $collections->pluck('Id')->toArray();
             if (Item::whereIn('id', $id)->doesntExist()) {
@@ -1490,25 +1534,60 @@ class ItemController extends Controller
             Toastr::error($e->getMessage());
             return back();
         }
+
+        $translationService = new BulkImportTranslationService('es', 'en');
+        $affectedIds = [];
+
         try {
             DB::beginTransaction();
             $chunkSize = 100;
             $chunk_items = array_chunk($data, $chunkSize);
             foreach ($chunk_items as $key => $chunk_item) {
-                //                DB::table('items')->upsert($chunk_item, ['id', 'module_id'], ['name', 'description', 'image', 'images', 'category_id', 'category_ids', 'unit_id', 'stock', 'price', 'discount', 'discount_type', 'available_time_starts', 'available_time_ends','choice_options', 'variations', 'food_variations', 'add_ons', 'attributes', 'store_id', 'status', 'veg', 'recommended']);
                 foreach ($chunk_item as $item) {
                     if (isset($item['id']) && DB::table('items')->where('id', $item['id'])->exists()) {
                         DB::table('items')->where('id', $item['id'])->update($item);
                         Helpers::updateStorageTable(get_class(new Item), $item['id'], $item['image']);
+                        $affectedIds[] = $item['id'];
                     } else {
                         $insertedId = DB::table('items')->insertGetId($item);
                         Helpers::updateStorageTable(get_class(new Item), $insertedId, $item['image']);
+                        $affectedIds[] = $insertedId;
                     }
                 }
             }
+
+            // Delete existing translations for these items
+            DB::table('translations')
+                ->where('translationable_type', 'App\Models\Item')
+                ->whereIn('translationable_id', $affectedIds)
+                ->delete();
+
+            // Process new translations with auto-translation (Spanish → English)
+            $allTranslations = $translationService->processTranslationsForRecords(
+                $affectedIds,
+                $translationFields,
+                'App\Models\Item'
+            );
+
+            // Bulk insert translations
+            if (!empty($allTranslations)) {
+                $chunks = array_chunk($allTranslations, 100);
+                foreach ($chunks as $chunk) {
+                    DB::table('translations')->insert($chunk);
+                }
+            }
+
             DB::commit();
+
+            // Report any translation failures
+            $failureCount = $translationService->getFailureCount();
+            if ($failureCount > 0) {
+                Toastr::warning(translate('messages.some_translations_failed') . ': ' . $failureCount);
+            }
+
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Item bulk update failed', ['error' => $e->getMessage()]);
             info(["line___{$e->getLine()}", $e->getMessage()]);
             Toastr::error($e->getMessage());
             return back();
