@@ -78,7 +78,8 @@ class Zone extends Model
         return $this->morphMany(Translation::class, 'translationable');
     }
 
-    public function getNameAttribute($value){
+    public function getNameAttribute($value)
+    {
         if (count($this->translations) > 0) {
             foreach ($this->translations as $translation) {
                 if ($translation['key'] == 'name') {
@@ -90,7 +91,8 @@ class Zone extends Model
         return $value;
     }
 
-    public function getDisplayNameAttribute($value){
+    public function getDisplayNameAttribute($value)
+    {
         if (count($this->translations) > 0) {
             foreach ($this->translations as $translation) {
                 if ($translation['key'] == 'display_name') {
@@ -133,7 +135,8 @@ class Zone extends Model
         return $query->where('status', '=', 1);
     }
 
-    public function scopeContains($query,$abc){
+    public function scopeContains($query, $abc)
+    {
         return $query->whereRaw("ST_Distance_Sphere(coordinates, POINT({$abc}))");
     }
 
@@ -142,15 +145,22 @@ class Zone extends Model
         static::addGlobalScope(new ZoneScope);
 
         static::addGlobalScope('translate', function (Builder $builder) {
-            $builder->with(['translations' => function($query){
-                return $query->where('locale', app()->getLocale());
-            }]);
+            $builder->with([
+                'translations' => function ($query) {
+                    return $query->where('locale', app()->getLocale());
+                }
+            ]);
         });
     }
 
     public function modules(): BelongsToMany
     {
-        return $this->belongsToMany(Module::class)->withPivot(['per_km_shipping_charge','minimum_shipping_charge','maximum_shipping_charge','maximum_cod_order_amount','delivery_charge_type','fixed_shipping_charge'])->using('App\Models\ModuleZone');
+        return $this->belongsToMany(Module::class)->withPivot(['per_km_shipping_charge', 'minimum_shipping_charge', 'maximum_shipping_charge', 'maximum_cod_order_amount', 'delivery_charge_type', 'fixed_shipping_charge'])->using('App\Models\ModuleZone');
+    }
+
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(ZonePaymentMethod::class);
     }
 
     public static function query(): Builder

@@ -192,12 +192,12 @@ class ConfigController extends Controller
         $default_location = isset($settings['default_location']) ? json_decode($settings['default_location'], true) : 0;
 
         $admin_free_delivery = [
-            'status' => (bool)data_get($settings, 'admin_free_delivery_status', 0),
+            'status' => (bool) data_get($settings, 'admin_free_delivery_status', 0),
             'type' => data_get($settings, 'admin_free_delivery_option'),
-            'free_delivery_over' => (float)data_get($settings, 'free_delivery_over', 0),
+            'free_delivery_over' => (float) data_get($settings, 'free_delivery_over', 0),
         ];
 
-        $additional_charge = isset($settings['additional_charge']) ? (float)$settings['additional_charge'] : 0;
+        $additional_charge = isset($settings['additional_charge']) ? (float) $settings['additional_charge'] : 0;
         $module = Cache::rememberForever('module_config', function () {
             return Module::active()->count() == 1 ? Module::active()->first() : null;
         });
@@ -223,7 +223,7 @@ class ConfigController extends Controller
         foreach (Helpers::get_business_settings('social_login') as $social) {
             $config = [
                 'login_medium' => $social['login_medium'],
-                'status' => (bool)$social['status'],
+                'status' => (bool) $social['status'],
             ];
             array_push($social_login, $config);
         }
@@ -233,7 +233,7 @@ class ConfigController extends Controller
             foreach (Helpers::get_business_settings('apple_login') as $apple) {
                 $config = [
                     'login_medium' => $apple['login_medium'],
-                    'status' => (bool)$apple['status'],
+                    'status' => (bool) $apple['status'],
                     'client_id' => $apple['client_id'],
                     'client_id_app' => $apple['client_id_app'] ?? '',
                     'redirect_url_flutter' => $apple['redirect_url_flutter'] ?? '',
@@ -250,12 +250,17 @@ class ConfigController extends Controller
             $published_status = $payment_published_status[0]['is_published'];
         }
 
-        $active_addon_payment_lists = $published_status == 1 ? $this->getPaymentMethods() : $this->getDefaultPaymentMethods();
+        // Extract zone_id from request header for zone-based payment filtering
+        $zoneIdHeader = request()->header('zoneId');
+        $zoneIdDecoded = $zoneIdHeader ? json_decode($zoneIdHeader, true) : null;
+        $primaryZoneId = is_array($zoneIdDecoded) ? ($zoneIdDecoded[0] ?? null) : $zoneIdDecoded;
+
+        $active_addon_payment_lists = $published_status == 1 ? $this->getPaymentMethods($primaryZoneId) : $this->getDefaultPaymentMethods($primaryZoneId);
 
         $digital_payment_infos = [
-            'digital_payment' => (bool)($digital_payment['status'] == 1 ? true : false),
-            'plugin_payment_gateways' => (bool)($published_status ? true : false),
-            'default_payment_gateways' => (bool)($published_status ? false : true),
+            'digital_payment' => (bool) ($digital_payment['status'] == 1 ? true : false),
+            'plugin_payment_gateways' => (bool) ($published_status ? true : false),
+            'default_payment_gateways' => (bool) ($published_status ? false : true),
         ];
 
         if (data_get($settings, 'subscription_free_trial_type') == 'year') {
@@ -298,46 +303,46 @@ class ConfigController extends Controller
             'default_location' => ['lat' => $default_location ? $default_location['lat'] : '23.757989', 'lng' => $default_location ? $default_location['lng'] : '90.360587'],
             'currency_symbol' => $currency_symbol,
             'currency_symbol_direction' => $settings['currency_symbol_position'],
-            'app_minimum_version_android' => (float)$settings['app_minimum_version_android'],
+            'app_minimum_version_android' => (float) $settings['app_minimum_version_android'],
             'app_url_android' => $settings['app_url_android'],
             'app_url_ios' => $settings['app_url_ios'],
-            'app_minimum_version_ios' => (float)$settings['app_minimum_version_ios'],
-            'app_minimum_version_android_store' => (float)(isset($settings['app_minimum_version_android_store']) ? $settings['app_minimum_version_android_store'] : 0),
+            'app_minimum_version_ios' => (float) $settings['app_minimum_version_ios'],
+            'app_minimum_version_android_store' => (float) (isset($settings['app_minimum_version_android_store']) ? $settings['app_minimum_version_android_store'] : 0),
             'app_url_android_store' => (isset($settings['app_url_android_store']) ? $settings['app_url_android_store'] : null),
-            'app_minimum_version_ios_store' => (float)(isset($settings['app_minimum_version_ios_store']) ? $settings['app_minimum_version_ios_store'] : 0),
+            'app_minimum_version_ios_store' => (float) (isset($settings['app_minimum_version_ios_store']) ? $settings['app_minimum_version_ios_store'] : 0),
             'app_url_ios_store' => (isset($settings['app_url_ios_store']) ? $settings['app_url_ios_store'] : null),
-            'app_minimum_version_android_deliveryman' => (float)(isset($settings['app_minimum_version_android_deliveryman']) ? $settings['app_minimum_version_android_deliveryman'] : 0),
+            'app_minimum_version_android_deliveryman' => (float) (isset($settings['app_minimum_version_android_deliveryman']) ? $settings['app_minimum_version_android_deliveryman'] : 0),
             'app_url_android_deliveryman' => (isset($settings['app_url_android_deliveryman']) ? $settings['app_url_android_deliveryman'] : null),
-            'app_minimum_version_ios_deliveryman' => (float)(isset($settings['app_minimum_version_ios_deliveryman']) ? $settings['app_minimum_version_ios_deliveryman'] : 0),
+            'app_minimum_version_ios_deliveryman' => (float) (isset($settings['app_minimum_version_ios_deliveryman']) ? $settings['app_minimum_version_ios_deliveryman'] : 0),
             'app_url_ios_deliveryman' => (isset($settings['app_url_ios_deliveryman']) ? $settings['app_url_ios_deliveryman'] : null),
-            'customer_verification' => (bool)$settings['customer_verification'],
-            'prescription_order_status' => isset($settings['prescription_order_status']) ? (bool)$settings['prescription_order_status'] : false,
-            'schedule_order' => (bool)$settings['schedule_order'],
-            'order_delivery_verification' => (bool)$settings['order_delivery_verification'],
-            'cash_on_delivery' => (bool)($cod['status'] == 1 ? true : false),
-            'digital_payment' => (bool)($digital_payment['status'] == 1 ? true : false),
+            'customer_verification' => (bool) $settings['customer_verification'],
+            'prescription_order_status' => isset($settings['prescription_order_status']) ? (bool) $settings['prescription_order_status'] : false,
+            'schedule_order' => (bool) $settings['schedule_order'],
+            'order_delivery_verification' => (bool) $settings['order_delivery_verification'],
+            'cash_on_delivery' => (bool) ($cod['status'] == 1 ? true : false),
+            'digital_payment' => (bool) ($digital_payment['status'] == 1 ? true : false),
             'digital_payment_info' => $digital_payment_infos,
-            'demo' => (bool)(env('APP_MODE') == 'demo' ? true : false),
-            'maintenance_mode' => (bool)Helpers::get_business_settings('maintenance_mode') ?? 0,
+            'demo' => (bool) (env('APP_MODE') == 'demo' ? true : false),
+            'maintenance_mode' => (bool) Helpers::get_business_settings('maintenance_mode') ?? 0,
             'order_confirmation_model' => config('order_confirmation_model'),
-            'show_dm_earning' => (bool)$settings['show_dm_earning'],
-            'canceled_by_deliveryman' => (bool)$settings['canceled_by_deliveryman'],
-            'canceled_by_store' => (bool)$settings['canceled_by_store'],
-            'timeformat' => (string)$settings['timeformat'],
+            'show_dm_earning' => (bool) $settings['show_dm_earning'],
+            'canceled_by_deliveryman' => (bool) $settings['canceled_by_deliveryman'],
+            'canceled_by_store' => (bool) $settings['canceled_by_store'],
+            'timeformat' => (string) $settings['timeformat'],
             'language' => $lang_array,
             'sys_language' => $sys_lang_array,
             'social_login' => $social_login,
             'apple_login' => $apple_login,
-            'toggle_veg_non_veg' => (bool)$settings['toggle_veg_non_veg'],
-            'toggle_dm_registration' => (bool)$settings['toggle_dm_registration'],
-            'toggle_store_registration' => (bool)$settings['toggle_store_registration'],
-            'refund_active_status' => (bool)$settings['refund_active_status'],
-            'schedule_order_slot_duration' => (int)$settings['schedule_order_slot_duration'],
-            'digit_after_decimal_point' => (int)config('round_up_to_digit'),
+            'toggle_veg_non_veg' => (bool) $settings['toggle_veg_non_veg'],
+            'toggle_dm_registration' => (bool) $settings['toggle_dm_registration'],
+            'toggle_store_registration' => (bool) $settings['toggle_store_registration'],
+            'refund_active_status' => (bool) $settings['refund_active_status'],
+            'schedule_order_slot_duration' => (int) $settings['schedule_order_slot_duration'],
+            'digit_after_decimal_point' => (int) config('round_up_to_digit'),
             'module_config' => config('module'),
             'module' => $module,
-            'parcel_per_km_shipping_charge' => (float)$settings['parcel_per_km_shipping_charge'],
-            'parcel_minimum_shipping_charge' => (float)$settings['parcel_minimum_shipping_charge'],
+            'parcel_per_km_shipping_charge' => (float) $settings['parcel_per_km_shipping_charge'],
+            'parcel_minimum_shipping_charge' => (float) $settings['parcel_minimum_shipping_charge'],
             'social_media' => SocialMedia::active()->get()->toArray(),
             'footer_text' => isset($settings['footer_text']) ? $settings['footer_text'] : '',
             'cookies_text' => isset($settings['cookies_text']) ? $settings['cookies_text'] : '',
@@ -345,82 +350,82 @@ class ConfigController extends Controller
             'fav_icon_full_url' => Helpers::get_full_url('business', $settings['icon'], $data['icon_storage'] ?? 'public'),
             'landing_page_links' => $landing_page_links,
             // Added Business Setting
-            'dm_tips_status' => (int)(isset($settings['dm_tips_status']) ? $settings['dm_tips_status'] : 0),
-            'loyalty_point_exchange_rate' => (int)(isset($settings['loyalty_point_item_purchase_point']) ? $settings['loyalty_point_exchange_rate'] : 0),
-            'loyalty_point_item_purchase_point' => (float)(isset($settings['loyalty_point_item_purchase_point']) ? $settings['loyalty_point_item_purchase_point'] : 0.0),
-            'loyalty_point_status' => (int)(isset($settings['loyalty_point_status']) ? $settings['loyalty_point_status'] : 0),
-            'customer_wallet_status' => (int)(isset($settings['wallet_status']) ? $settings['wallet_status'] : 0),
-            'ref_earning_status' => (int)(isset($settings['ref_earning_status']) ? $settings['ref_earning_status'] : 0),
-            'ref_earning_exchange_rate' => (float)(isset($settings['ref_earning_exchange_rate']) ? $settings['ref_earning_exchange_rate'] : 0),
-            'refund_policy' => (int)(self::get_settings_status('refund_policy_status')),
-            'cancelation_policy' => (int)(self::get_settings_status('cancellation_policy_status')),
-            'shipping_policy' => (int)(self::get_settings_status('shipping_policy_status')),
-            'loyalty_point_minimum_point' => (int)(isset($settings['loyalty_point_minimum_point']) ? $settings['loyalty_point_minimum_point'] : 0),
+            'dm_tips_status' => (int) (isset($settings['dm_tips_status']) ? $settings['dm_tips_status'] : 0),
+            'loyalty_point_exchange_rate' => (int) (isset($settings['loyalty_point_item_purchase_point']) ? $settings['loyalty_point_exchange_rate'] : 0),
+            'loyalty_point_item_purchase_point' => (float) (isset($settings['loyalty_point_item_purchase_point']) ? $settings['loyalty_point_item_purchase_point'] : 0.0),
+            'loyalty_point_status' => (int) (isset($settings['loyalty_point_status']) ? $settings['loyalty_point_status'] : 0),
+            'customer_wallet_status' => (int) (isset($settings['wallet_status']) ? $settings['wallet_status'] : 0),
+            'ref_earning_status' => (int) (isset($settings['ref_earning_status']) ? $settings['ref_earning_status'] : 0),
+            'ref_earning_exchange_rate' => (float) (isset($settings['ref_earning_exchange_rate']) ? $settings['ref_earning_exchange_rate'] : 0),
+            'refund_policy' => (int) (self::get_settings_status('refund_policy_status')),
+            'cancelation_policy' => (int) (self::get_settings_status('cancellation_policy_status')),
+            'shipping_policy' => (int) (self::get_settings_status('shipping_policy_status')),
+            'loyalty_point_minimum_point' => (int) (isset($settings['loyalty_point_minimum_point']) ? $settings['loyalty_point_minimum_point'] : 0),
 
-            'home_delivery_status' => (int)(isset($settings['home_delivery_status']) ? $settings['home_delivery_status'] : 0),
-            'takeaway_status' => (int)(isset($settings['takeaway_status']) ? $settings['takeaway_status'] : 0),
+            'home_delivery_status' => (int) (isset($settings['home_delivery_status']) ? $settings['home_delivery_status'] : 0),
+            'takeaway_status' => (int) (isset($settings['takeaway_status']) ? $settings['takeaway_status'] : 0),
             'active_payment_method_list' => $active_addon_payment_lists,
-            'additional_charge_status' => (int)(isset($settings['additional_charge_status']) ? $settings['additional_charge_status'] : 0),
+            'additional_charge_status' => (int) (isset($settings['additional_charge_status']) ? $settings['additional_charge_status'] : 0),
             'additional_charge_name' => (isset($settings['additional_charge_name']) ? $settings['additional_charge_name'] : 'Service Charge'),
             'additional_charge' => $additional_charge,
-            'partial_payment_status' => (int)(isset($settings['partial_payment_status']) ? $settings['partial_payment_status'] : 0),
+            'partial_payment_status' => (int) (isset($settings['partial_payment_status']) ? $settings['partial_payment_status'] : 0),
             'partial_payment_method' => (isset($settings['partial_payment_method']) ? $settings['partial_payment_method'] : ''),
-            'dm_picture_upload_status' => (int)(isset($settings['dm_picture_upload_status']) ? $settings['dm_picture_upload_status'] : 0),
-            'add_fund_status' => (int)(isset($settings['add_fund_status']) ? $settings['add_fund_status'] : 0),
-            'offline_payment_status' => (int)(isset($settings['offline_payment_status']) ? $settings['offline_payment_status'] : 0),
-            'websocket_status' => (int)(isset($settings['websocket_status']) ? $settings['websocket_status'] : 0),
+            'dm_picture_upload_status' => (int) (isset($settings['dm_picture_upload_status']) ? $settings['dm_picture_upload_status'] : 0),
+            'add_fund_status' => (int) (isset($settings['add_fund_status']) ? $settings['add_fund_status'] : 0),
+            'offline_payment_status' => (int) (isset($settings['offline_payment_status']) ? $settings['offline_payment_status'] : 0),
+            'websocket_status' => (int) (isset($settings['websocket_status']) ? $settings['websocket_status'] : 0),
             'websocket_url' => (isset($settings['websocket_url']) ? $settings['websocket_url'] : ''),
-            'websocket_port' => (int)(isset($settings['websocket_port']) ? $settings['websocket_port'] : 6001),
+            'websocket_port' => (int) (isset($settings['websocket_port']) ? $settings['websocket_port'] : 6001),
             'websocket_key' => env('PUSHER_APP_KEY'),
-            'guest_checkout_status' => (int)(isset($settings['guest_checkout_status']) ? $settings['guest_checkout_status'] : 0),
-            'disbursement_type' => (string)(isset($settings['disbursement_type']) ? $settings['disbursement_type'] : 'manual'),
-            'restaurant_disbursement_waiting_time' => (int)(isset($settings['restaurant_disbursement_waiting_time']) ? $settings['restaurant_disbursement_waiting_time'] : 0),
-            'dm_disbursement_waiting_time' => (int)(isset($settings['dm_disbursement_waiting_time']) ? $settings['dm_disbursement_waiting_time'] : 0),
-            'min_amount_to_pay_store' => (float)(isset($settings['min_amount_to_pay_store']) ? $settings['min_amount_to_pay_store'] : 0),
-            'min_amount_to_pay_dm' => (float)(isset($settings['min_amount_to_pay_dm']) ? $settings['min_amount_to_pay_dm'] : 0),
-            'new_customer_discount_status' => (int)(isset($settings['new_customer_discount_status']) ? $settings['new_customer_discount_status'] : 0),
-            'new_customer_discount_amount' => (float)(isset($settings['new_customer_discount_amount']) ? $settings['new_customer_discount_amount'] : 0),
+            'guest_checkout_status' => (int) (isset($settings['guest_checkout_status']) ? $settings['guest_checkout_status'] : 0),
+            'disbursement_type' => (string) (isset($settings['disbursement_type']) ? $settings['disbursement_type'] : 'manual'),
+            'restaurant_disbursement_waiting_time' => (int) (isset($settings['restaurant_disbursement_waiting_time']) ? $settings['restaurant_disbursement_waiting_time'] : 0),
+            'dm_disbursement_waiting_time' => (int) (isset($settings['dm_disbursement_waiting_time']) ? $settings['dm_disbursement_waiting_time'] : 0),
+            'min_amount_to_pay_store' => (float) (isset($settings['min_amount_to_pay_store']) ? $settings['min_amount_to_pay_store'] : 0),
+            'min_amount_to_pay_dm' => (float) (isset($settings['min_amount_to_pay_dm']) ? $settings['min_amount_to_pay_dm'] : 0),
+            'new_customer_discount_status' => (int) (isset($settings['new_customer_discount_status']) ? $settings['new_customer_discount_status'] : 0),
+            'new_customer_discount_amount' => (float) (isset($settings['new_customer_discount_amount']) ? $settings['new_customer_discount_amount'] : 0),
             'new_customer_discount_amount_type' => (isset($settings['new_customer_discount_amount_type']) ? $settings['new_customer_discount_amount_type'] : 'amount'),
-            'new_customer_discount_amount_validity' => (int)(isset($settings['new_customer_discount_amount_validity']) ? $settings['new_customer_discount_amount_validity'] : 0),
+            'new_customer_discount_amount_validity' => (int) (isset($settings['new_customer_discount_amount_validity']) ? $settings['new_customer_discount_amount_validity'] : 0),
             'new_customer_discount_validity_type' => (isset($settings['new_customer_discount_validity_type']) ? $settings['new_customer_discount_validity_type'] : 'day'),
-            'store_review_reply' => (int)(isset($settings['store_review_reply']) ? $settings['store_review_reply'] : 0),
-            'admin_commission' => (float)(isset($settings['admin_commission']) ? $settings['admin_commission'] : 0),
-            'subscription_business_model' => (int)(isset($settings['subscription_business_model']) ? $settings['subscription_business_model'] : 1),
-            'commission_business_model' => (int)(isset($settings['commission_business_model']) ? $settings['commission_business_model'] : 1),
-            'subscription_deadline_warning_days' => (int)(isset($settings['subscription_deadline_warning_days']) ? $settings['subscription_deadline_warning_days'] : 1),
+            'store_review_reply' => (int) (isset($settings['store_review_reply']) ? $settings['store_review_reply'] : 0),
+            'admin_commission' => (float) (isset($settings['admin_commission']) ? $settings['admin_commission'] : 0),
+            'subscription_business_model' => (int) (isset($settings['subscription_business_model']) ? $settings['subscription_business_model'] : 1),
+            'commission_business_model' => (int) (isset($settings['commission_business_model']) ? $settings['commission_business_model'] : 1),
+            'subscription_deadline_warning_days' => (int) (isset($settings['subscription_deadline_warning_days']) ? $settings['subscription_deadline_warning_days'] : 1),
             'subscription_deadline_warning_message' => isset($settings['subscription_deadline_warning_message']) ? $settings['subscription_deadline_warning_message'] : null,
-            'subscription_free_trial_days' => (int)$trial_period,
+            'subscription_free_trial_days' => (int) $trial_period,
             'subscription_free_trial_type' => (isset($settings['subscription_free_trial_type']) ? $settings['subscription_free_trial_type'] : 'day'),
-            'subscription_free_trial_status' => (int)(isset($settings['subscription_free_trial_status']) ? $settings['subscription_free_trial_status'] : 0),
-            'country_picker_status' => (int)(isset($settings['country_picker_status']) ? $settings['country_picker_status'] : 1),
+            'subscription_free_trial_status' => (int) (isset($settings['subscription_free_trial_status']) ? $settings['subscription_free_trial_status'] : 0),
+            'country_picker_status' => (int) (isset($settings['country_picker_status']) ? $settings['country_picker_status'] : 1),
             // 'external_system' => $drivemondExternalSetting,
             // 'drivemond_app_url_android' => $drivemondExternalSetting ? Helpers::get_external_data('drivemond_app_url_android') : '',
             // 'drivemond_app_url_ios' => $drivemondExternalSetting ? Helpers::get_external_data('drivemond_app_url_ios') : '',
-            'firebase_otp_verification' => (int)(isset($settings['firebase_otp_verification']) ? $settings['firebase_otp_verification'] : 0),
+            'firebase_otp_verification' => (int) (isset($settings['firebase_otp_verification']) ? $settings['firebase_otp_verification'] : 0),
             'centralize_login' => [
-                'manual_login_status' => (int)(isset($settings['manual_login_status']) ? $settings['manual_login_status'] : 0),
-                'otp_login_status' => (int)(isset($settings['otp_login_status']) ? $settings['otp_login_status'] : 0),
-                'social_login_status' => (int)(isset($settings['social_login_status']) ? $settings['social_login_status'] : 0),
-                'google_login_status' => (int)(isset($settings['google_login_status']) ? $settings['google_login_status'] : 0),
-                'facebook_login_status' => (int)(isset($settings['facebook_login_status']) ? $settings['facebook_login_status'] : 0),
-                'apple_login_status' => (int)(isset($settings['apple_login_status']) ? $settings['apple_login_status'] : 0),
-                'email_verification_status' => (int)(isset($settings['email_verification_status']) ? $settings['email_verification_status'] : 0),
-                'phone_verification_status' => (int)(isset($settings['phone_verification_status']) ? $settings['phone_verification_status'] : 0),
+                'manual_login_status' => (int) (isset($settings['manual_login_status']) ? $settings['manual_login_status'] : 0),
+                'otp_login_status' => (int) (isset($settings['otp_login_status']) ? $settings['otp_login_status'] : 0),
+                'social_login_status' => (int) (isset($settings['social_login_status']) ? $settings['social_login_status'] : 0),
+                'google_login_status' => (int) (isset($settings['google_login_status']) ? $settings['google_login_status'] : 0),
+                'facebook_login_status' => (int) (isset($settings['facebook_login_status']) ? $settings['facebook_login_status'] : 0),
+                'apple_login_status' => (int) (isset($settings['apple_login_status']) ? $settings['apple_login_status'] : 0),
+                'email_verification_status' => (int) (isset($settings['email_verification_status']) ? $settings['email_verification_status'] : 0),
+                'phone_verification_status' => (int) (isset($settings['phone_verification_status']) ? $settings['phone_verification_status'] : 0),
             ],
 
-            'vehicle_distance_min' => (float)$vehicle_distance_min ?? 0,
-            'vehicle_hourly_min' => (float)$vehicle_hourly_min ?? 0,
-            'vehicle_day_wise_min' => (float)$vehicle_day_wise_min ?? 0,
+            'vehicle_distance_min' => (float) $vehicle_distance_min ?? 0,
+            'vehicle_hourly_min' => (float) $vehicle_hourly_min ?? 0,
+            'vehicle_day_wise_min' => (float) $vehicle_day_wise_min ?? 0,
             'admin_free_delivery' => $admin_free_delivery,
-            'is_sms_active' => (bool)Setting::whereJsonContains('live_values->status', '1')->where('settings_type', 'sms_config')->exists(),
-            'is_mail_active' => (bool)config('mail.status'),
+            'is_sms_active' => (bool) Setting::whereJsonContains('live_values->status', '1')->where('settings_type', 'sms_config')->exists(),
+            'is_mail_active' => (bool) config('mail.status'),
             'system_tax_type' => $systemTax?->tax_type ?? null,
-            'system_tax_include_status' => (int)$systemTax?->is_included,
+            'system_tax_include_status' => (int) $systemTax?->is_included,
 
-            'parcel_cancellation_status' => (int)(1),
+            'parcel_cancellation_status' => (int) (1),
             'parcel_cancellation_basic_setup' => isset($settings['parcel_cancellation_basic_setup']) ? json_decode($settings['parcel_cancellation_basic_setup']) : null,
             'parcel_return_time_fee' => isset($settings['parcel_return_time_fee']) ? json_decode($settings['parcel_return_time_fee']) : null,
-            'open_ai_status' => (int)$openAIStatus,
+            'open_ai_status' => (int) $openAIStatus,
         ]);
     }
 
@@ -648,7 +653,7 @@ class ConfigController extends Controller
                     });
             })->orderBy('starting_coverage_area')->first();
 
-        $extra_charges = (float)(isset($data) ? $data->extra_charges : 0);
+        $extra_charges = (float) (isset($data) ? $data->extra_charges : 0);
 
         return response()->json($extra_charges, 200);
     }
@@ -712,13 +717,13 @@ class ConfigController extends Controller
             'pick_location_title' => (isset($settings['pick_location_title'])) ? $settings['pick_location_title'] : null,
         ];
         $trustSection = [
-            'trust_section_status' => (isset($settings['trust_section_status'])) ? (int)$settings['trust_section_status'] : 0,
+            'trust_section_status' => (isset($settings['trust_section_status'])) ? (int) $settings['trust_section_status'] : 0,
             'cards' => [],
         ];
 
         for ($i = 1; $i <= 4; $i++) {
             $trustSection['cards'][] = [
-                'status' => (int)($settings["trust_status_card_{$i}"] ?? 0),
+                'status' => (int) ($settings["trust_status_card_{$i}"] ?? 0),
                 'title' => $settings["trust_title_card_{$i}"] ?? null,
                 'sub_title' => $settings["trust_sub_title_card_{$i}"] ?? null,
                 'image_full_url' => Helpers::get_full_url(
@@ -730,18 +735,18 @@ class ConfigController extends Controller
         }
 
         $availableZoneSection = [
-            'available_zone_status' => (int)((isset($settings['available_zone_status'])) ? $settings['available_zone_status'] : 0),
+            'available_zone_status' => (int) ((isset($settings['available_zone_status'])) ? $settings['available_zone_status'] : 0),
             'available_zone_title' => (isset($settings['available_zone_title'])) ? $settings['available_zone_title'] : null,
             'available_zone_short_description' => (isset($settings['available_zone_short_description'])) ? $settings['available_zone_short_description'] : null,
             'available_zone_list' => $zones,
         ];
         $promotionalBannerSection = [
-            'promotion_banner_section_status' => (int)((isset($settings['promotional_banner_section_status'])) ? $settings['promotional_banner_section_status'] : 0),
+            'promotion_banner_section_status' => (int) ((isset($settings['promotional_banner_section_status'])) ? $settings['promotional_banner_section_status'] : 0),
             'promotion_banners_full_url' => $promotional_banners ?? [],
         ];
 
         $userAppDownloadSection = [
-            'download_user_app_section_status' => (int)((isset($settings['download_user_app_section_status'])) ? $settings['download_user_app_section_status'] : 0),
+            'download_user_app_section_status' => (int) ((isset($settings['download_user_app_section_status'])) ? $settings['download_user_app_section_status'] : 0),
             'download_user_app_title' => (isset($settings['download_user_app_title'])) ? $settings['download_user_app_title'] : null,
             'download_user_app_sub_title' => (isset($settings['download_user_app_sub_title'])) ? $settings['download_user_app_sub_title'] : null,
             'download_user_app_image_full_url' => Helpers::get_full_url('download_user_app_image', (isset($settings['download_user_app_image'])) ? $settings['download_user_app_image'] : null, isset($settings['download_user_app_image_storage']) ? $settings['download_user_app_image_storage'] : 'public'),
@@ -752,11 +757,11 @@ class ConfigController extends Controller
         ];
 
         $popularClientSection = [
-            'popular_client_section_status' => (isset($settings['popular_client_section_status'])) ? (int)$settings['popular_client_section_status'] : 0,
+            'popular_client_section_status' => (isset($settings['popular_client_section_status'])) ? (int) $settings['popular_client_section_status'] : 0,
             'popular_client_title' => (isset($settings['popular_client_title'])) ? $settings['popular_client_title'] : null,
             'popular_client_sub_title' => (isset($settings['popular_client_sub_title'])) ? $settings['popular_client_sub_title'] : null
         ];
-        $popularClientImage= DataSetting::where('key', 'popular_client_image')->whereNotNull('value')->where('value','!=',0)->select('value')->get();
+        $popularClientImage = DataSetting::where('key', 'popular_client_image')->whereNotNull('value')->where('value', '!=', 0)->select('value')->get();
         foreach ($popularClientImage as $image) {
             $settings["popular_client_image"] = $image->value;
             $popularClientSection['cards'][] = [
@@ -769,7 +774,7 @@ class ConfigController extends Controller
         }
 
         $sellerAppDownloadSection = [
-            'download_seller_app_section_status' => (int)((isset($settings['download_seller_app_section_status'])) ? $settings['download_seller_app_section_status'] : 0),
+            'download_seller_app_section_status' => (int) ((isset($settings['download_seller_app_section_status'])) ? $settings['download_seller_app_section_status'] : 0),
             'download_seller_app_title' => (isset($settings['download_seller_app_title'])) ? $settings['download_seller_app_title'] : null,
             'download_seller_app_sub_title' => (isset($settings['download_seller_app_sub_title'])) ? $settings['download_seller_app_sub_title'] : null,
             'download_seller_app_content_button_title' => (isset($settings['download_seller_app_button_title'])) ? $settings['download_seller_app_button_title'] : null,
@@ -781,7 +786,7 @@ class ConfigController extends Controller
         ];
 
         $deliverymanAppDownloadSection = [
-            'download_deliveryman_app_section_status' => (int)((isset($settings['download_dm_app_section_status'])) ? $settings['download_dm_app_section_status'] : 0),
+            'download_deliveryman_app_section_status' => (int) ((isset($settings['download_dm_app_section_status'])) ? $settings['download_dm_app_section_status'] : 0),
             'download_dm_app_title' => (isset($settings['download_dm_app_title'])) ? $settings['download_dm_app_title'] : null,
             'download_dm_app_sub_title' => (isset($settings['download_dm_app_sub_title'])) ? $settings['download_dm_app_sub_title'] : null,
             'download_dm_app_content_button_title' => (isset($settings['download_dm_app_button_title'])) ? $settings['download_dm_app_button_title'] : null,
@@ -793,12 +798,12 @@ class ConfigController extends Controller
         ];
 
         $bannerSection = [
-            'banner_section_status' => (int)((isset($settings['banner_section_status'])) ? $settings['banner_section_status'] : 0),
+            'banner_section_status' => (int) ((isset($settings['banner_section_status'])) ? $settings['banner_section_status'] : 0),
             'banner_iamge_full_url' => Helpers::get_full_url('banner_section', (isset($settings['banner'])) ? $settings['banner'] : null, isset($settings['banner_storage']) ? $settings['banner_storage'] : 'public'),
         ];
 
         $testimonialSection = [
-            'testimonial_section_status' => (int)((isset($settings['testimonial_section_status'])) ? $settings['testimonial_section_status'] : 0),
+            'testimonial_section_status' => (int) ((isset($settings['testimonial_section_status'])) ? $settings['testimonial_section_status'] : 0),
             'testimonial_title' => (isset($settings['testimonial_title'])) ? $settings['testimonial_title'] : null,
             'testimonial_sub_title' => (isset($settings['testimonial_sub_title'])) ? $settings['testimonial_sub_title'] : null,
             'testimonial_button_title' => (isset($settings['testimonial_button_title'])) ? $settings['testimonial_button_title'] : null,
@@ -806,14 +811,14 @@ class ConfigController extends Controller
         ];
 
         $gallerySection = [
-            'gallery_section_status' => (int)((isset($settings['gallery_section_status'])) ? $settings['gallery_section_status'] : 0),
+            'gallery_section_status' => (int) ((isset($settings['gallery_section_status'])) ? $settings['gallery_section_status'] : 0),
             'gallery_content_title' => (isset($settings['gallery_content_title'])) ? $settings['gallery_content_title'] : null,
             'gallery_content_sub_title' => (isset($settings['gallery_content_sub_title'])) ? $settings['gallery_content_sub_title'] : null,
         ];
 
         for ($i = 1; $i <= 4; $i++) {
             $gallerySection['cards'][] = [
-                'status' => (int)((isset($settings["gallery_image_{$i}_status"])) ? $settings["gallery_image_{$i}_status"] : 0),
+                'status' => (int) ((isset($settings["gallery_image_{$i}_status"])) ? $settings["gallery_image_{$i}_status"] : 0),
                 'image_full_url' => Helpers::get_full_url(
                     'gallery_section',
                     $settings["gallery_image_{$i}"] ?? null,
@@ -823,10 +828,10 @@ class ConfigController extends Controller
         }
 
         $highlightSection = [
-            'highlight_section_status' => (int)((isset($settings['highlight_section_status'])) ? $settings['highlight_section_status'] : 0),
+            'highlight_section_status' => (int) ((isset($settings['highlight_section_status'])) ? $settings['highlight_section_status'] : 0),
             'highlight_title' => (isset($settings['highlight_title'])) ? $settings['highlight_title'] : null,
             'highlight_sub_title' => (isset($settings['highlight_sub_title'])) ? $settings['highlight_sub_title'] : null,
-            'highlight_button_title' =>  null,
+            'highlight_button_title' => null,
             'highlight_image_full_url' => Helpers::get_full_url('highlight_section', (isset($settings['highlight_image'])) ? $settings['highlight_image'] : null, isset($settings['highlight_image_storage']) ? $settings['highlight_image_storage'] : 'public'),
 
         ];
@@ -834,7 +839,7 @@ class ConfigController extends Controller
         $faqs = FAQ::get();
 
         $faqSection = [
-            'faq_section_status' => (int)((isset($settings['faq_section_status'])) ? $settings['faq_section_status'] : 0),
+            'faq_section_status' => (int) ((isset($settings['faq_section_status'])) ? $settings['faq_section_status'] : 0),
             'faq_title' => (isset($settings['faq_title'])) ? $settings['faq_title'] : null,
             'faq_list' => (isset($faqs)) ? $faqs : null,
         ];
@@ -854,7 +859,7 @@ class ConfigController extends Controller
             'company_button_url' => (isset($settings['company_button_url'])) ? $settings['company_button_url'] : null,
         ];
 
-//        $earnMoneySection = [
+        //        $earnMoneySection = [
 //            'earning_title' => (isset($settings['earning_title'])) ? $settings['earning_title'] : null,
 //            'earning_sub_title' => (isset($settings['earning_sub_title'])) ? $settings['earning_sub_title'] : null,
 //            'earning_seller_title' => (isset($settings['earning_seller_title'])) ? $settings['earning_seller_title'] : null,
@@ -881,7 +886,7 @@ class ConfigController extends Controller
 
         return response()->json(
             [
-//                'base_urls' => [
+                //                'base_urls' => [
 //                    'header_icon_url' => asset('storage/app/public/header_icon'),
 //                    'header_banner_url' => asset('storage/app/public/header_banner'),
 //                    'testimonial_image_url' => asset('storage/app/public/reviewer_image'),
@@ -910,7 +915,7 @@ class ConfigController extends Controller
                 'faq_section' => $faqSection,
                 'footer_section' => $footerSection,
                 'company_intro_section' => $companyIntroSection,
-//                'earn_money_section' => $earnMoneySection,
+                //                'earn_money_section' => $earnMoneySection,
 //                'business_section' => $businessSection,
 //                'meta_data_section' => $metaDataSection,
 
@@ -993,11 +998,11 @@ class ConfigController extends Controller
                 'join_seller_title' => (isset($settings['join_seller_title'])) ? $settings['join_seller_title'] : null,
                 'join_seller_sub_title' => (isset($settings['join_seller_sub_title'])) ? $settings['join_seller_sub_title'] : null,
                 'join_seller_button_name' => (isset($settings['join_seller_button_name'])) ? $settings['join_seller_button_name'] : null,
-                'join_seller_status' => (int)((isset($settings['join_seller_flutter_status'])) ? $settings['join_seller_flutter_status'] : 0),
+                'join_seller_status' => (int) ((isset($settings['join_seller_flutter_status'])) ? $settings['join_seller_flutter_status'] : 0),
                 'join_delivery_man_title' => (isset($settings['join_delivery_man_title'])) ? $settings['join_delivery_man_title'] : null,
                 'join_delivery_man_sub_title' => (isset($settings['join_delivery_man_sub_title'])) ? $settings['join_delivery_man_sub_title'] : null,
                 'join_delivery_man_button_name' => (isset($settings['join_delivery_man_button_name'])) ? $settings['join_delivery_man_button_name'] : null,
-                'join_delivery_man_status' => (int)((isset($settings['join_DM_flutter_status'])) ? $settings['join_DM_flutter_status'] : 0),
+                'join_delivery_man_status' => (int) ((isset($settings['join_DM_flutter_status'])) ? $settings['join_DM_flutter_status'] : 0),
 
                 'download_user_app_title' => (isset($settings['download_user_app_title'])) ? $settings['download_user_app_title'] : null,
                 'download_user_app_sub_title' => (isset($settings['download_user_app_sub_title'])) ? $settings['download_user_app_sub_title'] : null,
@@ -1007,7 +1012,7 @@ class ConfigController extends Controller
                 'special_criterias' => (isset($criterias)) ? $criterias : null,
 
                 'download_user_app_links' => (isset($settings['download_user_app_links'])) ? json_decode($settings['download_user_app_links'], true) : null,
-                'available_zone_status' => (int)((isset($settings['available_zone_status'])) ? $settings['available_zone_status'] : 0),
+                'available_zone_status' => (int) ((isset($settings['available_zone_status'])) ? $settings['available_zone_status'] : 0),
                 'available_zone_title' => (isset($settings['available_zone_title'])) ? $settings['available_zone_title'] : null,
                 'available_zone_short_description' => (isset($settings['available_zone_short_description'])) ? $settings['available_zone_short_description'] : null,
                 'available_zone_image' => (isset($settings['available_zone_image'])) ? $settings['available_zone_image'] : null,
@@ -1017,13 +1022,27 @@ class ConfigController extends Controller
         );
     }
 
-    private function getPaymentMethods()
+    private function getPaymentMethods($zoneId = null)
     {
         if (!Schema::hasTable('addon_settings')) {
             return [];
         }
 
-        $methods = Setting::where('is_active', 1)->where('settings_type', 'payment_config')->get();
+        $methods = Setting::where('is_active', 1)->where('settings_type', 'payment_config');
+
+        // Filter by zone if zone_id provided and zone_payment_methods table exists
+        if ($zoneId && Schema::hasTable('zone_payment_methods')) {
+            $allowedMethods = \App\Models\ZonePaymentMethod::where('zone_id', $zoneId)
+                ->pluck('payment_method')
+                ->toArray();
+
+            // Only filter if this zone has specific payment methods configured
+            if (!empty($allowedMethods)) {
+                $methods = $methods->whereIn('key_name', $allowedMethods);
+            }
+        }
+
+        $methods = $methods->get();
         $env = env('APP_ENV') == 'live' ? 'live' : 'test';
         $credentials = $env . '_values';
 
@@ -1044,14 +1063,29 @@ class ConfigController extends Controller
         return $data;
     }
 
-    private function getDefaultPaymentMethods()
+    private function getDefaultPaymentMethods($zoneId = null)
     {
         if (!Schema::hasTable('addon_settings')) {
             return [];
         }
 
-        $methods = Setting::where('is_active', 1)->whereIn('settings_type', ['payment_config'])->whereIn('key_name', ['ssl_commerz', 'paypal', 'stripe', 'razor_pay', 'senang_pay', 'paytabs', 'paystack', 'paymob_accept', 'paytm', 'flutterwave', 'liqpay', 'bkash', 'mercadopago'])->get();
+        $defaultGateways = ['ssl_commerz', 'paypal', 'stripe', 'razor_pay', 'senang_pay', 'paytabs', 'paystack', 'paymob_accept', 'paytm', 'flutterwave', 'liqpay', 'bkash', 'mercadopago'];
 
+        $methods = Setting::where('is_active', 1)->whereIn('settings_type', ['payment_config'])->whereIn('key_name', $defaultGateways);
+
+        // Filter by zone if zone_id provided and zone_payment_methods table exists
+        if ($zoneId && Schema::hasTable('zone_payment_methods')) {
+            $allowedMethods = \App\Models\ZonePaymentMethod::where('zone_id', $zoneId)
+                ->pluck('payment_method')
+                ->toArray();
+
+            // Only filter if this zone has specific payment methods configured
+            if (!empty($allowedMethods)) {
+                $methods = $methods->whereIn('key_name', $allowedMethods);
+            }
+        }
+
+        $methods = $methods->get();
         $env = env('APP_ENV') == 'live' ? 'live' : 'test';
         $credentials = $env . '_values';
 
