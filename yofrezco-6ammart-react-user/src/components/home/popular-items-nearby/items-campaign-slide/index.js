@@ -1,25 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   CustomBoxFullWidth,
-  CustomSpan,
   CustomStackFullWidth,
-  SliderCustom,
 } from "../../../../styled-components/CustomStyles.style";
-import { Typography, alpha, useMediaQuery, useTheme, Stack } from "@mui/material";
-import CustomImageContainer from "../../../CustomImageContainer";
-import bg from "./assets/bg.png";
-import Slide from "./Slide";
-import Slider from "react-slick";
-import { settings } from "./Settings";
-import CustomSlider from "../../../search/CustomSlider";
+import { Typography, useTheme, Stack, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { styled } from "@mui/material/styles";
 import CustomCountdown from "../../../countdown";
-import CustomLinearProgressbar from "../../../linear-progressbar";
-import useGetFlashSales from "../../../../api-manage/hooks/react-query/useGetFlashSales";
 import { useRouter } from "next/router";
-import { t } from "i18next";
 import { useTranslation } from "react-i18next";
 import ProductCard from "components/cards/ProductCard";
 
@@ -62,37 +51,10 @@ const CustomCounterBox = styled(CustomStackFullWidth)(({ theme }) => ({
   marginBottom: "10px"
 }))
 
-const StyledCustomSlider = styled(SliderCustom)(({ theme, isSmall }) => ({
-  "& .slick-dots": {
-    top: "365px",
-    maxWidth: "100px",
-    "& li": {
-      backgroundColor: alpha(theme.palette.primary.main, 0.2),
-      width: "8px",
-      height: "3px",
-      "& button::before": {
-        color: "transparent",
-      },
-    },
-    "& li.slick-active button::before": {
-      backgroundColor: theme.palette.primary.main,
-      width: "8px",
-      height: "3px",
-      borderRadius: "100px",
-    },
-  },
-  [theme.breakpoints.down("sm")]: {
-    "& .slick-dots": {
-      bottom: 0,
-      top: "480px",
-    },
-  },
-}));
 const ItemsCampaign = ({ flashSales }) => {
 
   const theme = useTheme();
   const router = useRouter()
-  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleFlashSales = () => {
     router.push({
@@ -110,9 +72,7 @@ const ItemsCampaign = ({ flashSales }) => {
       sx={{
         backgroundColor: "transparent",
         padding: "4px",
-        // margin: { xs: "none", md: "10px 15px" },
         borderRadius: "10px",
-        cursor: "pointer",
       }}
     >
       <LocalizedFlashSaleTitle />
@@ -126,11 +86,20 @@ const ItemsCampaign = ({ flashSales }) => {
             endDate={flashSales?.end_date}
           />
         </CustomCounterBox>}
-      <StyledCustomSlider isSmall={isSmall}>
-        <Slider {...settings}>
-          {flashSales?.active_products?.slice(0, 5).map((item, index) => {
+
+      {/* Grid Layout for Flash Sale Products */}
+      <Box sx={{ width: "100%", px: 2, py: 2 }}>
+        <Grid container spacing={2}>
+          {flashSales?.active_products?.slice(0, 10).map((item, index) => {
             return (
-              <Box key={index}>
+              <Grid
+                key={item?.item?.id || index}
+                item
+                xs={6}
+                sm={4}
+                md={3}
+                lg={2.4}
+              >
                 <ProductCard
                   item={{ ...item?.item }}
                   cardheight="340px"
@@ -139,14 +108,26 @@ const ItemsCampaign = ({ flashSales }) => {
                   sold={item?.sold}
                   stock={item?.available_stock}
                 />
-                {/*<Slide item={item} />*/}
-              </Box>
+              </Grid>
             );
           })}
-        </Slider>
-      </StyledCustomSlider>
+        </Grid>
+      </Box>
+
       <Stack width="100%" alignItems="end" justifyContent="center">
-        <Typography onClick={handleFlashSales} sx={{ textDecoration: "underLine", color: theme => theme.palette.neutral[400] }} fontSize="16px" fontWeight="600" marginRight="10px">{("See All")}</Typography>
+        <Typography
+          onClick={handleFlashSales}
+          sx={{
+            textDecoration: "underLine",
+            color: theme => theme.palette.neutral[400],
+            cursor: "pointer"
+          }}
+          fontSize="16px"
+          fontWeight="600"
+          marginRight="10px"
+        >
+          {("See All")}
+        </Typography>
       </Stack>
     </CustomStackFullWidth>
   );
