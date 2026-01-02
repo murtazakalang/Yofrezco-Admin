@@ -200,7 +200,7 @@ if (!$is_published) {
         //CYBERSOURCE
         Route::group(['prefix' => 'cybersource', 'as' => 'cybersource.'], function () {
             Route::get('pay', [\App\Http\Controllers\CyberSourcePaymentController::class, 'index'])->name('pay');
-            Route::post('process', [\App\Http\Controllers\CyberSourcePaymentController::class, 'processPayment'])->name('process')
+            Route::post('callback', [\App\Http\Controllers\CyberSourcePaymentController::class, 'callback'])->name('callback')
                 ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
             Route::get('success', [\App\Http\Controllers\CyberSourcePaymentController::class, 'success'])->name('success');
             Route::get('canceled', [\App\Http\Controllers\CyberSourcePaymentController::class, 'canceled'])->name('canceled');

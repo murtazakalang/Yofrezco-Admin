@@ -18,61 +18,48 @@
                                     {{ number_format($data->payment_amount, 2) }}</strong></h5>
                         </div>
 
-                        <form id="payment-form" action="{{ route('cybersource.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_id" value="{{ $data->id }}">
+                        {{-- Secure Acceptance Form - Posts directly to CyberSource --}}
+                        <form id="payment-form" action="{{ $formData['endpoint'] }}" method="POST">
+                            {{-- Signed fields from controller --}}
+                            @foreach($formData['fields'] as $name => $value)
+                                <input type="hidden" name="{{ $name }}" value="{{ $value }}">
+                            @endforeach
+
+                            {{-- Unsigned fields - card data entered by user --}}
+                            <div class="mb-3">
+                                <label for="card_type" class="form-label">Card Type</label>
+                                <select class="form-control" id="card_type" name="card_type" required>
+                                    <option value="001">Visa</option>
+                                    <option value="002">Mastercard</option>
+                                    <option value="003">American Express</option>
+                                    <option value="004">Discover</option>
+                                </select>
+                            </div>
 
                             <div class="mb-3">
                                 <label for="card_number" class="form-label">Card Number</label>
                                 <input type="text" class="form-control" id="card_number" name="card_number"
-                                    placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                    placeholder="4111111111111111" maxlength="19" required autocomplete="cc-number">
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label for="expiry_month" class="form-label">Expiry Month</label>
-                                    <select class="form-control" id="expiry_month" name="expiry_month" required>
-                                        <option value="">MM</option>
-                                        @for ($i = 1; $i <= 12; $i++)
-                                            <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
-                                                {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</option>
-                                        @endfor
-                                    </select>
+                                <div class="col-md-8">
+                                    <label for="card_expiry_date" class="form-label">Expiry Date (MM-YYYY)</label>
+                                    <input type="text" class="form-control" id="card_expiry_date" name="card_expiry_date"
+                                        placeholder="12-2031" maxlength="7" required pattern="\d{2}-\d{4}"
+                                        autocomplete="cc-exp">
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="expiry_year" class="form-label">Expiry Year</label>
-                                    <select class="form-control" id="expiry_year" name="expiry_year" required>
-                                        <option value="">YYYY</option>
-                                        @for ($i = date('Y'); $i <= date('Y') + 15; $i++)
-                                            <option value="{{ $i }}">{{ $i }}</option>
-                                        @endfor
-                                    </select>
+                                    <label for="card_cvn" class="form-label">CVV</label>
+                                    <input type="password" class="form-control" id="card_cvn" name="card_cvn"
+                                        placeholder="123" maxlength="4" required autocomplete="cc-csc">
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="cvv" class="form-label">CVV</label>
-                                    <input type="password" class="form-control" id="cvv" name="cvv" placeholder="123"
-                                        maxlength="4" required>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="first_name" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="first_name" name="first_name" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="last_name" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="last_name" name="last_name" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
-                                    <span id="btn-text">Pay Now</span>
+                                    <span id="btn-text">Pay {{ $data->currency_code }}
+                                        {{ number_format($data->payment_amount, 2) }}</span>
                                     <span id="btn-loader" class="d-none">
                                         <span class="spinner-border spinner-border-sm" role="status"
                                             aria-hidden="true"></span>
@@ -84,7 +71,7 @@
 
                         <div class="mt-3 text-center">
                             <small class="text-muted">
-                                <i class="bi bi-lock-fill"></i> Secure payment powered by CyberSource
+                                <i class="bi bi-lock-fill"></i> Secure payment powered by CyberSource (A Visa Solution)
                             </small>
                         </div>
                     </div>
@@ -100,11 +87,19 @@
             document.getElementById('submit-btn').disabled = true;
         });
 
-        // Format card number with spaces
+        // Format card number - remove spaces for submission
         document.getElementById('card_number').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
-            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
-            e.target.value = formatted;
+            e.target.value = value;
+        });
+
+        // Format expiry date as MM-YYYY
+        document.getElementById('card_expiry_date').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/[^\d-]/g, '');
+            if (value.length === 2 && !value.includes('-')) {
+                value = value + '-';
+            }
+            e.target.value = value;
         });
     </script>
 @endsection
