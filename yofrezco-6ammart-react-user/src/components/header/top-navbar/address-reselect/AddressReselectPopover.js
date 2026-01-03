@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Button, Popover, Stack, Typography, useTheme} from "@mui/material";
+import { Button, Popover, Stack, Typography, useTheme } from "@mui/material";
 
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
@@ -12,7 +12,10 @@ import useGetGeoCode from "../../../../api-manage/hooks/react-query/google-api/u
 import useGetZoneId from "../../../../api-manage/hooks/react-query/google-api/useGetZone";
 import { invalidateHeaderCache } from "api-manage/MainApi";
 import dynamic from "next/dynamic";
+import toast from "react-hot-toast";
+
 const MapModal = dynamic(() => import("../../../Map/MapModal"));
+
 const AddressReselectPopover = (props) => {
   const { anchorEl, onClose, open, t, address, setAddress, token, currentLatLngForMar, ...other } =
     props;
@@ -23,6 +26,9 @@ const AddressReselectPopover = (props) => {
   const [showCurrentLocation, setShowCurrentLocation] = useState(false);
   const [geoLocationEnable, setGeoLocationEnable] = useState(false);
   const [zoneIdEnabled, setZoneIdEnabled] = useState(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [zoneCheckCompleted, setZoneCheckCompleted] = useState(false);
+
   const { coords } = useGeolocated({
     positionOptions: {
       enableHighAccuracy: false,
@@ -31,13 +37,17 @@ const AddressReselectPopover = (props) => {
     isGeolocationEnabled: true,
   });
 
+  // Handle "Use Current Location" button click
   const handleAgreeLocation = async () => {
     // Use native geolocation API to properly handle permission prompt
     if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser.");
+      toast.error(t("Geolocation is not supported by this browser."));
       return;
     }
-    
+
+    setIsDetectingLocation(true);
+    setZoneCheckCompleted(false);
+
     try {
       // This will trigger permission prompt and wait for user response
       const position = await new Promise((resolve, reject) => {
@@ -47,63 +57,85 @@ const AddressReselectPopover = (props) => {
           maximumAge: 0
         });
       });
-      
+
       // Set location from the received coordinates
-      setLocation({ 
-        lat: position.coords.latitude, 
-        lng: position.coords.longitude 
+      setLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
       });
       setShowCurrentLocation(true);
       setGeoLocationEnable(true);
       setZoneIdEnabled(true);
     } catch (error) {
-      // If we have coords from the hook, use those
-      if (coords) {
-        setLocation({ lat: coords?.latitude, lng: coords?.longitude });
-        setShowCurrentLocation(true);
-        setGeoLocationEnable(true);
-        setZoneIdEnabled(true);
+      setIsDetectingLocation(false);
+      // User denied permission or error occurred
+      if (error.code === 1) {
+        // Permission denied - user can still select manually
+        toast.error(t("Location permission denied. You can select location manually."));
       } else {
-        console.error("Geolocation error:", error);
+        toast.error(t("Could not detect your location. Please select manually."));
       }
     }
   };
 
-  const handleSetLocation = async () => {
-    if (currentLocation && location) {
-      localStorage.setItem("location", currentLocation);
-      localStorage.setItem("currentLatLng", JSON.stringify(location));
-      window.location.reload();
-    }
-  };
+  // Get geocode for the detected location
   const { data: geoCodeResults, isLoading: isLoadingGeoCode } = useGetGeoCode(
     location,
     geoLocationEnable
   );
 
-  useEffect(() => {
-    handleSetLocation();
-  }, [currentLocation, location,address?.address]);
+  // Get zone ID for the detected location
+  const { data: zoneData, isLoading: isLoadingZone, error: zoneError, isError: isZoneError } = useGetZoneId(
+    location,
+    zoneIdEnabled
+  );
+
+  // Update current location address when geocode results arrive
   useEffect(() => {
     if (geoCodeResults?.results && showCurrentLocation) {
       setCurrentLocation(geoCodeResults?.results[0]?.formatted_address);
     }
-  }, [geoCodeResults, location]);
+  }, [geoCodeResults, showCurrentLocation]);
 
-  const { data: zoneData } = useGetZoneId(location, zoneIdEnabled);
-
+  // Handle zone data response - this is where we check if location is valid
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (zoneData) {
-        localStorage.setItem("zoneid", zoneData?.zone_id);
-        invalidateHeaderCache();
+    if (!isDetectingLocation || !zoneIdEnabled || zoneCheckCompleted) return;
+    if (isLoadingZone || isLoadingGeoCode) return;
+
+    // Zone check completed
+    if (zoneData?.zone_id) {
+      // User is in a valid zone - update location
+      localStorage.setItem("zoneid", zoneData.zone_id);
+      invalidateHeaderCache();
+
+      // Wait for geocode to complete, then save and reload
+      if (currentLocation && location) {
+        localStorage.setItem("location", currentLocation);
+        localStorage.setItem("currentLatLng", JSON.stringify(location));
+        toast.success(t("Location updated successfully!"));
+        setZoneCheckCompleted(true);
+        setIsDetectingLocation(false);
+        window.location.reload();
       }
+    } else if (isZoneError || zoneError || (zoneData && !zoneData.zone_id)) {
+      // User is NOT in a valid zone - show error
+      toast.error(t("Sorry, service is not available in your current location."));
+      setZoneCheckCompleted(true);
+      setIsDetectingLocation(false);
+      // Reset states so user can try again or select manually
+      setLocation(undefined);
+      setCurrentLocation(undefined);
+      setShowCurrentLocation(false);
+      setGeoLocationEnable(false);
+      setZoneIdEnabled(false);
     }
-  }, [zoneData]);
+  }, [zoneData, zoneError, isZoneError, isLoadingZone, isLoadingGeoCode, currentLocation, location, isDetectingLocation, zoneIdEnabled, zoneCheckCompleted, t]);
+
   const handleCloseMapModal = () => {
     setOpenMapModal(false);
     onClose();
   };
+
   const popOverHeightHandler = () => {
     if (token) {
       return "475px";
@@ -111,6 +143,7 @@ const AddressReselectPopover = (props) => {
       return "150px";
     }
   };
+
   return (
     <>
       <Popover
@@ -170,23 +203,24 @@ const AddressReselectPopover = (props) => {
               )}
             </Stack>
           </SimpleBar>
-         <Button
-           fullWidth
-              onClick={handleAgreeLocation}
-              startIcon={
-                <ControlPointOutlinedIcon sx={{ color: theme.palette.primary.main }} />
-              }
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+          <Button
+            fullWidth
+            onClick={handleAgreeLocation}
+            disabled={isDetectingLocation}
+            startIcon={
+              <ControlPointOutlinedIcon sx={{ color: isDetectingLocation ? theme.palette.grey[400] : theme.palette.primary.main }} />
+            }
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
 
-                fontWeight: 600,
-                color: theme.palette.primary.main,
-              }}
-            >
-              {t("Use Current Location")}
-            </Button>
+              fontWeight: 600,
+              color: isDetectingLocation ? theme.palette.grey[400] : theme.palette.primary.main,
+            }}
+          >
+            {isDetectingLocation ? t("Detecting...") : t("Use Current Location")}
+          </Button>
           <Stack width="100%" justifyContent="center" alignItems="center">
             <CustomButtonPrimary onClick={() => setOpenMapModal(true)}>
               {t("Pick from map")}
@@ -195,7 +229,7 @@ const AddressReselectPopover = (props) => {
         </Stack>
       </Popover>
       {openMapModal && (
-        <MapModal open={openMapModal} handleClose={handleCloseMapModal}  selectedLocation={currentLatLngForMar}/>
+        <MapModal open={openMapModal} handleClose={handleCloseMapModal} selectedLocation={currentLatLngForMar} />
       )}
     </>
   );
