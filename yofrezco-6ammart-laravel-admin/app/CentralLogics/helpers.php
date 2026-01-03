@@ -411,7 +411,7 @@ class Helpers
             $data['attributes'] = json_decode($data['attributes']);
             $data['choice_options'] = json_decode($data['choice_options']);
             $data['add_ons'] = self::addon_data_formatting(AddOn::whereIn('id', json_decode($data['add_ons']))->active()->get(), true, $trans, $local);
-            foreach (json_decode($data['variations'], true) as $var) {
+            foreach (json_decode($data['variations'], true) ?? [] as $var) {
                 array_push($variations, [
                     'type' => $var['type'],
                     'price' => (float) $var['price'],
@@ -537,7 +537,7 @@ class Helpers
                 $item['attributes'] = json_decode($item['attributes']);
                 $item['choice_options'] = json_decode($item['choice_options']);
                 $item['add_ons'] = self::addon_data_formatting(AddOn::withoutGlobalScope('translate')->whereIn('id', json_decode($item['add_ons'], true))->active()->get(), true, $trans, $local);
-                foreach (json_decode($item['variations'], true) as $var) {
+                foreach (json_decode($item['variations'], true) ?? [] as $var) {
                     array_push($variations, [
                         'type' => $var['type'],
                         'price' => (float) $var['price'],
@@ -637,7 +637,7 @@ class Helpers
             $data['attributes'] = json_decode($data['attributes']);
             $data['choice_options'] = json_decode($data['choice_options']);
             $data['add_ons'] = self::addon_data_formatting(AddOn::whereIn('id', json_decode($data['add_ons']))->active()->get(), true, $trans, $local);
-            foreach (json_decode($data['variations'], true) as $var) {
+            foreach (json_decode($data['variations'], true) ?? [] as $var) {
                 array_push($variations, [
                     'type' => $var['type'],
                     'price' => (float) $var['price'],
