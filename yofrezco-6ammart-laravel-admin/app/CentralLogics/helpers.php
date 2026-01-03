@@ -168,6 +168,7 @@ class Helpers
         }
         $data['addons'] = $data_addons;
         $data_variations = gettype($data['variations']) == 'array' ? $data['variations'] : json_decode($data['variations'], true);
+        $data_variations = $data_variations ?? [];
         foreach ($data_variations as $var) {
             array_push($variations, [
                 'type' => $var['type'],
