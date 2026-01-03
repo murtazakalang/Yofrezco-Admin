@@ -74,17 +74,21 @@ class CyberSourcePaymentController extends Controller
             ? 'https://secureacceptance.cybersource.com/silent/pay'
             : 'https://testsecureacceptance.cybersource.com/silent/pay';
 
-        $transaction_uuid = uniqid('', true);
+        // Use simple uniqid() matching CyberSource sample
+        $transaction_uuid = uniqid();
         $signed_date_time = gmdate("Y-m-d\TH:i:s\Z");
         $reference_number = 'REF-' . $payment->id;
         
-        // Build the form fields
+        // Define signed_field_names in exact order (matching CyberSource sample)
+        $signed_field_names = 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,payment_method,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_line1,bill_to_address_city,bill_to_address_state,bill_to_address_country,bill_to_address_postal_code,override_custom_receipt_page,override_custom_cancel_page';
+        
+        // Build the form fields in the exact order of signed_field_names
         $fields = [
             'access_key' => $config->access_key,
             'profile_id' => $config->profile_id,
             'transaction_uuid' => $transaction_uuid,
-            'signed_field_names' => '', // Will be set below
-            'unsigned_field_names' => 'card_type,card_number,card_expiry_date,card_cvn',
+            'signed_field_names' => $signed_field_names,
+            'unsigned_field_names' => 'card_type,card_number,card_expiry_date',
             'signed_date_time' => $signed_date_time,
             'locale' => 'en',
             'transaction_type' => 'sale',
@@ -104,10 +108,6 @@ class CyberSourcePaymentController extends Controller
             'override_custom_receipt_page' => route('cybersource.callback') . '?payment_id=' . $payment->id,
             'override_custom_cancel_page' => route('cybersource.canceled') . '?payment_id=' . $payment->id,
         ];
-
-        // Set signed_field_names to include all fields except unsigned ones
-        $signed_field_names = implode(',', array_keys($fields));
-        $fields['signed_field_names'] = $signed_field_names;
 
         // Generate signature
         $fields['signature'] = $this->generateSignature($fields, $config->secret_key);
