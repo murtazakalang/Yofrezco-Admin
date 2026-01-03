@@ -11,6 +11,8 @@ import HeaderComponent from "../header";
 import BottomNav from "../header/BottomNav";
 import { MainLayoutRoot } from "./LandingLayout";
 import useGetLandingPage from "api-manage/hooks/react-query/useGetLandingPage";
+import LocationWatcher from "../location/LocationWatcher";
+
 
 const MainLayout = ({ children, configData }) => {
   const [rerenderUi, setRerenderUi] = useState(false);
@@ -50,6 +52,7 @@ const MainLayout = ({ children, configData }) => {
 
   return (
     <MainLayoutRoot justifyContent="space-between" key={rerenderUi}>
+      <LocationWatcher />
       <header>
         <HeaderComponent />
       </header>
