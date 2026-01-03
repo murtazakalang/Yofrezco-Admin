@@ -31,17 +31,42 @@ const AddressReselectPopover = (props) => {
     isGeolocationEnabled: true,
   });
 
-  const handleAgreeLocation = () => {
-    // e.stopPropagation();
-    if (coords) {
-      setLocation({ lat: coords?.latitude, lng: coords?.longitude });
+  const handleAgreeLocation = async () => {
+    // Use native geolocation API to properly handle permission prompt
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      return;
+    }
+    
+    try {
+      // This will trigger permission prompt and wait for user response
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      });
+      
+      // Set location from the received coordinates
+      setLocation({ 
+        lat: position.coords.latitude, 
+        lng: position.coords.longitude 
+      });
       setShowCurrentLocation(true);
       setGeoLocationEnable(true);
       setZoneIdEnabled(true);
+    } catch (error) {
+      // If we have coords from the hook, use those
+      if (coords) {
+        setLocation({ lat: coords?.latitude, lng: coords?.longitude });
+        setShowCurrentLocation(true);
+        setGeoLocationEnable(true);
+        setZoneIdEnabled(true);
+      } else {
+        console.error("Geolocation error:", error);
+      }
     }
-    setGeoLocationEnable(true);
-    setZoneIdEnabled(true);
-    window.reload()
   };
 
   const handleSetLocation = async () => {
