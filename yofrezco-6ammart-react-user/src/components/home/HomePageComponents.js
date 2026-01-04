@@ -35,6 +35,7 @@ import TopBanner from "./top-banner";
 import TaxiSearchPanel from "components/home/module-wise-components/rental/components/global/search/TaxiSearchPanel";
 import { useGetWishList } from "api-manage/hooks/react-query/rental-wishlist/useGetWishlist";
 import Rental from "components/home/module-wise-components/rental/Rental";
+import HomeLocationDetector from "./HomeLocationDetector";
 
 export const HomeComponentsWrapper = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -141,6 +142,7 @@ const HomePageComponents = ({ configData, landingPageData }) => {
 
   return (
     <PushNotificationLayout>
+      <HomeLocationDetector />
       <CustomStackFullWidth>
         <CustomStackFullWidth sx={{ position: "relative" }}>
           <TopBanner />
@@ -227,11 +229,11 @@ const HomePageComponents = ({ configData, landingPageData }) => {
             <Typography variant="body2" lineHeight={"1.5"}>
               {profileInfo?.is_valid_for_discount
                 ? t(
-                    `Get ready for a special welcome gift, enjoy a special discount on your first order within`
-                  ) +
-                  " " +
-                  profileInfo?.validity +
-                  "."
+                  `Get ready for a special welcome gift, enjoy a special discount on your first order within`
+                ) +
+                " " +
+                profileInfo?.validity +
+                "."
                 : " "}
               {"  "}
               {t(`Start exploring the best services around you.`)}
