@@ -12,8 +12,6 @@ import BottomNav from "../header/BottomNav";
 import { MainLayoutRoot } from "./LandingLayout";
 import useGetLandingPage from "api-manage/hooks/react-query/useGetLandingPage";
 
-
-
 const MainLayout = ({ children, configData }) => {
   const [rerenderUi, setRerenderUi] = useState(false);
   const { data, refetch } = useGetModule();
