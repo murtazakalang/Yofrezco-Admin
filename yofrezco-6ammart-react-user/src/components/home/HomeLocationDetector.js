@@ -104,6 +104,33 @@ const HomeLocationDetector = () => {
                 ? zoneData.zone_id
                 : JSON.stringify(zoneData.zone_id);
             localStorage.setItem("zoneid", zoneIdValue);
+
+            // Validate current module against new zone
+            // If module is not valid for this zone, clear it so auto-selection kicks in
+            try {
+                const currentModule = localStorage.getItem("module");
+                if (currentModule) {
+                    const moduleObj = JSON.parse(currentModule);
+                    const moduleZones = moduleObj?.zones?.map(z => z.id) || [];
+
+                    // Parse new zone IDs
+                    const parsedZoneIds = JSON.parse(zoneIdValue);
+                    const newZoneArray = Array.isArray(parsedZoneIds) ? parsedZoneIds : [parsedZoneIds];
+
+                    // Check if current module is valid for the new zone
+                    const isModuleValid = newZoneArray.some(id => moduleZones.includes(id));
+
+                    if (!isModuleValid) {
+                        console.log("Current module not valid for new zone, clearing module");
+                        localStorage.removeItem("module");
+                    }
+                }
+            } catch (e) {
+                console.error("Error validating module:", e);
+                // On error, clear module to be safe
+                localStorage.removeItem("module");
+            }
+
             invalidateHeaderCache();
             // Reload to apply the new location
             window.location.reload();

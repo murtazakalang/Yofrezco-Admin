@@ -42,11 +42,31 @@ const AddressReselect = ({ location, setOpenDrawer }) => {
       const values = { lat: address?.lat, lng: address?.lng };
       localStorage.setItem("currentLatLng", JSON.stringify(values));
       if (address.zone_ids && address.zone_ids.length > 0) {
-        const value = [address.zone_ids];
+        const zoneIdValue = JSON.stringify(address.zone_ids);
+        localStorage.setItem("zoneid", zoneIdValue);
 
-        localStorage.setItem("zoneid", JSON.stringify(address.zone_ids));
+        // Validate current module against new zone
+        try {
+          const currentModule = localStorage.getItem("module");
+          if (currentModule) {
+            const moduleObj = JSON.parse(currentModule);
+            const moduleZones = moduleObj?.zones?.map(z => z.id) || [];
+            const newZoneArray = address.zone_ids;
+
+            const isModuleValid = newZoneArray.some(id => moduleZones.includes(id));
+
+            if (!isModuleValid) {
+              console.log("Module not valid for selected address zone, clearing");
+              localStorage.removeItem("module");
+            }
+          }
+        } catch (e) {
+          console.error("Error validating module:", e);
+          localStorage.removeItem("module");
+        }
+
         invalidateHeaderCache();
-        toast.success(t(`New ${getModule()?.module_type==="rental" ? "Pickup" : "Delivery"} address selected.`));
+        toast.success(t(`New ${getModule()?.module_type === "rental" ? "Pickup" : "Delivery"} address selected.`));
         handleClosePopover();
       }
     }

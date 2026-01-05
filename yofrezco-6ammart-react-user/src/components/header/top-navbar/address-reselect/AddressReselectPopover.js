@@ -78,6 +78,29 @@ const AddressReselectPopover = (props) => {
           ? zoneData.zone_id
           : JSON.stringify(zoneData.zone_id);
         localStorage.setItem("zoneid", zoneIdValue);
+
+        // Validate current module against new zone
+        try {
+          const currentModule = localStorage.getItem("module");
+          if (currentModule) {
+            const moduleObj = JSON.parse(currentModule);
+            const moduleZones = moduleObj?.zones?.map(z => z.id) || [];
+
+            const parsedZoneIds = JSON.parse(zoneIdValue);
+            const newZoneArray = Array.isArray(parsedZoneIds) ? parsedZoneIds : [parsedZoneIds];
+
+            const isModuleValid = newZoneArray.some(id => moduleZones.includes(id));
+
+            if (!isModuleValid) {
+              console.log("Module not valid for new zone, clearing");
+              localStorage.removeItem("module");
+            }
+          }
+        } catch (e) {
+          console.error("Error validating module:", e);
+          localStorage.removeItem("module");
+        }
+
         invalidateHeaderCache();
       }
     }
