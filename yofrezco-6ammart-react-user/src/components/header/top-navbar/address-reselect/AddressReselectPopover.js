@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Button, Popover, Stack, Typography, useTheme} from "@mui/material";
+import { Button, Popover, Stack, Typography, useTheme } from "@mui/material";
 
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
@@ -41,7 +41,11 @@ const AddressReselectPopover = (props) => {
     }
     setGeoLocationEnable(true);
     setZoneIdEnabled(true);
-    window.reload()
+    setGeoLocationEnable(true);
+    setZoneIdEnabled(true);
+    if (typeof window !== "undefined") {
+      window.location.reload()
+    }
   };
 
   const handleSetLocation = async () => {
@@ -58,7 +62,7 @@ const AddressReselectPopover = (props) => {
 
   useEffect(() => {
     handleSetLocation();
-  }, [currentLocation, location,address?.address]);
+  }, [currentLocation, location, address?.address]);
   useEffect(() => {
     if (geoCodeResults?.results && showCurrentLocation) {
       setCurrentLocation(geoCodeResults?.results[0]?.formatted_address);
@@ -70,7 +74,10 @@ const AddressReselectPopover = (props) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       if (zoneData) {
-        localStorage.setItem("zoneid", zoneData?.zone_id);
+        const zoneIdValue = typeof zoneData.zone_id === 'string'
+          ? zoneData.zone_id
+          : JSON.stringify(zoneData.zone_id);
+        localStorage.setItem("zoneid", zoneIdValue);
         invalidateHeaderCache();
       }
     }
@@ -145,23 +152,23 @@ const AddressReselectPopover = (props) => {
               )}
             </Stack>
           </SimpleBar>
-         <Button
-           fullWidth
-              onClick={handleAgreeLocation}
-              startIcon={
-                <ControlPointOutlinedIcon sx={{ color: theme.palette.primary.main }} />
-              }
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+          <Button
+            fullWidth
+            onClick={handleAgreeLocation}
+            startIcon={
+              <ControlPointOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+            }
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
 
-                fontWeight: 600,
-                color: theme.palette.primary.main,
-              }}
-            >
-              {t("Use Current Location")}
-            </Button>
+              fontWeight: 600,
+              color: theme.palette.primary.main,
+            }}
+          >
+            {t("Use Current Location")}
+          </Button>
           <Stack width="100%" justifyContent="center" alignItems="center">
             <CustomButtonPrimary onClick={() => setOpenMapModal(true)}>
               {t("Pick from map")}
@@ -170,7 +177,7 @@ const AddressReselectPopover = (props) => {
         </Stack>
       </Popover>
       {openMapModal && (
-        <MapModal open={openMapModal} handleClose={handleCloseMapModal}  selectedLocation={currentLatLngForMar}/>
+        <MapModal open={openMapModal} handleClose={handleCloseMapModal} selectedLocation={currentLatLngForMar} />
       )}
     </>
   );

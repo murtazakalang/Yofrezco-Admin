@@ -99,7 +99,11 @@ const HomeLocationDetector = () => {
     useEffect(() => {
         if (zoneData?.zone_id && location && geoCodeResults?.results) {
             console.log("Setting zone ID:", zoneData.zone_id);
-            localStorage.setItem("zoneid", zoneData.zone_id);
+            // Ensure consistent storage format
+            const zoneIdValue = typeof zoneData.zone_id === 'string'
+                ? zoneData.zone_id
+                : JSON.stringify(zoneData.zone_id);
+            localStorage.setItem("zoneid", zoneIdValue);
             invalidateHeaderCache();
             // Reload to apply the new location
             window.location.reload();
