@@ -94,6 +94,7 @@ const AddressReselectPopover = (props) => {
             if (!isModuleValid) {
               console.log("Module not valid for new zone, clearing");
               localStorage.removeItem("module");
+              localStorage.setItem("forceModuleSelection", "true");
             }
           }
         } catch (e) {

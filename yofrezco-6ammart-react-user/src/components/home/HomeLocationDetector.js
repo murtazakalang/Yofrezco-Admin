@@ -123,6 +123,7 @@ const HomeLocationDetector = () => {
                     if (!isModuleValid) {
                         console.log("Current module not valid for new zone, clearing module");
                         localStorage.removeItem("module");
+                        localStorage.setItem("forceModuleSelection", "true");
                     }
                 }
             } catch (e) {

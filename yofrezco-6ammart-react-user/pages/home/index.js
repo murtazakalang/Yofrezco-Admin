@@ -1,12 +1,13 @@
 import CssBaseline from "@mui/material/CssBaseline";
 import Router from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MainLayout from "../../src/components/layout/MainLayout";
 import ModuleWiseLayout from "../../src/components/module-wise-layout";
 import ZoneGuard from "../../src/components/route-guard/ZoneGuard";
 import SEO from "../../src/components/seo";
 import { setConfigData, setLandingPageData } from "../../src/redux/slices/configData";
+import { ModuleSelection } from "../../src/components/landing-page/hero-section/module-selection";
 
 const Home = (props) => {
   // Get data from server-side props first, then fallback to Redux
@@ -15,10 +16,22 @@ const Home = (props) => {
     (state) => state.configData
   );
   const dispatch = useDispatch();
+  const [showModuleSelection, setShowModuleSelection] = useState(false);
 
   // Use SSR data if available, otherwise use Redux data
   const configData = ssrConfigData || reduxConfigData;
   const landingPageData = ssrLandingPageData || reduxLandingPageData;
+
+  // Check for forceModuleSelection flag on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const forceModule = localStorage.getItem("forceModuleSelection");
+      if (forceModule === "true") {
+        localStorage.removeItem("forceModuleSelection");
+        setShowModuleSelection(true);
+      }
+    }
+  }, []);
 
   // Store server-side data in Redux for other components
   useEffect(() => {
@@ -59,6 +72,16 @@ const Home = (props) => {
           landingPageData={landingPageData}
         />
       </MainLayout>
+
+      {/* Module selection modal - shown when zone changes */}
+      {showModuleSelection && (
+        <ModuleSelection
+          location={true}
+          closeModal={() => setShowModuleSelection(false)}
+          setOpenModuleSelection={setShowModuleSelection}
+          disableAutoFocus={true}
+        />
+      )}
     </>
   );
 };
