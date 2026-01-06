@@ -220,13 +220,35 @@ const MapModal = ({
         handleLocation(location, geoCodeResults?.results[0]?.formatted_address);
         handleClose();
       } else {
+        // Check if current module is valid for the new zone
+        let isModuleValid = false;
+        const currentModule = localStorage.getItem("module");
+        if (currentModule && selectedModule) {
+          try {
+            const moduleObj = JSON.parse(currentModule);
+            const moduleZones = moduleObj?.zones?.map(z => z.id) || [];
+            const parsedZoneId = typeof zoneId === 'string' ? JSON.parse(zoneId) : zoneId;
+            const newZoneArray = Array.isArray(parsedZoneId) ? parsedZoneId : [parsedZoneId];
+            isModuleValid = newZoneArray.some(id => moduleZones.includes(id));
+          } catch (e) {
+            console.error("Error validating module:", e);
+            isModuleValid = false;
+          }
+        }
+
         if (fromStore) {
           window.location.reload();
           handleClose();
-        } else if (location && selectedModule) {
+        } else if (selectedModule && isModuleValid) {
+          // Module exists and is valid for new zone - just reload
           window.location.reload();
           handleClose();
         } else {
+          // No module selected OR module not valid for new zone - show module selection
+          if (currentModule && !isModuleValid) {
+            localStorage.removeItem("module");
+            console.log("Module not valid for new zone, showing module selection");
+          }
           setOpenModuleSelection(true);
         }
       }
