@@ -128,8 +128,9 @@ const HomeLocationDetector = () => {
                 }
             } catch (e) {
                 console.error("Error validating module:", e);
-                // On error, clear module to be safe
+                // On error, clear module and force selection
                 localStorage.removeItem("module");
+                localStorage.setItem("forceModuleSelection", "true");
             }
 
             invalidateHeaderCache();

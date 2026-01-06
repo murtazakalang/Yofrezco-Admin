@@ -59,11 +59,18 @@ const AddressReselect = ({ location, setOpenDrawer }) => {
               console.log("Module not valid for selected address zone, clearing");
               localStorage.removeItem("module");
               localStorage.setItem("forceModuleSelection", "true");
+              invalidateHeaderCache();
+              window.location.reload();
+              return; // Early return - reload will handle the rest
             }
           }
         } catch (e) {
           console.error("Error validating module:", e);
           localStorage.removeItem("module");
+          localStorage.setItem("forceModuleSelection", "true");
+          invalidateHeaderCache();
+          window.location.reload();
+          return;
         }
 
         invalidateHeaderCache();
