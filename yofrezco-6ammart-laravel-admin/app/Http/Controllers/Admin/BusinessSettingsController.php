@@ -1278,6 +1278,13 @@ class BusinessSettingsController extends Controller
                 'username' => 'required_if:status,1',
                 'password' => 'required_if:status,1',
             ];
+        } elseif ($request['gateway'] == 'fygaro') {
+            $additional_data = [
+                'status' => 'required|in:1,0',
+                'access_key' => 'required_if:status,1',
+                'secret_key' => 'required_if:status,1',
+                'button_url' => 'required_if:status,1',
+            ];
         }
 
         $request->validate(array_merge($validation, $additional_data));
