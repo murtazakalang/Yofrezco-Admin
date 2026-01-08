@@ -336,7 +336,7 @@ trait PaymentGatewayTrait
                 "CZK" => "Czech Koruna",
                 "HUF" => "Hungarian Forint"
             ],
-            "cybersource" => [
+            "fygaro" => [
                 "USD" => "United States Dollar",
                 "EUR" => "Euro",
                 "GBP" => "Pound Sterling",

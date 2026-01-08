@@ -23,7 +23,7 @@ class FygaroPaymentController extends Controller
 
     public function __construct(PaymentRequest $payment)
     {
-        $config = $this->payment_config('cybersource', 'payment_config');
+        $config = $this->payment_config('fygaro', 'payment_config');
         if (!is_null($config) && $config->mode == 'live') {
             $this->config_values = json_decode($config->live_values);
         } elseif (!is_null($config) && $config->mode == 'test') {
@@ -119,7 +119,7 @@ class FygaroPaymentController extends Controller
 
         if ($payment) {
             $this->payment::where(['id' => $payment_id])->update([
-                'payment_method' => 'cybersource', // Keep name as cybersource to match DB
+                'payment_method' => 'fygaro', // Updated to fygaro
                 'is_paid' => 1,
                 'transaction_id' => $request->input('reference'),
             ]);

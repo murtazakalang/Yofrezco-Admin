@@ -81,7 +81,7 @@ trait Payment
             'sadadqa' => 'payment/sadadqa/pay',
             'rapidpay' => 'payment/rapidpay/pay',
             'tilopay' => 'payment/tilopay/pay',
-            'cybersource' => 'payment/cybersource/pay',
+            'fygaro' => 'payment/fygaro/pay',
         ];
         if (array_key_exists($payment->payment_method, $routes)) {
             return url("{$routes[$payment->payment_method]}/?payment_id={$payment->id}");
