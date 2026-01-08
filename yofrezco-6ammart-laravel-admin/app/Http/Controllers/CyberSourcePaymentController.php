@@ -9,10 +9,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Validator;
 use App\Models\PaymentRequest;
 use App\Traits\Processor;
+use App\Models\Order;
 
 class CyberSourcePaymentController extends Controller
 {
@@ -32,10 +32,7 @@ class CyberSourcePaymentController extends Controller
         $this->payment = $payment;
     }
 
-    /**
-     * Display the payment page with Secure Acceptance form
-     */
-    public function index(Request $request): View|Factory|JsonResponse|Application
+    public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'payment_id' => 'required|uuid'
@@ -45,182 +42,100 @@ class CyberSourcePaymentController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)), 400);
         }
 
-        $data = $this->payment::where(['id' => $request['payment_id']])->where(['is_paid' => 0])->first();
-        if (!isset($data)) {
+        $payment = $this->payment::where(['id' => $request['payment_id']])->where(['is_paid' => 0])->first();
+        if (!isset($payment)) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
-        $config = $this->config_values;
+        // Fygaro Base Payment Button URL (Provided by user)
+        $baseUrl = 'https://www.fygaro.com/en/pb/a2a290cb-b939-48c0-b11c-cfb44852876f/';
         
-        // Get payer information
-        $payer_info = json_decode($data->payer_information ?? '{}');
-        $additional_data = json_decode($data->additional_data ?? '{}');
-        
-        // Generate Secure Acceptance form fields
-        $formData = $this->generateSecureAcceptanceFormData($data, $payer_info, $additional_data);
+        // Use button_url from config if exists, otherwise use the hardcoded one
+        if (isset($this->config_values->button_url) && !empty($this->config_values->button_url)) {
+            $baseUrl = $this->config_values->button_url;
+        }
 
-        return view('payment-views.cybersource', compact('data', 'config', 'formData'));
-    }
-
-    /**
-     * Generate Secure Acceptance form data with signature
-     */
-    private function generateSecureAcceptanceFormData($payment, $payer_info, $additional_data): array
-    {
-        $config = $this->config_values;
-        
-        // Determine endpoint based on mode
-        $endpoint = $config->mode == 'live'
-            ? 'https://secureacceptance.cybersource.com/silent/pay'
-            : 'https://testsecureacceptance.cybersource.com/silent/pay';
-
-        // Use simple uniqid() matching CyberSource sample
-        $transaction_uuid = uniqid();
-        $signed_date_time = gmdate("Y-m-d\TH:i:s\Z");
-        $reference_number = 'REF-' . $payment->id;
-        
-        // Define signed_field_names in exact order (matching CyberSource sample)
-        $signed_field_names = 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,payment_method,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_line1,bill_to_address_city,bill_to_address_state,bill_to_address_country,bill_to_address_postal_code,override_custom_receipt_page,override_custom_cancel_page';
-        
-        // Build the form fields in the exact order of signed_field_names
-        $fields = [
-            'access_key' => $config->access_key,
-            'profile_id' => $config->profile_id,
-            'transaction_uuid' => $transaction_uuid,
-            'signed_field_names' => $signed_field_names,
-            'unsigned_field_names' => 'card_type,card_number,card_expiry_date',
-            'signed_date_time' => $signed_date_time,
-            'locale' => 'en',
-            'transaction_type' => 'sale',
-            'reference_number' => $reference_number,
-            'amount' => number_format($payment->payment_amount, 2, '.', ''),
-            'currency' => strtoupper($payment->currency_code),
-            'payment_method' => 'card',
-            'bill_to_forename' => $payer_info->name ?? 'Customer',
-            'bill_to_surname' => $payer_info->last_name ?? 'User',
-            'bill_to_email' => $payer_info->email ?? 'customer@example.com',
-            'bill_to_phone' => $payer_info->phone ?? '0000000000',
-            'bill_to_address_line1' => $payer_info->address ?? '123 Main St',
-            'bill_to_address_city' => $payer_info->city ?? 'Panama City',
-            'bill_to_address_state' => $payer_info->state ?? 'PA',
-            'bill_to_address_country' => $payer_info->country ?? 'PA',
-            'bill_to_address_postal_code' => $payer_info->postal_code ?? '00000',
-            'override_custom_receipt_page' => route('cybersource.callback') . '?payment_id=' . $payment->id,
-            'override_custom_cancel_page' => route('cybersource.canceled') . '?payment_id=' . $payment->id,
-        ];
-
-        // Generate signature
-        $fields['signature'] = $this->generateSignature($fields, $config->secret_key);
-
-        return [
-            'endpoint' => $endpoint,
-            'fields' => $fields
-        ];
-    }
-
-    /**
-     * Generate HMAC-SHA256 signature for Secure Acceptance
-     */
-    private function generateSignature(array $params, string $secretKey): string
-    {
-        $signedFieldNames = explode(',', $params['signed_field_names']);
-        
-        $dataToSign = [];
-        foreach ($signedFieldNames as $field) {
-            $dataToSign[] = $field . '=' . $params[$field];
+        // Calculate Tax Amount
+        $taxAmount = 0.00;
+        // Attempt to fetch tax from Order if linked
+        if ($payment->attribute_id) {
+            $order = Order::find($payment->attribute_id);
+            if ($order) {
+                // Ensure we use the correct tax field
+                $taxAmount = $order->total_tax_amount ?? 0.00;
+            }
         }
         
-        $signatureString = implode(',', $dataToSign);
-        
-        return base64_encode(hash_hmac('sha256', $signatureString, $secretKey, true));
+        // Generate JWT
+        $jwt = $this->generateFygaroJwt($payment, $taxAmount);
+
+        // Redirect to Fygaro
+        return redirect()->away($baseUrl . '?jwt=' . $jwt);
     }
 
-    /**
-     * Handle CyberSource callback (success or decline)
-     */
+    private function generateFygaroJwt($payment, $taxAmount)
+    {
+        $header = [
+            "alg" => "HS256",
+            "typ" => "JWT",
+            "kid" => $this->config_values->access_key // Public Key
+        ];
+
+        $payload = [
+            "amount" => number_format($payment->payment_amount, 2, '.', ''),
+            "currency" => "USD",
+            "custom_reference" => $payment->id,
+            "tax_amount" => number_format($taxAmount, 2, '.', ''), // Tax requirement
+            "exp" => time() + 3600, // 1 hour expiration
+            "nbf" => time()
+        ];
+
+        $base64Header = $this->base64UrlEncode(json_encode($header));
+        $base64Payload = $this->base64UrlEncode(json_encode($payload));
+
+        $signature = hash_hmac('sha256', $base64Header . "." . $base64Payload, $this->config_values->secret_key, true);
+        $base64Signature = $this->base64UrlEncode($signature);
+
+        return $base64Header . "." . $base64Payload . "." . $base64Signature;
+    }
+
+    private function base64UrlEncode($data)
+    {
+        return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
+    }
+
     public function callback(Request $request)
     {
-        // Verify signature from CyberSource response
-        $responseSignature = $request->input('signature');
-        $signedFieldNames = $request->input('signed_field_names');
+        // Handle callback if Fygaro redirects back with parameters
+        // Fygaro returns: ?reference=FYGARO_ID&custom_reference=OUR_PAYMENT_ID
         
-        if ($signedFieldNames) {
-            $fields = explode(',', $signedFieldNames);
-            $dataToSign = [];
-            foreach ($fields as $field) {
-                $dataToSign[] = $field . '=' . $request->input($field);
-            }
-            $signatureString = implode(',', $dataToSign);
-            $expectedSignature = base64_encode(hash_hmac('sha256', $signatureString, $this->config_values->secret_key, true));
-            
-            // Signature validation (optional but recommended)
-            // if ($responseSignature !== $expectedSignature) {
-            //     return $this->payment_response(null, 'fail');
-            // }
-        }
-
-        $payment_id = $request->input('payment_id') ?? $request->input('req_reference_number');
+        $payment_id = $request->input('custom_reference');
         
-        // Extract payment_id from reference_number if needed
-        if (str_starts_with($payment_id, 'REF-')) {
-            $payment_id = str_replace('REF-', '', $payment_id);
+        if (!$payment_id) {
+             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200); 
         }
 
-        $decision = $request->input('decision');
-        $reason_code = $request->input('reason_code');
-        $transaction_id = $request->input('transaction_id');
+        $payment = $this->payment::where(['id' => $payment_id])->first();
 
-        $paymentData = $this->payment::where(['id' => $payment_id])->first();
-
-        if (!$paymentData) {
-            return redirect()->route('payment-fail');
-        }
-
-        // Check if payment was successful
-        // ACCEPT = approved, REVIEW = pending review, DECLINE/ERROR/CANCEL = failed
-        if ($decision === 'ACCEPT' && $reason_code === '100') {
-            // Payment successful
+        if ($payment) {
             $this->payment::where(['id' => $payment_id])->update([
-                'payment_method' => 'cybersource',
+                'payment_method' => 'cybersource', // Keep name as cybersource to match DB
                 'is_paid' => 1,
-                'transaction_id' => $transaction_id,
+                'transaction_id' => $request->input('reference'),
             ]);
 
-            $paymentData = $this->payment::where(['id' => $payment_id])->first();
+            $data = $this->payment::where(['id' => $payment_id])->first();
 
-            if (isset($paymentData) && function_exists($paymentData->success_hook)) {
-                call_user_func($paymentData->success_hook, $paymentData);
+            if (isset($data) && function_exists($data->success_hook)) {
+                call_user_func($data->success_hook, $data);
             }
 
-            return $this->payment_response($paymentData, 'success');
-        } else {
-            // Payment failed
-            if (isset($paymentData) && function_exists($paymentData->failure_hook)) {
-                call_user_func($paymentData->failure_hook, $paymentData);
-            }
-            return $this->payment_response($paymentData, 'fail');
+            return $this->payment_response($data, 'success');
         }
-    }
 
-    /**
-     * Handle successful payment (legacy route)
-     */
-    public function success(Request $request)
-    {
-        return $this->callback($request);
+        return $this->payment_response(null, 'fail');
     }
-
-    /**
-     * Handle canceled payment
-     */
-    public function canceled(Request $request): JsonResponse|Redirector|RedirectResponse|Application
-    {
-        $payment_id = $request->input('payment_id');
-        $paymentData = $this->payment::where(['id' => $payment_id])->first();
-        
-        if (isset($paymentData) && function_exists($paymentData->failure_hook)) {
-            call_user_func($paymentData->failure_hook, $paymentData);
-        }
-        return $this->payment_response($paymentData, 'cancel');
-    }
+    
+    public function success() { return response()->json(['message' => 'Payment Successful']); }
+    public function canceled() { return response()->json(['message' => 'Payment Canceled']); }
 }
