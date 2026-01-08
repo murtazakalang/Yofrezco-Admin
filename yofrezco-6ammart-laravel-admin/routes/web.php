@@ -197,8 +197,8 @@ if (!$is_published) {
             Route::any('response', [PaytabsController::class, 'response'])->name('response');
         });
 
-        //CYBERSOURCE
-        Route::group(['prefix' => 'cybersource', 'as' => 'cybersource.'], function () {
+        //FYGARO
+        Route::group(['prefix' => 'fygaro', 'as' => 'fygaro.'], function () {
             Route::get('pay', [\App\Http\Controllers\FygaroPaymentController::class, 'index'])->name('pay');
             Route::post('callback', [\App\Http\Controllers\FygaroPaymentController::class, 'callback'])->name('callback')
                 ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
