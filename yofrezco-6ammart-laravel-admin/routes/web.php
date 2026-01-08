@@ -202,6 +202,7 @@ if (!$is_published) {
             Route::get('pay', [\App\Http\Controllers\FygaroPaymentController::class, 'index'])->name('pay');
             Route::post('callback', [\App\Http\Controllers\FygaroPaymentController::class, 'callback'])->name('callback')
                 ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+            Route::get('return', [\App\Http\Controllers\FygaroPaymentController::class, 'return'])->name('return');
             Route::get('success', [\App\Http\Controllers\FygaroPaymentController::class, 'success'])->name('success');
             Route::get('canceled', [\App\Http\Controllers\FygaroPaymentController::class, 'canceled'])->name('canceled');
         });

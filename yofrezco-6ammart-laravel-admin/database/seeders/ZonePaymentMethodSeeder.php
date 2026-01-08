@@ -9,8 +9,8 @@ class ZonePaymentMethodSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
-     * Panama (zone_id = 11): Tilopay, CyberSource
+     *
+     * Panama (zone_id = 11): Tilopay, Fygaro
      * Curacao (zone_id = 4): Rapidpay
      */
     public function run(): void
@@ -18,7 +18,7 @@ class ZonePaymentMethodSeeder extends Seeder
         // Clear existing data
         ZonePaymentMethod::truncate();
 
-        // Panama Zone (ID: 11) - Tilopay and CyberSource
+        // Panama Zone (ID: 11) - Tilopay and Fygaro
         ZonePaymentMethod::create([
             'zone_id' => 11,
             'payment_method' => 'tilopay'
@@ -26,7 +26,7 @@ class ZonePaymentMethodSeeder extends Seeder
 
         ZonePaymentMethod::create([
             'zone_id' => 11,
-            'payment_method' => 'cybersource'
+            'payment_method' => 'fygaro'
         ]);
 
         // Curacao Zone (ID: 4) - Rapidpay
