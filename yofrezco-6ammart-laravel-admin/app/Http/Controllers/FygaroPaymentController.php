@@ -14,7 +14,7 @@ use App\Models\PaymentRequest;
 use App\Traits\Processor;
 use App\Models\Order;
 
-class CyberSourcePaymentController extends Controller
+class FygaroPaymentController extends Controller
 {
     use Processor;
 
@@ -49,7 +49,7 @@ class CyberSourcePaymentController extends Controller
 
         // Fygaro Base Payment Button URL (Provided by user)
         $baseUrl = 'https://www.fygaro.com/en/pb/a2a290cb-b939-48c0-b11c-cfb44852876f/';
-        
+
         // Use button_url from config if exists, otherwise use the hardcoded one
         if (isset($this->config_values->button_url) && !empty($this->config_values->button_url)) {
             $baseUrl = $this->config_values->button_url;
@@ -65,7 +65,7 @@ class CyberSourcePaymentController extends Controller
                 $taxAmount = $order->total_tax_amount ?? 0.00;
             }
         }
-        
+
         // Generate JWT
         $jwt = $this->generateFygaroJwt($payment, $taxAmount);
 
@@ -108,11 +108,11 @@ class CyberSourcePaymentController extends Controller
     {
         // Handle callback if Fygaro redirects back with parameters
         // Fygaro returns: ?reference=FYGARO_ID&custom_reference=OUR_PAYMENT_ID
-        
+
         $payment_id = $request->input('custom_reference');
-        
+
         if (!$payment_id) {
-             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200); 
+            return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
         $payment = $this->payment::where(['id' => $payment_id])->first();
@@ -135,7 +135,13 @@ class CyberSourcePaymentController extends Controller
 
         return $this->payment_response(null, 'fail');
     }
-    
-    public function success() { return response()->json(['message' => 'Payment Successful']); }
-    public function canceled() { return response()->json(['message' => 'Payment Canceled']); }
+
+    public function success()
+    {
+        return response()->json(['message' => 'Payment Successful']);
+    }
+    public function canceled()
+    {
+        return response()->json(['message' => 'Payment Canceled']);
+    }
 }
