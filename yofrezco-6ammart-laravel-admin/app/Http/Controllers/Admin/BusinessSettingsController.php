@@ -1149,7 +1149,7 @@ class BusinessSettingsController extends Controller
 
             $value = $setting->value;
             if ($setting->key === 'offline_payment_status') {
-                $status = (int)$value;
+                $status = (int) $value;
             } else {
                 $decoded = json_decode($value, true);
                 $status = $decoded['status'] ?? 0;
@@ -1184,7 +1184,7 @@ class BusinessSettingsController extends Controller
         $request['status'] = $request->status ?? 0;
 
         $validation = [
-            'gateway' => 'required|in:ssl_commerz,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago',
+            'gateway' => 'required|in:ssl_commerz,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,fygaro',
             'mode' => 'required|in:live,test',
         ];
 
@@ -2800,11 +2800,11 @@ class BusinessSettingsController extends Controller
         $social_login = [];
         $social_login_data = Helpers::get_business_settings('social_login') ?? [];
         foreach ($social_login_data as $social) {
-            $social_login[$social['login_medium']] = (bool)$social['status'];
+            $social_login[$social['login_medium']] = (bool) $social['status'];
         }
         $social_login_data = Helpers::get_business_settings('apple_login') ?? [];
         foreach ($social_login_data as $social) {
-            $social_login[$social['login_medium']] = (bool)$social['status'];
+            $social_login[$social['login_medium']] = (bool) $social['status'];
         }
 
         $is_firebase_active = Helpers::get_business_settings('firebase_otp_verification') ?? 0;
@@ -3737,7 +3737,7 @@ class BusinessSettingsController extends Controller
             $earning_seller_image = DataSetting::where('type', 'admin_landing_page')->where('key', 'earning_seller_image')->first();
             if ($earning_seller_image == null) {
                 $request->validate([
-                    'earning_seller_image' => 'required|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                    'earning_seller_image' => 'required|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
                 ]);
                 $earning_seller_image = new DataSetting;
             }
@@ -3771,7 +3771,7 @@ class BusinessSettingsController extends Controller
             $earning_delivery_image = DataSetting::where('type', 'admin_landing_page')->where('key', 'earning_delivery_image')->first();
             if ($earning_delivery_image == null) {
                 $request->validate([
-                    'earning_delivery_image' => 'required|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                    'earning_delivery_image' => 'required|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
                 ]);
                 $earning_delivery_image = new DataSetting;
             }
@@ -3845,7 +3845,7 @@ class BusinessSettingsController extends Controller
         } elseif ($tab == 'special-criteria-list') {
             $request->validate([
                 'title' => 'required',
-                'image' => 'required|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                'image' => 'required|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
             ]);
             if ($request->title[array_search('default', $request->lang)] == '') {
                 Toastr::error(translate('default_data_is_required'));
@@ -3890,9 +3890,9 @@ class BusinessSettingsController extends Controller
             Toastr::success(translate('messages.criteria_added_successfully'));
         } elseif ($tab == 'download-app-section') {
             $request->validate([
-                'download_user_app_title.0' =>'required',
+                'download_user_app_title.0' => 'required',
                 'download_user_app_sub_title.0' => 'required',
-                'image' => 'nullable|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION
+                'image' => 'nullable|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION
             ]);
             $download_user_app_title = DataSetting::where('type', 'admin_landing_page')->where('key', 'download_user_app_title')->first();
             if ($download_user_app_title == null) {
@@ -4047,8 +4047,8 @@ class BusinessSettingsController extends Controller
                 'name' => 'required',
                 'designation' => 'required',
                 'review' => 'required',
-                'reviewer_image' => 'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
-                'company_image' => 'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                'reviewer_image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
+                'company_image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
             ]);
 
             $testimonial = new AdminTestimonial;
@@ -4083,7 +4083,7 @@ class BusinessSettingsController extends Controller
             $contact_us_image = DataSetting::where('type', 'admin_landing_page')->where('key', 'contact_us_image')->first();
             if ($contact_us_image == null) {
                 $request->validate([
-                    'image' => 'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                    'image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
                 ]);
                 $contact_us_image = new DataSetting;
             }
@@ -4199,9 +4199,9 @@ class BusinessSettingsController extends Controller
 
             $available_zone_image = DataSetting::where('type', 'admin_landing_page')->where('key', 'available_zone_image')->first();
             if ($available_zone_image == null) {
-                    $request->validate([
-                        'image' => 'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION
-                    ]);
+                $request->validate([
+                    'image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION
+                ]);
                 $available_zone_image = new DataSetting;
             }
             $available_zone_image->key = 'available_zone_image';
@@ -4360,7 +4360,7 @@ class BusinessSettingsController extends Controller
         $request->validate([
             'title' => 'required|max:100',
             'sub_title' => 'required',
-            'image' =>  'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION
+            'image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION
         ]);
 
         if ($request->title[array_search('default', $request->lang)] == '') {
@@ -4473,7 +4473,7 @@ class BusinessSettingsController extends Controller
         $request->validate([
             'title' => 'required|max:100',
             'sub_title' => 'required',
-            'image' =>  'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION
+            'image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION
         ]);
 
         if ($request->title[array_search('default', $request->lang)] == '') {
@@ -4594,9 +4594,9 @@ class BusinessSettingsController extends Controller
         }
         $criteria = AdminSpecialCriteria::find($id);
         $criteria->title = $request->title[array_search('default', $request->lang)];
-        if ($criteria->image == null){
+        if ($criteria->image == null) {
             $request->validate([
-                'image' => 'nullable|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION
+                'image' => 'nullable|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION
             ]);
         }
         $criteria->image = $request->has('image') ? Helpers::update('special_criteria/', $criteria->image, 'png', $request->file('image')) : $criteria->image;
@@ -4684,12 +4684,12 @@ class BusinessSettingsController extends Controller
         $review->review = $request->review;
         if ($review->reviewer_image == null) {
             $request->validate([
-                'reviewer_image' => 'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                'reviewer_image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
             ]);
         }
-        if ($review->company_image == null){
+        if ($review->company_image == null) {
             $request->validate([
-                'company_image' => 'required|image|max:2048|mimes:'.IMAGE_FORMAT_FOR_VALIDATION,
+                'company_image' => 'required|image|max:2048|mimes:' . IMAGE_FORMAT_FOR_VALIDATION,
             ]);
         }
 
@@ -4736,7 +4736,7 @@ class BusinessSettingsController extends Controller
             'faq' => 'react-landing-page-faq',
             'footer' => 'react-landing-page-footer',
             'meta-data' => 'react-landing-meta-data',
-//            'company-intro' => 'react-landing-page-company',
+            //            'company-intro' => 'react-landing-page-company',
 //            'earn-money' => 'react-landing-earn-money',
 //            'business-section' => 'react-landing-business',
         ];
@@ -5386,9 +5386,7 @@ class BusinessSettingsController extends Controller
 
 
             Toastr::success(translate('messages.available_zone_section_updated'));
-        }
-
-        elseif ($tab == 'testimonial-title') {
+        } elseif ($tab == 'testimonial-title') {
             $request->validate([
                 'testimonial_title.0' => 'required|max:50',
                 'testimonial_sub_title.0' => 'required|max:200',
@@ -5427,7 +5425,7 @@ class BusinessSettingsController extends Controller
             Helpers::add_or_update_translations(request: $request, key_data: 'review', name_field: 'review', model_name: 'ReactTestimonial', data_id: $testimonial->id, data_value: $testimonial->review);
             Toastr::success(translate('messages.testimonial_added_successfully'));
         }
-//        elseif ($tab == 'business-section') {
+        //        elseif ($tab == 'business-section') {
 //            $business_title = DataSetting::where('type', 'react_landing_page')->where('key', 'business_title')->first();
 //            if ($business_title == null) {
 //                $business_title = new DataSetting;
@@ -5527,7 +5525,6 @@ class BusinessSettingsController extends Controller
 //
 //            Toastr::success(translate('messages.business_section_updated'));
 //        }
-
         elseif ($tab == 'header-section') {
             $request->validate([
                 'header_title.0' => 'required',
@@ -5705,7 +5702,7 @@ class BusinessSettingsController extends Controller
 
             Toastr::success(translate('messages.header_section_updated'));
         }
-//        elseif ($tab == 'company-section') {
+        //        elseif ($tab == 'company-section') {
 //
 //            $request->validate([
 //                'company_title.0' => 'required',
@@ -7530,7 +7527,10 @@ class BusinessSettingsController extends Controller
 
         if ($multiLang) {
             Helpers::add_or_update_translations(
-                request: $request, key_data: $key, name_field: $key, model_name: 'DataSetting',
+                request: $request,
+                key_data: $key,
+                name_field: $key,
+                model_name: 'DataSetting',
                 data_id: $data->id,
                 data_value: $data->value
             );
