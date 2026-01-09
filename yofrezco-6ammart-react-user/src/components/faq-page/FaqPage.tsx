@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
 import { t } from 'i18next';
-import CustomContainer from '../container';
+import CustomContainer from 'components/container';
 
 interface FaqItem {
     id: number;
