@@ -97,6 +97,17 @@ const RouteLinks = (props) => {
       >
         {selectedModule?.module_type === "rental" ? t("Track Trip") : t("Track Order")}
       </Typography>
+      <Typography
+        onClick={() => handleClickToRoute("/faq")}
+        sx={{
+          cursor: "pointer",
+          "&:hover": {
+            color: "#888888",
+          },
+        }}
+      >
+        {t("FAQ")}
+      </Typography>
     </CustomStackFullWidth>
   );
 };
