@@ -92,21 +92,14 @@ class FygaroPaymentController extends Controller
 
     private function calculateTaxAmount($payment): float
     {
-        $taxAmount = 0.00;
+        // Calculate 7% of payment amount as tax for Panama tax requirements
+        $taxAmount = (float) ($payment->payment_amount * 0.07);
 
-        // Attempt to fetch tax from Order if linked
-        if ($payment->attribute_id) {
-            $order = Order::find($payment->attribute_id);
-            if ($order) {
-                // Get tax from order's total_tax_amount field
-                $taxAmount = (float) ($order->total_tax_amount ?? 0.00);
-
-                Log::info('Fygaro: Tax calculated from order', [
-                    'order_id' => $order->id,
-                    'total_tax_amount' => $taxAmount
-                ]);
-            }
-        }
+        Log::info('Fygaro: Tax calculated as 7% of payment amount', [
+            'payment_id' => $payment->id,
+            'payment_amount' => $payment->payment_amount,
+            'tax_amount' => $taxAmount
+        ]);
 
         return $taxAmount;
     }

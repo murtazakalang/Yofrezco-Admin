@@ -1069,7 +1069,7 @@ class ConfigController extends Controller
             return [];
         }
 
-        $defaultGateways = ['ssl_commerz', 'paypal', 'stripe', 'razor_pay', 'senang_pay', 'paytabs', 'paystack', 'paymob_accept', 'paytm', 'flutterwave', 'liqpay', 'bkash', 'mercadopago'];
+        $defaultGateways = ['ssl_commerz', 'paypal', 'stripe', 'razor_pay', 'senang_pay', 'paytabs', 'paystack', 'paymob_accept', 'paytm', 'flutterwave', 'liqpay', 'bkash', 'mercadopago', 'rapidpay', 'tilopay', 'fygaro'];
 
         $methods = Setting::where('is_active', 1)->whereIn('settings_type', ['payment_config'])->whereIn('key_name', $defaultGateways);
 
