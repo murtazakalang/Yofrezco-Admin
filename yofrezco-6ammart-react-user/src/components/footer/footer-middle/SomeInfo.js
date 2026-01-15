@@ -27,10 +27,10 @@ const SomeInfo = (props) => {
         },
         "&:hover": {
           ".MuiTypography-body1": {
-            color: theme.palette.primary.main,
+            color: "#9CA3AF",
           },
           ".MuiTypography-body2": {
-            color: theme.palette.primary.main,
+            color: "#9CA3AF",
           },
         },
       }}
@@ -45,7 +45,7 @@ const SomeInfo = (props) => {
           color: "#FFFFFF",
         }}
       >
-        {info}
+        {title}
       </Typography>
     </CustomStackFullWidth>
   );
