@@ -202,13 +202,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
             mt={{ xs: "10x", md: "16px" }}
             spacing={1}
           >
-            {isLoading ? (
-              <Skeleton varient="text" width="110px" />
-            ) : (
-              <LocalizedPopularProductsTitle />
-            )}
-
-            {/* Flash Sale Section - Above Popular Products */}
+            {/* Flash Sale Section - First */}
             {flashSalesIsLoading ? (
               <CustomBoxFullWidth sx={{ mb: 3 }}>
                 <CampaignSimmerTimmer />
@@ -219,6 +213,13 @@ const PopularItemsNearby = ({ title, subTitle }) => {
                   <ItemsCampaign flashSales={flashSales} />
                 </CustomBoxFullWidth>
               )
+            )}
+
+            {/* Popular Products Title - After Flash Sale */}
+            {isLoading ? (
+              <Skeleton varient="text" width="110px" />
+            ) : (
+              <LocalizedPopularProductsTitle />
             )}
 
             {/* Popular Products Section */}

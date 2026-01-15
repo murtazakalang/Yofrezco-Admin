@@ -83,16 +83,19 @@ const Shop = ({ configData }) => {
           <FeaturedCategories configData={configData} />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Recommended Store Section
       <Grid item xs={12}>
         <CustomContainer>
           <RecommendedStore />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <PharmacyStaticBanners />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Visit Again Section
       <Grid item xs={12}>
         {IsSmallScreen() ? (
           <VisitAgain
@@ -112,6 +115,7 @@ const Shop = ({ configData }) => {
           </CustomContainer>
         )}
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <PaidAds />
@@ -135,16 +139,20 @@ const Shop = ({ configData }) => {
           <CampaignBanners />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Limited Offer Section
       <Grid item xs={12}>
         <CustomContainer>
           <SpecialFoodOffers />
         </CustomContainer>
       </Grid>
+      */}
+      {/* TEMPORARILY HIDDEN - Popular Stores Section
       <Grid item xs={12}>
         <CustomContainer>
           <FeaturedStores title="Popular Store" configData={configData} />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <BestReviewedItems

@@ -398,8 +398,8 @@ const SecondNavBar = ({ configData }) => {
       {!isSmall && (
         <Box display="flex" justifyContent="center" flex={1}>
           <LogoSide
-            width={350}
-            height={220}
+            width={200}
+            height={55}
             configData={configData}
             objectFit="contain"
             className="custom-logo-side"
