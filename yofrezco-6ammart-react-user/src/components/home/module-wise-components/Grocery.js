@@ -1,4 +1,4 @@
-import {Grid, useMediaQuery} from "@mui/material";
+import { Grid, useMediaQuery } from "@mui/material";
 import useGetNewArrivalStores from "api-manage/hooks/react-query/store/useGetNewArrivalStores";
 import { useGetVisitAgain } from "api-manage/hooks/react-query/useGetVisitAgain";
 import PaidAds from "components/home/paid-ads";
@@ -24,6 +24,7 @@ import VisitAgain from "../visit-again";
 import PharmacyStaticBanners from "./pharmacy/pharmacy-banners/PharmacyStaticBanners";
 import TopOffersNearMe from "../top-offers-nearme";
 import RecommendedStore from "components/home/recommended-store";
+import Brands from "components/home/brands";
 
 const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
 const Grocery = (props) => {
@@ -39,13 +40,13 @@ const Grocery = (props) => {
     data: visitedStores,
     refetch: refetchVisitAgain,
     isFetching: visitIsFetching,
-    isLoading:visitIsLoading
+    isLoading: visitIsLoading
   } = useGetVisitAgain();
   const {
     data: newStore,
     refetch: newStoreRefetch,
     isFetching,
-    isLoading:newStoreIsLoading
+    isLoading: newStoreIsLoading
   } = useGetNewArrivalStores({
     type: "all",
   });
@@ -62,7 +63,7 @@ const Grocery = (props) => {
     }
   }, [visitedStores, newStore?.stores, getModuleId()]);
 
-    const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   return (
     <Grid container spacing={1}>
@@ -71,11 +72,14 @@ const Grocery = (props) => {
           <FeaturedCategories configData={configData} />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Recommended Store Section
       <Grid item xs={12}>
         <CustomContainer>
           <RecommendedStore/>
         </CustomContainer>
       </Grid>
+      */}
+      {/* TEMPORARILY HIDDEN - Visit Again Section
         {token && (<Grid item xs={12} mb={3}>
             {isSmallScreen ? (
                 <VisitAgain
@@ -98,6 +102,7 @@ const Grocery = (props) => {
                 </CustomContainer>
             )}
         </Grid>)}
+      */}
       <Grid item xs={12} mb={3}>
         <CustomContainer>
           <PaidAds />
@@ -116,11 +121,13 @@ const Grocery = (props) => {
           <PharmacyStaticBanners />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Limited Offer Section
       <Grid item xs={12}>
         <CustomContainer>
           <SpecialFoodOffers />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <TopOffersNearMe title="Top offers near me" />
@@ -161,17 +168,25 @@ const Grocery = (props) => {
           </CustomContainer>
         )}
       </Grid>
+      {/* TEMPORARILY HIDDEN - Popular Stores Section
       <Grid item xs={12}>
         <CustomContainer>
           <NewArrivalStores />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <PromotionalBanner bannerData={data} />
         </CustomContainer>
       </Grid>
 
+      {/* TEMPORARILY HIDDEN - Brands Section */}
+      {/* <Grid item xs={12}>
+        <CustomContainer>
+          <Brands />
+        </CustomContainer>
+      </Grid> */}
       <Grid item xs={12}>
         <CustomContainer>
           <Stores />

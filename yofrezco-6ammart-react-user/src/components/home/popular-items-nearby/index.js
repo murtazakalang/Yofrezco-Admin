@@ -207,6 +207,21 @@ const PopularItemsNearby = ({ title, subTitle }) => {
             ) : (
               <LocalizedPopularProductsTitle />
             )}
+
+            {/* Flash Sale Section - Above Popular Products */}
+            {flashSalesIsLoading ? (
+              <CustomBoxFullWidth sx={{ mb: 3 }}>
+                <CampaignSimmerTimmer />
+              </CustomBoxFullWidth>
+            ) : (
+              flashSaleslength() && (
+                <CustomBoxFullWidth sx={{ mb: 3 }}>
+                  <ItemsCampaign flashSales={flashSales} />
+                </CustomBoxFullWidth>
+              )
+            )}
+
+            {/* Popular Products Section */}
             <CustomBoxFullWidth>
               <Grid container spacing={2} sx={{ marginTop: "1px" }}>
                 {isLoading ? (
@@ -254,19 +269,6 @@ const PopularItemsNearby = ({ title, subTitle }) => {
                 )}
               </Grid>
             </CustomBoxFullWidth>
-
-            {/* Flash Sale Section - Below Popular Products */}
-            {flashSalesIsLoading ? (
-              <CustomBoxFullWidth sx={{ mt: 3 }}>
-                <CampaignSimmerTimmer />
-              </CustomBoxFullWidth>
-            ) : (
-              flashSaleslength() && (
-                <CustomBoxFullWidth sx={{ mt: 3 }}>
-                  <ItemsCampaign flashSales={flashSales} />
-                </CustomBoxFullWidth>
-              )
-            )}
           </CustomStackFullWidth>
         </>
       )}

@@ -28,6 +28,39 @@ import CustomPopover from "../../CustomPopover";
 import AllStores from "./AllStores";
 import MobileMenus from "./MobileMenus";
 
+// Localized Title Image Component for Stores
+const LocalizedStoresTitle = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
+  const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+
+  const imageSrc = isSpanish
+    ? "/stores_spanish.png"
+    : "/stores_english.png";
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        mb: 1
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Stores"
+        style={{
+          height: "220px",
+          width: "auto",
+          objectFit: "contain"
+        }}
+      />
+    </Box>
+  );
+};
+
 const menus = [
   { label: t("All"), value: "all" },
   { label: t("Newly Joined"), value: "newly_joined" },
@@ -49,7 +82,7 @@ const Filter = (props) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const mobileLayout = () => {};
+  const mobileLayout = () => { };
   const desktopLayout = () => {
     return (
       <Box sx={{ width: 120, bgcolor: "background.paper" }}>
@@ -100,7 +133,7 @@ const Filter = (props) => {
           placement="bottom"
           handleClose={() => setAnchorEl(null)}
           top="10px"
-          // left="-230px"
+        // left="-230px"
         >
           {isSmall ? mobileLayout() : desktopLayout()}
         </CustomPopover>
@@ -155,6 +188,7 @@ const Stores = (props) => {
 
   return (
     <HomeComponentsWrapper sx={{ paddingTop: "1rem" }}>
+      <LocalizedStoresTitle />
       <CustomStackFullWidth
         direction="row"
         alignItems="center"

@@ -18,9 +18,9 @@ const getModuleWiseBG = (theme) => {
 };
 
 export const CustomBadgeWrapepr = styled(Badge)(
-  ({ theme, bg_color, top, left, border_radius,fontSize    }) => ({
+  ({ theme, bg_color, top, left, border_radius, fontSize }) => ({
     color: theme.palette.whiteContainer.main,
-    backgroundColor: bg_color ? bg_color : theme.palette.error.deepLight,
+    backgroundColor: bg_color ? bg_color : "#EF4444",
     position: "absolute",
     top: top ? top : "0",
     left: left ? left : 0,
@@ -38,7 +38,7 @@ export const CustomBadgeWrapepr = styled(Badge)(
 );
 
 const CustomBadge = (props) => {
-  const { text, top, bg_color,fontSize,border_radius } = props;
+  const { text, top, bg_color, fontSize, border_radius } = props;
   return (
     <CustomBadgeWrapepr fontSize={fontSize} border_radius={border_radius} bg_color={bg_color} top={top}>
       {" "}

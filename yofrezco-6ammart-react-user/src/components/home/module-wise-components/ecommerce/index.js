@@ -85,7 +85,7 @@ const Shop = ({ configData }) => {
       </Grid>
       <Grid item xs={12}>
         <CustomContainer>
-          <RecommendedStore/>
+          <RecommendedStore />
         </CustomContainer>
       </Grid>
       <Grid item xs={12}>
@@ -175,11 +175,13 @@ const Shop = ({ configData }) => {
           <FeaturedCategoriesWithFilter title="Featured Categories" />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Brands Section
       <Grid item xs={12}>
         <CustomContainer>
           <Brands />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <SinglePoster bannerData={data} />
