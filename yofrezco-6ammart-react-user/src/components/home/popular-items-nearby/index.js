@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useGetPopularItemsNearby from "../../../api-manage/hooks/react-query/useGetPopularItemsNearby";
 
-import { Grid, Skeleton, Box } from "@mui/material";
+import { Grid, Skeleton, Box, Stack, Typography, useTheme } from "@mui/material";
 import Slider from "react-slick";
 
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 
 import { useGetFlashSales } from "api-manage/hooks/react-query/useGetFlashSales";
 import { getLanguage } from "helper-functions/getLanguage";
@@ -62,6 +63,8 @@ const LocalizedPopularProductsTitle = () => {
 const PopularItemsNearby = ({ title, subTitle }) => {
   const { popularItemsNearby } = useSelector((state) => state.storedData);
   const { t } = useTranslation();
+  const router = useRouter();
+  const theme = useTheme();
   const limit = 2;
   const offset = 1;
   const { data, refetch, isLoading, isFetching } = useGetPopularItemsNearby({
@@ -270,6 +273,22 @@ const PopularItemsNearby = ({ title, subTitle }) => {
                 )}
               </Grid>
             </CustomBoxFullWidth>
+
+            {/* View All Link */}
+            <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
+              <Typography
+                onClick={() => router.push('/home?search=allProducts')}
+                sx={{
+                  textDecoration: "underLine",
+                  color: theme.palette.primary.main,
+                  cursor: "pointer"
+                }}
+                fontSize="16px"
+                fontWeight="600"
+              >
+                {t("View All")}
+              </Typography>
+            </Stack>
           </CustomStackFullWidth>
         </>
       )}

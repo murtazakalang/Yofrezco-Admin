@@ -55,6 +55,7 @@ const ItemsCampaign = ({ flashSales }) => {
 
   const theme = useTheme();
   const router = useRouter()
+  const { t } = useTranslation();
 
   const handleFlashSales = () => {
     router.push({
@@ -114,19 +115,18 @@ const ItemsCampaign = ({ flashSales }) => {
         </Grid>
       </Box>
 
-      <Stack width="100%" alignItems="end" justifyContent="center">
+      <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
         <Typography
           onClick={handleFlashSales}
           sx={{
             textDecoration: "underLine",
-            color: theme => theme.palette.neutral[400],
+            color: theme => theme.palette.primary.main,
             cursor: "pointer"
           }}
           fontSize="16px"
           fontWeight="600"
-          marginRight="10px"
         >
-          {("See All")}
+          {t("View All")}
         </Typography>
       </Stack>
     </CustomStackFullWidth>

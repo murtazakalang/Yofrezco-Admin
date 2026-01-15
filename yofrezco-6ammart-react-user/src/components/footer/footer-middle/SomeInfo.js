@@ -19,7 +19,7 @@ const SomeInfo = (props) => {
     <CustomStackFullWidth
       alignItems="center"
       justifyContent="center"
-      spacing={3}
+      spacing={2}
       sx={{
         cursor: "pointer",
         img: {
@@ -35,26 +35,21 @@ const SomeInfo = (props) => {
         },
       }}
     >
-      <CustomImageContainer src={imageSrc} alt={alt} height={100} width={100} />
+      <CustomImageContainer src={imageSrc} alt={alt} height={120} width={120} />
       <CustomStackFullWidth
         alignItems="center"
         justifyContent="center"
         spacing={1}
       >
-        <CustomTypographyBold
-          sx={{
-            textTransform: "capitalize",
-          }}
-        >
-          {t(title)}
-        </CustomTypographyBold>
         <Typography
-          variant="body2"
+          variant="body1"
+          fontWeight="600"
           sx={{
             textAlign: "center",
+            fontSize: "16px",
           }}
         >
-          {info}
+          {t(info)}
         </Typography>
       </CustomStackFullWidth>
     </CustomStackFullWidth>

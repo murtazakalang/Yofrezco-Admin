@@ -172,8 +172,7 @@ const FooterMiddle = (props) => {
                   <SomeInfo
                     image="/email_footer.png"
                     alt="Email"
-                    title="Send us mails"
-                    info={configData?.email}
+                    title="Email Us"
                     t={t}
                     href={`mailto:${configData?.email}`}
                   />
@@ -192,8 +191,7 @@ const FooterMiddle = (props) => {
                   <SomeInfo
                     image="/Whatsapp_footer.png"
                     alt="WhatsApp"
-                    title="Contact us"
-                    info="Info & Support"
+                    title="Info & Support"
                     t={t}
                     href="https://wa.link/yofrezco"
                     isExternal={true}
@@ -229,7 +227,7 @@ const FooterMiddle = (props) => {
                   image="/email_footer.png"
                   alt="Email"
                   title="Send us mails"
-                  info={configData?.email}
+                  info="Email Us"
                   t={t}
                   href={`mailto:${configData?.email}`}
                 />
