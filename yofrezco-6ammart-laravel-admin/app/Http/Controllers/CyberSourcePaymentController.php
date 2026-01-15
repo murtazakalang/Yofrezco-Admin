@@ -247,6 +247,7 @@ class CyberSourcePaymentController extends Controller
             ],
             'processingInformation' => [
                 'commerceIndicator' => 'internet',
+                'actionList' => ['DECISION_SKIP'], // Skip Decision Manager fraud screening
             ],
             'orderInformation' => [
                 'amountDetails' => [
