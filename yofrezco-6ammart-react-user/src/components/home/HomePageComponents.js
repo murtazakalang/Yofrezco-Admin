@@ -151,9 +151,10 @@ const HomePageComponents = ({ configData, landingPageData }) => {
             justifyContent="center"
             sx={{
               position: "absolute",
-              top: { xs: -4, sm: 50 },
+              top: "50%",
               left: 0,
               right: 0,
+              transform: "translateY(-50%)",
             }}
           >
             <SearchWithTitle

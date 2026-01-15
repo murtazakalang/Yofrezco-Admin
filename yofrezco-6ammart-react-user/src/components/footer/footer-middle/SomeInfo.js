@@ -36,22 +36,17 @@ const SomeInfo = (props) => {
       }}
     >
       <CustomImageContainer src={imageSrc} alt={alt} height={120} width={120} />
-      <CustomStackFullWidth
-        alignItems="center"
-        justifyContent="center"
-        spacing={1}
+      <Typography
+        variant="body1"
+        fontWeight="600"
+        sx={{
+          textAlign: "center",
+          fontSize: "18px",
+          color: "#FFFFFF",
+        }}
       >
-        <Typography
-          variant="body1"
-          fontWeight="600"
-          sx={{
-            textAlign: "center",
-            fontSize: "16px",
-          }}
-        >
-          {t(info)}
-        </Typography>
-      </CustomStackFullWidth>
+        {info}
+      </Typography>
     </CustomStackFullWidth>
   );
 
