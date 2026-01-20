@@ -223,8 +223,7 @@ const ItemCheckout = (props) => {
     ["get-distancesss", storeData, address, orderType],
     () => GoogleApi.distanceApi(storeData, address),
     {
-      // Only run query when both storeData and address are available
-      enabled: !!(storeData?.latitude && storeData?.longitude && address?.lat && address?.lng),
+      enabled: true,
       onError: onErrorResponse,
     }
   );

@@ -709,16 +709,6 @@ export const getDeliveryFees = (
   extraCharge,
   surgePrice
 ) => {
-  // DEBUG LOGGING - Remove after fixing issue
-  console.log('=== DELIVERY FEE DEBUG ===');
-  console.log('orderType:', orderType);
-  console.log('storeData?.self_delivery_system:', storeData?.self_delivery_system);
-  console.log('distance:', distance);
-  console.log('origin:', origin);
-  console.log('destination:', destination);
-  console.log('zoneData:', zoneData);
-  console.log('configData?.per_km_shipping_charge:', configData?.per_km_shipping_charge);
-
   if (orderType === "delivery" || orderType === "schedule_order") {
     //convert m to km
     let convertedDistance = handleDistance(
@@ -726,11 +716,7 @@ export const getDeliveryFees = (
       origin,
       destination
     );
-    console.log('convertedDistance (km):', convertedDistance);
-    
     let deliveryFee = convertedDistance * configData?.per_km_shipping_charge;
-    console.log('Initial deliveryFee from configData:', deliveryFee);
-    
     let totalOrderAmount = cartItemsTotalAmount(cartList);
     const isAdminFreeDeliveryEnabled = configData?.admin_free_delivery?.status === true;
     const freeDeliveryType = configData?.admin_free_delivery?.type;
@@ -740,75 +726,42 @@ export const getDeliveryFees = (
       freeDeliveryThreshold > 0 &&
       totalOrderAmount >= freeDeliveryThreshold;
     const isFreeDeliveryToAllStores = freeDeliveryType === "free_delivery_to_all_store";
-    
-    console.log('isAdminFreeDeliveryEnabled:', isAdminFreeDeliveryEnabled);
-    console.log('isFreeDeliveryByAmount:', isFreeDeliveryByAmount);
-    console.log('isFreeDeliveryToAllStores:', isFreeDeliveryToAllStores);
-    
     //restaurant self delivery system checking
     if (Number.parseInt(storeData?.self_delivery_system ) === 1) {
-      console.log('>>> Using SELF DELIVERY system');
       const storeWiseDeliveryFee = convertedDistance * storeData?.per_km_shipping_charge || 0;
-      console.log('storeData?.per_km_shipping_charge:', storeData?.per_km_shipping_charge);
-      console.log('storeWiseDeliveryFee:', storeWiseDeliveryFee);
 
       if (storeData?.free_delivery || ((isAdminFreeDeliveryEnabled && (isFreeDeliveryByAmount || isFreeDeliveryToAllStores)))) {
-        console.log('>>> Returning 0 (free delivery - self delivery)');
         return 0;
       } else {
-        deliveryFee = storeWiseDeliveryFee;
-        console.log('storeData?.minimum_shipping_charge:', storeData?.minimum_shipping_charge);
-        console.log('storeData?.maximum_shipping_charge:', storeData?.maximum_shipping_charge);
-        
+        deliveryFee =
+          storeWiseDeliveryFee
         if (
           deliveryFee >= storeData?.minimum_shipping_charge &&
           deliveryFee <= storeData.maximum_shipping_charge
         ) {
-          console.log('>>> Returning deliveryFee (within range):', deliveryFee);
           return deliveryFee;
         } else {
           if (deliveryFee < storeData?.minimum_shipping_charge) {
-            console.log('>>> Returning minimum_shipping_charge:', storeData?.minimum_shipping_charge);
             return storeData?.minimum_shipping_charge;
           } else if (
             storeData?.maximum_shipping_charge !== null &&
             deliveryFee > storeData?.maximum_shipping_charge
           ) {
-            console.log('>>> Returning maximum_shipping_charge:', storeData?.maximum_shipping_charge);
             return storeData?.maximum_shipping_charge;
           }
         }
       }
-      // FALLBACK for self-delivery when no condition matches
-      console.log('>>> FALLBACK: Self-delivery no condition matched, returning deliveryFee:', deliveryFee);
-      return deliveryFee || 0;
     } else {
-      console.log('>>> Using ZONE-BASED delivery');
-      console.log('zoneData?.data?.zone_data?.length:', zoneData?.data?.zone_data?.length);
-      
       if (zoneData?.data?.zone_data?.length > 0) {
         const chargeInfo = getInfoFromZoneData(zoneData);
-        console.log('chargeInfo:', chargeInfo);
-        console.log('chargeInfo?.pivot:', chargeInfo?.pivot);
-        console.log('delivery_charge_type:', chargeInfo?.pivot?.delivery_charge_type);
-        
         if(chargeInfo?.pivot?.delivery_charge_type ==="fixed"){
-          console.log('>>> Using FIXED delivery charge');
           if((isAdminFreeDeliveryEnabled && (isFreeDeliveryByAmount || isFreeDeliveryToAllStores)) ||
             orderType === "take_away") {
-            console.log('>>> Returning 0 (free delivery - fixed)');
             return 0;
           }else{
-            const fixedFee = getDeliveryFeeByBadWeather(chargeInfo?.pivot?.fixed_shipping_charge + extraCharge, surgePrice);
-            console.log('>>> Returning fixed fee:', fixedFee);
-            return fixedFee;
+            return getDeliveryFeeByBadWeather(chargeInfo?.pivot?.fixed_shipping_charge + extraCharge,surgePrice);
           }
         }else{
-          console.log('>>> Using DISTANCE-WISE delivery charge');
-          console.log('chargeInfo?.pivot?.per_km_shipping_charge:', chargeInfo?.pivot?.per_km_shipping_charge);
-          console.log('chargeInfo?.pivot?.minimum_shipping_charge:', chargeInfo?.pivot?.minimum_shipping_charge);
-          console.log('chargeInfo?.pivot?.maximum_shipping_charge:', chargeInfo?.pivot?.maximum_shipping_charge);
-          
           if (
             chargeInfo?.pivot?.per_km_shipping_charge !== null &&
             chargeInfo?.pivot?.per_km_shipping_charge >= 0
@@ -816,60 +769,36 @@ export const getDeliveryFees = (
             deliveryFee =
               convertedDistance *
               (chargeInfo?.pivot?.per_km_shipping_charge || 0);
-            console.log('Calculated deliveryFee from zone:', deliveryFee);
-            
             if((isAdminFreeDeliveryEnabled && (isFreeDeliveryByAmount || isFreeDeliveryToAllStores)) ||
               orderType === "take_away") {
-              console.log('>>> Returning 0 (free delivery - distance wise)');
               return 0;
             } else if (
               deliveryFee <= chargeInfo?.pivot?.minimum_shipping_charge
             ) {
-              const minFee = getDeliveryFeeByBadWeather(
+              return getDeliveryFeeByBadWeather(
                 chargeInfo?.pivot?.minimum_shipping_charge + extraCharge,
                 surgePrice
               );
-              console.log('>>> Returning minimum_shipping_charge:', minFee);
-              return minFee;
             } else if (
               deliveryFee >= chargeInfo?.pivot?.maximum_shipping_charge &&
               chargeInfo?.pivot?.maximum_shipping_charge !== null
             ) {
-              const maxFee = getDeliveryFeeByBadWeather(
+              return getDeliveryFeeByBadWeather(
                 chargeInfo?.pivot?.maximum_shipping_charge + extraCharge,
                 surgePrice
               );
-              console.log('>>> Returning maximum_shipping_charge:', maxFee);
-              return maxFee;
             } else {
-              const calculatedFee = getDeliveryFeeByBadWeather(
+              return getDeliveryFeeByBadWeather(
                 deliveryFee + extraCharge,
                 surgePrice
               );
-              console.log('>>> Returning calculated fee:', calculatedFee);
-              return calculatedFee;
-            }
-          } else {
-            // FIX: per_km_shipping_charge is null - use minimum as fallback
-            console.log('>>> WARNING: per_km_shipping_charge is null/undefined');
-            const minCharge = chargeInfo?.pivot?.minimum_shipping_charge;
-            if (minCharge && minCharge > 0) {
-              const fallbackFee = getDeliveryFeeByBadWeather(minCharge + extraCharge, surgePrice);
-              console.log('>>> Returning minimum as fallback:', fallbackFee);
-              return fallbackFee;
             }
           }
         }
-      } else {
-        // FIX: No zone data available
-        console.log('>>> WARNING: No zone data available');
+
       }
     }
-    // FIX: Final fallback - return 0 instead of undefined
-    console.log('>>> FALLBACK: No delivery fee calculated, returning 0');
-    return 0;
   } else {
-    console.log('>>> Order type is not delivery:', orderType);
     return 0;
   }
 };
