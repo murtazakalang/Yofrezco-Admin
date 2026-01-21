@@ -216,8 +216,8 @@ class Helpers
         $data['food_variations'] = $data_variation;
 
         // Add commission to price - Customer pays commission on top of base price
-        $store_for_commission = $data->store;
-        $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+        // Use only global Business Settings commission, not per-store commission
+        $commission_percentage = BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
         $base_price = $data['price'];
         $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
         $data['price'] = $base_price + $commission_amount;
@@ -290,7 +290,8 @@ class Helpers
     {
         return collect($data)->map(function ($item) {
             // Add commission to price - Customer pays commission on top of base price
-            $commission_percentage = $item->store->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+            // Use only global Business Settings commission, not per-store commission
+            $commission_percentage = BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
             $base_price = $item->price;
             $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
             $price_with_commission = $base_price + $commission_amount;
@@ -383,8 +384,8 @@ class Helpers
                 $item['food_variations'] = $item['food_variations'] ? json_decode($item['food_variations'], true) : '';
 
                 // Add commission to price - Customer pays commission on top of base price
-                $store_for_commission = $item->store;
-                $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+                // Use only global Business Settings commission, not per-store commission
+                $commission_percentage = BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
                 $base_price = $item['price'];
                 $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
                 $item['price'] = $base_price + $commission_amount;
@@ -505,8 +506,8 @@ class Helpers
             $data['food_variations'] = $data['food_variations'] ? json_decode($data['food_variations'], true) : '';
 
             // Add commission to price - Customer pays commission on top of base price
-            $store_for_commission = $data->store;
-            $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+            // Use only global Business Settings commission, not per-store commission
+            $commission_percentage = BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
             $base_price = $data['price'];
             $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
             $data['price'] = $base_price + $commission_amount;
