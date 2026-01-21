@@ -217,7 +217,7 @@ class Helpers
 
         // Add commission to price - Customer pays commission on top of base price
         $store_for_commission = $data->store;
-        $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+        $commission_percentage = $store_for_commission?->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
         $base_price = $data['price'];
         $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
         $data['price'] = $base_price + $commission_amount;
@@ -241,10 +241,10 @@ class Helpers
             $data['variations'] = $variations_with_commission;
         }
 
-        $data['store_name'] = $data->store->name;
+        $data['store_name'] = $data->store?->name;
         $data['is_campaign'] = $data->store?->campaigns_count > 0 ? 1 : 0;
-        $data['module_type'] = $data->module->module_type;
-        $data['zone_id'] = $data->store->zone_id;
+        $data['module_type'] = $data->module?->module_type;
+        $data['zone_id'] = $data->store?->zone_id;
         $running_flash_sale = FlashSaleItem::Active()->whereHas('flashSale', function ($query) {
             $query->Active()->Running();
         })
@@ -290,7 +290,7 @@ class Helpers
     {
         return collect($data)->map(function ($item) {
             // Add commission to price - Customer pays commission on top of base price
-            $commission_percentage = $item->store->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+            $commission_percentage = $item->store?->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
             $base_price = $item->price;
             $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
             $price_with_commission = $base_price + $commission_amount;
@@ -325,11 +325,11 @@ class Helpers
                 'available_time_starts' => ($item->start_time instanceof \Carbon\Carbon) ? $item->start_time->format('H:i') : ($item->available_time_starts ?? null),
                 'available_time_ends' => ($item->end_time instanceof \Carbon\Carbon) ? $item->end_time->format('H:i') : ($item->available_time_ends ?? null),
 
-                'halal_tag_status' => (int) $item->store->storeConfig?->halal_tag_status ?? 0,
+                'halal_tag_status' => (int) ($item->store?->storeConfig?->halal_tag_status ?? 0),
                 'store_name' => $item->store?->name,
                 'store_id' => $item->store?->id,
                 'module_type' => $module_type,
-                'halal_tag_status' => (int) ($item->store->storeConfig->halal_tag_status ?? 0),
+                'halal_tag_status' => (int) ($item->store?->storeConfig?->halal_tag_status ?? 0),
                 'free_delivery' => $item->store?->free_delivery,
             ];
         })->toArray();
@@ -384,7 +384,7 @@ class Helpers
 
                 // Add commission to price - Customer pays commission on top of base price
                 $store_for_commission = $item->store;
-                $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+                $commission_percentage = $store_for_commission?->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
                 $base_price = $item['price'];
                 $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
                 $item['price'] = $base_price + $commission_amount;
@@ -506,7 +506,7 @@ class Helpers
 
             // Add commission to price - Customer pays commission on top of base price
             $store_for_commission = $data->store;
-            $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+            $commission_percentage = $store_for_commission?->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
             $base_price = $data['price'];
             $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
             $data['price'] = $base_price + $commission_amount;
@@ -530,10 +530,10 @@ class Helpers
                 $data['variations'] = $variations_with_commission;
             }
 
-            $data['store_name'] = $data->store->name;
+            $data['store_name'] = $data->store?->name;
             $data['is_campaign'] = $data->store?->campaigns_count > 0 ? 1 : 0;
-            $data['module_type'] = $data->module->module_type;
-            $data['zone_id'] = $data->store->zone_id;
+            $data['module_type'] = $data->module?->module_type;
+            $data['zone_id'] = $data->store?->zone_id;
             $running_flash_sale = FlashSaleItem::Active()->whereHas('flashSale', function ($query) {
                 $query->Active()->Running();
             })
