@@ -1,5 +1,6 @@
 import { Box, Stack } from "@mui/system";
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import {
   CustomBoxFullWidth,
   CustomStackFullWidth,
@@ -148,6 +149,8 @@ const Stores = (props) => {
   const [totalDataCount, setTotalDataCount] = useState(null);
   const { configData } = useSelector((state) => state.configData);
   const theme = useTheme();
+  const router = useRouter();
+  const { t } = useTranslation();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const stores = t("Stores");
   const handleSelectedMenuIndex = (value) => {
@@ -225,6 +228,22 @@ const Stores = (props) => {
           filteredData={filteredData}
         />
       </CustomBoxFullWidth>
+
+      {/* View All Link */}
+      <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2, mb: 2 }}>
+        <Typography
+          onClick={() => router.push('/store/popular')}
+          sx={{
+            textDecoration: "underLine",
+            color: theme.palette.primary.main,
+            cursor: "pointer"
+          }}
+          fontSize="16px"
+          fontWeight="600"
+        >
+          {t("View All")}
+        </Typography>
+      </Stack>
     </HomeComponentsWrapper>
   );
 };

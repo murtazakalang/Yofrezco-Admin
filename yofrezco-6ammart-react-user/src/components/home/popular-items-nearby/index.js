@@ -277,7 +277,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
             {/* View All Link */}
             <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
               <Typography
-                onClick={() => router.push('/home?search=allProducts')}
+                onClick={() => router.push('/product/popular')}
                 sx={{
                   textDecoration: "underLine",
                   color: theme.palette.primary.main,

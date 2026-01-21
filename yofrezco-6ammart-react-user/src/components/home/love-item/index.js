@@ -1,7 +1,8 @@
-import { Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Skeleton, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useGetRecommendProductsForHome } from "api-manage/hooks/react-query/useGetRecommendProductsForHome";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import { setYouWillLoveItems } from "redux/slices/storedData";
@@ -25,6 +26,7 @@ const LoveItem = (props) => {
   const [reRender, setReRender] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
+  const router = useRouter();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const params = {
     offset: 1,
@@ -92,66 +94,82 @@ const LoveItem = (props) => {
     <>
       {!isFetched || data?.items?.length > 0 ? (<HomeComponentsWrapper>
         <CustomStackFullWidth
-            alignItems="center"
-            justyfyContent="center"
-            mt="30px"
-            spacing={1}
+          alignItems="center"
+          justyfyContent="center"
+          mt="30px"
+          spacing={1}
         >
           <CustomStackFullWidth
-              alignItems="center"
-              justifyContent="space-between"
-              direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            direction="row"
           >
             {!isFetched ? (
-                <Skeleton variant="text" width="110px" />
+              <Skeleton variant="text" width="110px" />
             ) : (
-                <>
-                  {data?.items?.length > 0 && (
-                      <H2 text="Item That You’ll Love" component="h2" />
-                  )}
-                </>
+              <>
+                {data?.items?.length > 0 && (
+                  <H2 text="Item That You’ll Love" component="h2" />
+                )}
+              </>
             )}
             <Stack maxWidth="960px" width={isSmall ? "initial" : "100%"}>
               {data?.items?.length ? (
-                  <>
-                    {menu?.length > 0 && (
-                        <Menus
-                            selectedMenuIndex={selectedMenuIndex}
-                            setSelectedMenuIndex={setSelectedMenuIndex}
-                            menus={menu}
-                        />
-                    )}
-                  </>
+                <>
+                  {menu?.length > 0 && (
+                    <Menus
+                      selectedMenuIndex={selectedMenuIndex}
+                      setSelectedMenuIndex={setSelectedMenuIndex}
+                      menus={menu}
+                    />
+                  )}
+                </>
               ) : null}
             </Stack>
           </CustomStackFullWidth>
           <CustomStackFullWidth>
             {!isFetched ? (
-                <SliderCustom nopadding="true">
-                  <Slider {...loveItemSettings}>
-                    {[...Array(5)].map((_, index) => {
-                      return <ProductCardSimmer key={index} />;
-                    })}
-                  </Slider>
-                </SliderCustom>
+              <SliderCustom nopadding="true">
+                <Slider {...loveItemSettings}>
+                  {[...Array(5)].map((_, index) => {
+                    return <ProductCardSimmer key={index} />;
+                  })}
+                </Slider>
+              </SliderCustom>
             ) : (
-                <SliderCustom nopadding="true">
-                  <Slider {...loveItemSettings}>
-                    {data?.items?.map((item, index) => {
-                      return (
-                          <ProductCard
-                              key={item?.id}
-                              cardType="vertical-type"
-                              loveItem="true"
-                              cardFor="vertical"
-                              item={item}
-                          />
-                      );
-                    })}
-                  </Slider>
-                </SliderCustom>
+              <SliderCustom nopadding="true">
+                <Slider {...loveItemSettings}>
+                  {data?.items?.map((item, index) => {
+                    return (
+                      <ProductCard
+                        key={item?.id}
+                        cardType="vertical-type"
+                        loveItem="true"
+                        cardFor="vertical"
+                        item={item}
+                      />
+                    );
+                  })}
+                </Slider>
+              </SliderCustom>
             )}
           </CustomStackFullWidth>
+
+          {/* View All Link */}
+          <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
+            <Typography
+              onClick={() => router.push('/product/latest')}
+              sx={{
+                textDecoration: "underLine",
+                color: theme.palette.primary.main,
+                cursor: "pointer"
+              }}
+              fontSize="16px"
+              fontWeight="600"
+            >
+              {t("View All")}
+            </Typography>
+          </Stack>
         </CustomStackFullWidth>
       </HomeComponentsWrapper>) : null}
     </>
