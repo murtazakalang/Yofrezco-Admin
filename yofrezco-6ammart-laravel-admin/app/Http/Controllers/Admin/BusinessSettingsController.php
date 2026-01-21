@@ -671,6 +671,10 @@ class BusinessSettingsController extends Controller
         Helpers::businessUpdateOrInsert(['key' => 'delivery_charge_comission'], [
             'value' => $request['admin_comission_in_delivery_charge'],
         ]);
+
+        Helpers::businessUpdateOrInsert(['key' => 'delivery_tax_percentage'], [
+            'value' => $request['delivery_tax_percentage'] ?? 0,
+        ]);
         // dd( $request['commission_business_model']);
 
         if (!isset($request->subscription_business_model) && !isset($request->commission_business_model)) {

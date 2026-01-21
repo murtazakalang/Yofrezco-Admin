@@ -937,6 +937,12 @@
                                              + {{ \App\CentralLogics\Helpers::format_currency($del_c) }}
                                              <hr>
                                          </dd>
+                                    @if (($order['delivery_tax_amount'] ?? 0) > 0)
+                                        <dt class="col-6">{{ translate('messages.delivery_tax') }}:</dt>
+                                        <dd class="col-6">
+                                            + {{ \App\CentralLogics\Helpers::format_currency($order['delivery_tax_amount']) }}
+                                        </dd>
+                                    @endif
                                     <dt class="col-6">{{ translate('messages.delivery_man_tips') }}</dt>
                                     <dd class="col-6">
                                         + {{ \App\CentralLogics\Helpers::format_currency($deliverman_tips) }}</dd>

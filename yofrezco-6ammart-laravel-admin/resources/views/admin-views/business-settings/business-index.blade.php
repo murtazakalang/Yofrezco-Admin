@@ -773,6 +773,23 @@
                                         value="{{ $delivery_charge_comission ? $delivery_charge_comission->value : 0 }}">
                                 </div>
                             </div>
+                            <div class="col-sm-6 col-lg-4">
+                                @php($delivery_tax_percentage = \App\Models\BusinessSetting::where('key', 'delivery_tax_percentage')->first())
+                                <div class="form-group mb-0">
+                                    <label class="input-label text-capitalize d-flex alig-items-center"
+                                        for="delivery_tax_percentage">
+                                        {{translate('messages.Tax_Rate_On_Delivery_Charge')}} (%)
+                                        <span class="form-label-secondary" data-toggle="tooltip" data-placement="right"
+                                            data-original-title="{{ translate('messages.Set_a_tax_rate_to_apply_on_delivery_charges._This_tax_is_added_on_top_of_the_delivery_fee_including_commission.') }}">
+                                            <img src="{{asset('public/assets/admin/img/info-circle.svg')}}" alt="">
+                                        </span>
+                                    </label>
+                                    <input type="number" name="delivery_tax_percentage" class="form-control"
+                                        id="delivery_tax_percentage" placeholder="{{ translate('messages.Ex:_7') }}"
+                                        min="0" max="100" step="0.01"
+                                        value="{{ $delivery_tax_percentage ? $delivery_tax_percentage->value : 0 }}">
+                                </div>
+                            </div>
 
                             <div class="col-lg-4 col-sm-6">
                                 @php($order_confirmation_model = \App\Models\BusinessSetting::where('key', 'order_confirmation_model')->first())
@@ -1008,7 +1025,7 @@
 
                                         @php($free_delivery_over = \App\Models\BusinessSetting::where('key', 'free_delivery_over')->first())
                                         @php($admin_free_delivery_option = \App\Models\BusinessSetting::where('key', 'admin_free_delivery_option')->first())
-{{--                                        @dd($admin_free_delivery_status?->value)--}}
+                                        {{-- @dd($admin_free_delivery_status?->value)--}}
 
                                         <div class="form-group mb-0">
                                             <label
@@ -1026,9 +1043,8 @@
                                                     </span>
                                                 </label>
                                                 <label class="form-check form--check">
-                                                    <input
-                                                        class="form-check-input radio-trigger"
-                                                        type="radio" {{ $admin_free_delivery_status?->value ? '' : 'disabled' }} value="free_delivery_by_order_amount"
+                                                    <input class="form-check-input radio-trigger" type="radio" {{ $admin_free_delivery_status?->value ? '' : 'disabled' }}
+                                                        value="free_delivery_by_order_amount"
                                                         name="admin_free_delivery_option" {{ $admin_free_delivery_option?->value == 'free_delivery_by_order_amount' || $admin_free_delivery_option?->value == null ? 'checked' : '' }}>
                                                     <span class="form-check-label">
                                                         {{translate('Set Specific Criteria')}}
@@ -1473,144 +1489,144 @@
 
 @push('script_2')
 
-    <script>
-        "use strict";
+<script>
+    "use strict";
 
-        $(document).ready(function () {
-            let selectedRadio = null;
+    $(document).ready(function () {
+        let selectedRadio = null;
 
-            // Function to update field validation based on selected option and status
-            function updateFieldValidation() {
-                const isEnabled = $('#admin_free_delivery_status').is(':checked');
-                const selectedValue = $('input[name="admin_free_delivery_option"]:checked').val();
+        // Function to update field validation based on selected option and status
+        function updateFieldValidation() {
+            const isEnabled = $('#admin_free_delivery_status').is(':checked');
+            const selectedValue = $('input[name="admin_free_delivery_option"]:checked').val();
 
-                if (!isEnabled) {
-                    // When disabled, remove validation and make readonly
-                    $('#free_delivery_over').removeAttr('required').prop('readonly', true);
-                    $('.radio-trigger').prop('disabled', true);
-                } else {
-                    // When enabled, set validation based on selected radio
-                    $('.radio-trigger').prop('disabled', false);
+            if (!isEnabled) {
+                // When disabled, remove validation and make readonly
+                $('#free_delivery_over').removeAttr('required').prop('readonly', true);
+                $('.radio-trigger').prop('disabled', true);
+            } else {
+                // When enabled, set validation based on selected radio
+                $('.radio-trigger').prop('disabled', false);
 
-                    if (selectedValue === 'free_delivery_by_order_amount') {
-                        $('#show_free_delivery_over').removeClass('d-none');
-                        $('#show_text_for_all_store_free_delivery').addClass('d-none');
-                        $('#free_delivery_over').prop('readonly', false).prop('required', true);
-                    } else if (selectedValue === 'free_delivery_to_all_store') {
-                        $('#show_free_delivery_over').addClass('d-none');
-                        $('#show_text_for_all_store_free_delivery').removeClass('d-none');
-                        $('#free_delivery_over').val('').prop('required', false).prop('readonly', true);
-                    }
-                }
-
-                // Update text-muted classes
-                if (isEnabled) {
-                    $('.add_text_mute').removeClass('text-muted');
-                } else {
-                    $('.add_text_mute').addClass('text-muted');
+                if (selectedValue === 'free_delivery_by_order_amount') {
+                    $('#show_free_delivery_over').removeClass('d-none');
+                    $('#show_text_for_all_store_free_delivery').addClass('d-none');
+                    $('#free_delivery_over').prop('readonly', false).prop('required', true);
+                } else if (selectedValue === 'free_delivery_to_all_store') {
+                    $('#show_free_delivery_over').addClass('d-none');
+                    $('#show_text_for_all_store_free_delivery').removeClass('d-none');
+                    $('#free_delivery_over').val('').prop('required', false).prop('readonly', true);
                 }
             }
 
-            // Handle radio button clicks
-            $(".radio-trigger").on("click", function (event) {
-                event.preventDefault();
-                selectedRadio = this;
-                let selectedValue = $(this).val();
+            // Update text-muted classes
+            if (isEnabled) {
+                $('.add_text_mute').removeClass('text-muted');
+            } else {
+                $('.add_text_mute').addClass('text-muted');
+            }
+        }
 
-                if (selectedValue === 'free_delivery_to_all_store') {
-                    $("#confirmation_modal_free_delivery_to_all_store").modal("show");
-                } else {
-                    $("#confirmation_modal_free_delivery_by_order_amount").modal("show");
-                }
-            });
+        // Handle radio button clicks
+        $(".radio-trigger").on("click", function (event) {
+            event.preventDefault();
+            selectedRadio = this;
+            let selectedValue = $(this).val();
 
-            // Handle confirmation for "free delivery to all store"
-            $("#confirmBtn_free_delivery_to_all_store").on("click", function () {
-                if (selectedRadio) {
-                    selectedRadio.checked = true;
-                    updateFieldValidation();
-                }
-                $("#confirmation_modal_free_delivery_to_all_store").modal("hide");
-            });
+            if (selectedValue === 'free_delivery_to_all_store') {
+                $("#confirmation_modal_free_delivery_to_all_store").modal("show");
+            } else {
+                $("#confirmation_modal_free_delivery_by_order_amount").modal("show");
+            }
+        });
 
-            // Handle confirmation for "free delivery by order amount"
-            $("#confirmBtn_free_delivery_by_order_amount").on("click", function () {
-                if (selectedRadio) {
-                    selectedRadio.checked = true;
-                    updateFieldValidation();
-                }
-                $("#confirmation_modal_free_delivery_by_order_amount").modal("hide");
-            });
-
-            // Handle toggle switch change - using multiple event listeners to catch all scenarios
-            $('#admin_free_delivery_status').on('change', function() {
-                // Use setTimeout to ensure this runs after any other handlers
-                setTimeout(function() {
-                    updateFieldValidation();
-                }, 100);
-            });
-
-            // Also listen for click events on the toggle
-            $('#admin_free_delivery_status').on('click', function() {
-                setTimeout(function() {
-                    updateFieldValidation();
-                }, 100);
-            });
-
-            // Listen for changes on the parent toggle switch span (in case the event bubbles from there)
-            $('.toggle-switch-input').on('change', function() {
-                setTimeout(function() {
-                    updateFieldValidation();
-                }, 100);
-            });
-
-            // Initialize validation state on page load
-            setTimeout(function() {
+        // Handle confirmation for "free delivery to all store"
+        $("#confirmBtn_free_delivery_to_all_store").on("click", function () {
+            if (selectedRadio) {
+                selectedRadio.checked = true;
                 updateFieldValidation();
-            }, 200);
+            }
+            $("#confirmation_modal_free_delivery_to_all_store").modal("hide");
         });
 
-        $(document).ready(function () {
-            let selectedCurrency = "{{ $currency_code ? $currency_code->value : 'USD' }}";
-            let currencyConfirmed = false;
-            let updatingCurrency = false;
+        // Handle confirmation for "free delivery by order amount"
+        $("#confirmBtn_free_delivery_by_order_amount").on("click", function () {
+            if (selectedRadio) {
+                selectedRadio.checked = true;
+                updateFieldValidation();
+            }
+            $("#confirmation_modal_free_delivery_by_order_amount").modal("hide");
+        });
 
-            $("#change_currency").change(function () {
-                if (!updatingCurrency) check_currency($(this).val());
-            });
+        // Handle toggle switch change - using multiple event listeners to catch all scenarios
+        $('#admin_free_delivery_status').on('change', function () {
+            // Use setTimeout to ensure this runs after any other handlers
+            setTimeout(function () {
+                updateFieldValidation();
+            }, 100);
+        });
 
-            $("#confirm-currency-change").click(function () {
-                currencyConfirmed = true;
-                update_currency(selectedCurrency);
-                $('#currency-warning-modal').modal('hide');
-            });
+        // Also listen for click events on the toggle
+        $('#admin_free_delivery_status').on('click', function () {
+            setTimeout(function () {
+                updateFieldValidation();
+            }, 100);
+        });
 
-            function check_currency(currency) {
-                $.ajax({
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    url: "{{route('admin.system_currency')}}",
-                    method: 'GET',
-                    data: { currency: currency },
-                    success: function (response) {
-                        if (response.data) {
-                            $('#currency-warning-modal').modal('show');
-                        } else {
-                            update_currency(currency);
-                        }
+        // Listen for changes on the parent toggle switch span (in case the event bubbles from there)
+        $('.toggle-switch-input').on('change', function () {
+            setTimeout(function () {
+                updateFieldValidation();
+            }, 100);
+        });
+
+        // Initialize validation state on page load
+        setTimeout(function () {
+            updateFieldValidation();
+        }, 200);
+    });
+
+    $(document).ready(function () {
+        let selectedCurrency = "{{ $currency_code ? $currency_code->value : 'USD' }}";
+        let currencyConfirmed = false;
+        let updatingCurrency = false;
+
+        $("#change_currency").change(function () {
+            if (!updatingCurrency) check_currency($(this).val());
+        });
+
+        $("#confirm-currency-change").click(function () {
+            currencyConfirmed = true;
+            update_currency(selectedCurrency);
+            $('#currency-warning-modal').modal('hide');
+        });
+
+        function check_currency(currency) {
+            $.ajax({
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                url: "{{route('admin.system_currency')}}",
+                method: 'GET',
+                data: { currency: currency },
+                success: function (response) {
+                    if (response.data) {
+                        $('#currency-warning-modal').modal('show');
+                    } else {
+                        update_currency(currency);
                     }
-                });
-            }
-
-            function update_currency(currency) {
-                if (currencyConfirmed) {
-                    updatingCurrency = true;
-                    $("#change_currency").val(currency).trigger('change');
-                    updatingCurrency = false;
-                    currencyConfirmed = false;
                 }
+            });
+        }
+
+        function update_currency(currency) {
+            if (currencyConfirmed) {
+                updatingCurrency = true;
+                $("#change_currency").val(currency).trigger('change');
+                updatingCurrency = false;
+                currencyConfirmed = false;
             }
-        });
-    </script>
+        }
+    });
+</script>
 
 <script
     src="https://maps.googleapis.com/maps/api/js?key={{ \App\Models\BusinessSetting::where('key', 'map_api_key')->first()->value }}&libraries=places,marker&v=3.61">

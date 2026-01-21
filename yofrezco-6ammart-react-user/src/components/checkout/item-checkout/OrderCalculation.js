@@ -105,7 +105,12 @@ const OrderCalculation = (props) => {
     // Add delivery commission to display the total delivery fee including commission
     const commissionPercentage = configData?.delivery_commission_percentage ?? 0;
     const deliveryCommission = (commissionPercentage / 100) * price;
-    const totalDeliveryFee = price + deliveryCommission;
+    const feeWithCommission = price + deliveryCommission;
+
+    // Add delivery tax on top of (base + commission)
+    const taxPercentage = configData?.delivery_tax_percentage ?? 0;
+    const deliveryTax = (taxPercentage / 100) * feeWithCommission;
+    const totalDeliveryFee = feeWithCommission + deliveryTax;
 
     setDeliveryFee(orderType !== "delivery" ? 0 : price);
     if (price === 0) {
@@ -173,6 +178,30 @@ const OrderCalculation = (props) => {
     return (commissionPercentage / 100) * deliveryFee;
   };
 
+  // Calculate delivery tax on (delivery fee + commission)
+  const getDeliveryTax = () => {
+    if (orderType === 'take_away') return 0;
+    const commissionPercentage = configData?.delivery_commission_percentage ?? 0;
+    const taxPercentage = configData?.delivery_tax_percentage ?? 0;
+    const deliveryFee = getDeliveryFees(
+      storeData,
+      configData,
+      cartList,
+      distanceData?.data,
+      couponDiscount,
+      couponType,
+      orderType,
+      zoneData,
+      origin,
+      destination,
+      tempExtraCharge,
+      surgePrice
+    );
+    const deliveryCommission = (commissionPercentage / 100) * deliveryFee;
+    const feeWithCommission = deliveryFee + deliveryCommission;
+    return (taxPercentage / 100) * feeWithCommission;
+  };
+
   const handleOrderAmount = () => {
     let totalAmount = getCalculatedTotal(
       cartList,
@@ -196,7 +225,9 @@ const OrderCalculation = (props) => {
     );
     // Add delivery commission (product commission is already included in product prices from API)
     const deliveryCommission = getDeliveryCommission();
-    totalAmount = totalAmount + deliveryCommission;
+    // Add delivery tax on (delivery fee + commission)
+    const deliveryTax = getDeliveryTax();
+    totalAmount = totalAmount + deliveryCommission + deliveryTax;
     setPayableAmount(totalAmount);
     dispatch(setTotalAmount(totalAmount));
     return totalAmount;
@@ -218,8 +249,8 @@ const OrderCalculation = (props) => {
   const extraText = t("This delivery fee includes all the applicable charges on delivery");
   const badText = t("and bad weather charge");
   const deliveryToolTipsText = `${extraText}${surgePrice?.customer_note_status !== 0
-      ? `. ${surgePrice?.customer_note} `
-      : ""
+    ? `. ${surgePrice?.customer_note} `
+    : ""
     }`;
   return (
     <>

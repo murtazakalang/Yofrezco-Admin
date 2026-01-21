@@ -428,14 +428,23 @@ trait PlaceNewOrder
                     ? round(($delivery_commission_percentage / 100) * $original_delivery_charge, config('round_up_to_digit'))
                     : 0;
 
-                // Store commission values in order
+                // Delivery tax: Calculate tax on (delivery_charge + delivery_commission)
+                $delivery_tax_percentage = BusinessSetting::where('key', 'delivery_tax_percentage')->first()->value ?? 0;
+                $delivery_fee_with_commission = $original_delivery_charge + $delivery_commission_amount;
+                $delivery_tax_amount = ($request->order_type !== 'take_away')
+                    ? round(($delivery_tax_percentage / 100) * $delivery_fee_with_commission, config('round_up_to_digit'))
+                    : 0;
+
+                // Store commission and tax values in order
                 $order->product_commission_amount = $product_commission_amount;
                 $order->delivery_commission_amount = $delivery_commission_amount;
                 $order->product_commission_percentage = $product_commission_percentage;
                 $order->delivery_commission_percentage = $delivery_commission_percentage;
+                $order->delivery_tax_percentage = $delivery_tax_percentage;
+                $order->delivery_tax_amount = $delivery_tax_amount;
 
-                // Order amount: total_price (includes product commission) + tax + delivery_charge + delivery_commission
-                $order->order_amount = round($total_price + $tax_amount + $order->delivery_charge + $delivery_commission_amount, config('round_up_to_digit'));
+                // Order amount: total_price (includes product commission) + tax + delivery_charge + delivery_commission + delivery_tax
+                $order->order_amount = round($total_price + $tax_amount + $order->delivery_charge + $delivery_commission_amount + $delivery_tax_amount, config('round_up_to_digit'));
                 $order->free_delivery_by = $free_delivery_by;
             } else {
                 // Parcel order - only delivery commission applies, no product commission
@@ -446,13 +455,20 @@ trait PlaceNewOrder
                 $delivery_commission_percentage = BusinessSetting::where('key', 'delivery_charge_comission')->first()->value ?? 0;
                 $delivery_commission_amount = round(($delivery_commission_percentage / 100) * $original_delivery_charge, config('round_up_to_digit'));
 
-                // Store commission values in order (no product commission for parcels)
+                // Delivery tax for parcel: Calculate tax on (delivery_charge + delivery_commission)
+                $delivery_tax_percentage = BusinessSetting::where('key', 'delivery_tax_percentage')->first()->value ?? 0;
+                $delivery_fee_with_commission = $original_delivery_charge + $delivery_commission_amount;
+                $delivery_tax_amount = round(($delivery_tax_percentage / 100) * $delivery_fee_with_commission, config('round_up_to_digit'));
+
+                // Store commission and tax values in order (no product commission for parcels)
                 $order->product_commission_amount = 0;
                 $order->delivery_commission_amount = $delivery_commission_amount;
                 $order->product_commission_percentage = 0;
                 $order->delivery_commission_percentage = $delivery_commission_percentage;
+                $order->delivery_tax_percentage = $delivery_tax_percentage;
+                $order->delivery_tax_amount = $delivery_tax_amount;
 
-                $order->order_amount = round($order->delivery_charge + $delivery_commission_amount, config('round_up_to_digit'));
+                $order->order_amount = round($order->delivery_charge + $delivery_commission_amount + $delivery_tax_amount, config('round_up_to_digit'));
 
                 $productIds[] = [
                     'id' => 1,
@@ -484,8 +500,8 @@ trait PlaceNewOrder
                 $order->total_tax_amount = round($tax_amount, config('round_up_to_digit'));
 
                 $order->tax_status = $tax_status;
-                // Include delivery commission in parcel order amount
-                $order->order_amount = round($order->delivery_charge + $tax_amount + $order->delivery_commission_amount, config('round_up_to_digit'));
+                // Include delivery commission and delivery tax in parcel order amount
+                $order->order_amount = round($order->delivery_charge + $tax_amount + $order->delivery_commission_amount + $order->delivery_tax_amount, config('round_up_to_digit'));
             }
             $order->flash_admin_discount_amount = round($flash_sale_admin_discount_amount, config('round_up_to_digit'));
             $order->flash_store_discount_amount = round($flash_sale_vendor_discount_amount, config('round_up_to_digit'));
