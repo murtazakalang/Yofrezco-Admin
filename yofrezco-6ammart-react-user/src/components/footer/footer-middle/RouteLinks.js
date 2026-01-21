@@ -108,6 +108,38 @@ const RouteLinks = (props) => {
       >
         {t("FAQ")}
       </Typography>
+      <Typography
+        component="a"
+        href="https://drive.google.com/file/d/1O57WxrL6dweT4Z7noNqtMWbkx3GRTiJq/view?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+          cursor: "pointer",
+          textDecoration: "none",
+          color: "inherit",
+          "&:hover": {
+            color: "#888888",
+          },
+        }}
+      >
+        {t("Become a YOFrezcedor")}
+      </Typography>
+      <Typography
+        component="a"
+        href="https://docs.google.com/forms/d/e/1FAIpQLScSu-tX_HTZppekp7EjHT6sJxNN1_KHpoAwe-LLsV9yBvsBzw/viewform?usp=sharing&ouid=110379331266621673495"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+          cursor: "pointer",
+          textDecoration: "none",
+          color: "inherit",
+          "&:hover": {
+            color: "#888888",
+          },
+        }}
+      >
+        {t("Become a YOFler")}
+      </Typography>
     </CustomStackFullWidth>
   );
 };

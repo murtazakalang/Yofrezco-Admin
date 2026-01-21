@@ -1433,4 +1433,6 @@ export const spain = {
   "I'm a Customer": "I'm a Customer",
   "I'm a Seller": "I'm a Seller",
   "I'm a Rider": "I'm a Rider",
+  "Become a YOFrezcedor": "Unete como YOFrezcedor",
+  "Become a YOFler": "Unete como YOFler",
 };

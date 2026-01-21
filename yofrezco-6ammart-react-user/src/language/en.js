@@ -1407,4 +1407,6 @@ export const english = {
   "I'm a Customer": "I'm a Customer",
   "I'm a Seller": "I'm a Seller",
   "I'm a Rider": "I'm a Rider",
+  "Become a YOFrezcedor": "Become a YOFrezcedor",
+  "Become a YOFler": "Become a YOFler",
 };
