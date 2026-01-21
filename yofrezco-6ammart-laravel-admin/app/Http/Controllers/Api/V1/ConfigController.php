@@ -390,6 +390,7 @@ class ConfigController extends Controller
             'new_customer_discount_validity_type' => (isset($settings['new_customer_discount_validity_type']) ? $settings['new_customer_discount_validity_type'] : 'day'),
             'store_review_reply' => (int) (isset($settings['store_review_reply']) ? $settings['store_review_reply'] : 0),
             'admin_commission' => (float) (isset($settings['admin_commission']) ? $settings['admin_commission'] : 0),
+            'delivery_commission_percentage' => (float) (BusinessSetting::where('key', 'delivery_charge_comission')->first()->value ?? 0),
             'subscription_business_model' => (int) (isset($settings['subscription_business_model']) ? $settings['subscription_business_model'] : 1),
             'commission_business_model' => (int) (isset($settings['commission_business_model']) ? $settings['commission_business_model'] : 1),
             'subscription_deadline_warning_days' => (int) (isset($settings['subscription_deadline_warning_days']) ? $settings['subscription_deadline_warning_days'] : 1),

@@ -147,6 +147,27 @@ const OrderCalculation = (props) => {
     customerData?.data?.discount_amount,
     customerData?.data?.discount_amount_type
   );
+  // Calculate delivery commission (product commission is already included in prices from API)
+  const getDeliveryCommission = () => {
+    if (orderType === 'take_away') return 0;
+    const commissionPercentage = configData?.delivery_commission_percentage ?? 0;
+    const deliveryFee = getDeliveryFees(
+      storeData,
+      configData,
+      cartList,
+      distanceData?.data,
+      couponDiscount,
+      couponType,
+      orderType,
+      zoneData,
+      origin,
+      destination,
+      tempExtraCharge,
+      surgePrice
+    );
+    return (commissionPercentage / 100) * deliveryFee;
+  };
+
   const handleOrderAmount = () => {
     let totalAmount = getCalculatedTotal(
       cartList,
@@ -168,6 +189,9 @@ const OrderCalculation = (props) => {
       taxAmount?.tax_amount,
       surgePrice
     );
+    // Add delivery commission (product commission is already included in product prices from API)
+    const deliveryCommission = getDeliveryCommission();
+    totalAmount = totalAmount + deliveryCommission;
     setPayableAmount(totalAmount);
     dispatch(setTotalAmount(totalAmount));
     return totalAmount;

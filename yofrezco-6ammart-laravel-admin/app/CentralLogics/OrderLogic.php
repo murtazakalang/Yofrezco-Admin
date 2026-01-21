@@ -130,41 +130,43 @@ class OrderLogic
             }
 
 
-            $order_amount = $order->order_amount - $order->additional_charge - $order->extra_packaging_amount - $order->delivery_charge - $order->total_tax_amount - $dm_tips + $flash_admin_discount_amount + $order->coupon_discount_amount + $store_discount_amount + $flash_store_discount_amount + $ref_bonus_amount;
-            // comission in delivery charge
-            $delivery_charge_comission = BusinessSetting::where('key', 'delivery_charge_comission')->first();
-            $delivery_charge_comission_percentage = $delivery_charge_comission ? $delivery_charge_comission->value : 0;
-            $comission_on_delivery = $delivery_charge_comission_percentage * ($order->original_delivery_charge / 100);
+            // NEW COMMISSION MODEL: Commission is charged to customer, not deducted from vendor/deliveryman
+            // Calculate base order amount (excluding commission amounts already paid by customer)
+            $order_amount_with_commission = $order->order_amount - $order->additional_charge - $order->extra_packaging_amount - $order->delivery_charge - $order->total_tax_amount - $dm_tips - $order->delivery_commission_amount + $flash_admin_discount_amount + $order->coupon_discount_amount + $store_discount_amount + $flash_store_discount_amount + $ref_bonus_amount;
 
-            if ($order->store->sub_self_delivery) {
-                $comission_on_actual_delivery_fee = 0;
-            } else {
+            // Base product amount (without commission) - this is what the vendor set
+            $base_order_amount = $order_amount_with_commission - $order->product_commission_amount;
 
-                $comission_on_actual_delivery_fee = ($order->delivery_charge > 0) ? $comission_on_delivery : 0;
-            }
+            // No commission deducted from deliveryman - they get 100% of original delivery charge
+            $comission_on_actual_delivery_fee = 0;
 
+            // Handle free delivery by admin
             if ($order->free_delivery_by == 'admin') {
                 if ($order->store->sub_self_delivery) {
-                    $comission_on_actual_delivery_fee = 0;
                     $store_amount = $order->original_delivery_charge ?? 0;
-                } else {
-                    $comission_on_actual_delivery_fee = ($order->original_delivery_charge > 0) ? $comission_on_delivery : 0;
                 }
             }
 
-            //final comission
+            // No commission deducted from store - they get 100% of base price
             if ($store->store_business_model == 'subscription' && isset($store_sub)) {
                 $comission_on_store_amount = 0;
                 $subscription_mode = 1;
                 $commission_percentage = 0;
             } else {
-                $comission_on_store_amount = ($comission ? ($order_amount / 100) * $comission : 0);
+                $comission_on_store_amount = 0; // No deduction from vendor in new model
                 $subscription_mode = 0;
-                $commission_percentage = $comission;
+                $commission_percentage = $order->product_commission_percentage ?? $comission;
             }
 
-            $comission_amount = $comission_on_store_amount + $comission_on_actual_delivery_fee;
-            $dm_commission = $order->original_delivery_charge - $comission_on_actual_delivery_fee;
+            // Admin commission from customer-paid amounts
+            $admin_commission_from_customer = $order->product_commission_amount + $order->delivery_commission_amount;
+            $comission_amount = $admin_commission_from_customer;
+
+            // Deliveryman gets 100% of original delivery charge
+            $dm_commission = $order->original_delivery_charge;
+
+            // Use base order amount for vendor calculations
+            $order_amount = $base_order_amount;
         }
         $store_amount = $store_amount + $order_amount + $order->total_tax_amount + $order->extra_packaging_amount - $comission_on_store_amount - $store_coupon_discount_subsidy - $flash_store_discount_amount;
         try {

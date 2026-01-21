@@ -46,6 +46,10 @@ class Order extends Model
         'is_guest' => 'boolean',
         'ref_bonus_amount' => 'float',
         'bring_change_amount'=>'integer',
+        'product_commission_amount' => 'float',
+        'delivery_commission_amount' => 'float',
+        'product_commission_percentage' => 'float',
+        'delivery_commission_percentage' => 'float',
     ];
 
     protected $appends = ['module_type','order_attachment_full_url','order_proof_full_url'];

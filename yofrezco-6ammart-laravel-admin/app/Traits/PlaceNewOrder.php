@@ -415,13 +415,44 @@ trait PlaceNewOrder
                 $order->store_discount_amount = round($store_discount_amount, config('round_up_to_digit'));
                 $order->tax_percentage = 0;
                 $order->total_tax_amount = round($tax_amount, config('round_up_to_digit'));
-                $order->order_amount = round($total_price + $tax_amount + $order->delivery_charge, config('round_up_to_digit'));
+
+                // Calculate commission amounts from commission-inclusive prices
+                // Product commission: Since prices from frontend already include commission, reverse-calculate the commission portion
+                $product_commission_percentage = $store->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+                $base_product_total = $total_price / (1 + ($product_commission_percentage / 100));
+                $product_commission_amount = round($total_price - $base_product_total, config('round_up_to_digit'));
+
+                // Delivery commission: Calculate commission on original delivery charge
+                $delivery_commission_percentage = BusinessSetting::where('key', 'delivery_charge_comission')->first()->value ?? 0;
+                $delivery_commission_amount = ($request->order_type !== 'take_away')
+                    ? round(($delivery_commission_percentage / 100) * $original_delivery_charge, config('round_up_to_digit'))
+                    : 0;
+
+                // Store commission values in order
+                $order->product_commission_amount = $product_commission_amount;
+                $order->delivery_commission_amount = $delivery_commission_amount;
+                $order->product_commission_percentage = $product_commission_percentage;
+                $order->delivery_commission_percentage = $delivery_commission_percentage;
+
+                // Order amount: total_price (includes product commission) + tax + delivery_charge + delivery_commission
+                $order->order_amount = round($total_price + $tax_amount + $order->delivery_charge + $delivery_commission_amount, config('round_up_to_digit'));
                 $order->free_delivery_by = $free_delivery_by;
             } else {
-
+                // Parcel order - only delivery commission applies, no product commission
                 $order->delivery_charge = round($original_delivery_charge, config('round_up_to_digit')) ?? 0;
                 $order->original_delivery_charge = round($original_delivery_charge, config('round_up_to_digit'));
-                $order->order_amount = round($order->delivery_charge, config('round_up_to_digit'));
+
+                // Delivery commission for parcel
+                $delivery_commission_percentage = BusinessSetting::where('key', 'delivery_charge_comission')->first()->value ?? 0;
+                $delivery_commission_amount = round(($delivery_commission_percentage / 100) * $original_delivery_charge, config('round_up_to_digit'));
+
+                // Store commission values in order (no product commission for parcels)
+                $order->product_commission_amount = 0;
+                $order->delivery_commission_amount = $delivery_commission_amount;
+                $order->product_commission_percentage = 0;
+                $order->delivery_commission_percentage = $delivery_commission_percentage;
+
+                $order->order_amount = round($order->delivery_charge + $delivery_commission_amount, config('round_up_to_digit'));
 
                 $productIds[] = [
                     'id' => 1,
@@ -453,7 +484,8 @@ trait PlaceNewOrder
                 $order->total_tax_amount = round($tax_amount, config('round_up_to_digit'));
 
                 $order->tax_status = $tax_status;
-                $order->order_amount = round($order->delivery_charge + $tax_amount, config('round_up_to_digit'));
+                // Include delivery commission in parcel order amount
+                $order->order_amount = round($order->delivery_charge + $tax_amount + $order->delivery_commission_amount, config('round_up_to_digit'));
             }
             $order->flash_admin_discount_amount = round($flash_sale_admin_discount_amount, config('round_up_to_digit'));
             $order->flash_store_discount_amount = round($flash_sale_vendor_discount_amount, config('round_up_to_digit'));

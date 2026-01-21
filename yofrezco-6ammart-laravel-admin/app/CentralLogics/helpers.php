@@ -214,6 +214,33 @@ class Helpers
             }
         }
         $data['food_variations'] = $data_variation;
+
+        // Add commission to price - Customer pays commission on top of base price
+        $store_for_commission = $data->store;
+        $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+        $base_price = $data['price'];
+        $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
+        $data['price'] = $base_price + $commission_amount;
+        $data['base_price'] = $base_price;
+        $data['commission_amount'] = $commission_amount;
+        $data['commission_percentage'] = $commission_percentage;
+
+        // Also add commission to variation prices
+        if (!empty($data['variations'])) {
+            $variations_with_commission = [];
+            foreach ($data['variations'] as $var) {
+                $var_base_price = $var['price'];
+                $var_commission = round(($commission_percentage / 100) * $var_base_price, config('round_up_to_digit'));
+                $variations_with_commission[] = [
+                    'type' => $var['type'],
+                    'price' => (float) ($var_base_price + $var_commission),
+                    'stock' => $var['stock'],
+                    'base_price' => $var_base_price,
+                ];
+            }
+            $data['variations'] = $variations_with_commission;
+        }
+
         $data['store_name'] = $data->store->name;
         $data['is_campaign'] = $data->store?->campaigns_count > 0 ? 1 : 0;
         $data['module_type'] = $data->module->module_type;
@@ -262,7 +289,13 @@ class Helpers
     public static function productListDataFormatting($data)
     {
         return collect($data)->map(function ($item) {
-            $discount = self::product_discount_calculate($item, $item->price, $item->store, true);
+            // Add commission to price - Customer pays commission on top of base price
+            $commission_percentage = $item->store->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+            $base_price = $item->price;
+            $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
+            $price_with_commission = $base_price + $commission_amount;
+
+            $discount = self::product_discount_calculate($item, $price_with_commission, $item->store, true);
             $module_type = $item->store?->module_type;
             $has_variant = $module_type == 'food' ? $item->food_variations : $item->variations;
             $has_variant = is_string($has_variant) ? json_decode($has_variant, true) : $has_variant;
@@ -272,7 +305,10 @@ class Helpers
                 'id' => (int) $item->id,
                 'name' => $item->title ?? $item->name,
                 'image_full_url' => $item->image_full_url,
-                'price' => $item->price,
+                'price' => $price_with_commission,
+                'base_price' => $base_price,
+                'commission_amount' => $commission_amount,
+                'commission_percentage' => $commission_percentage,
                 'veg' => $item->veg,
                 'unit_type' => $item->unit_type,
                 'recommended' => $item->recommended,
@@ -345,6 +381,33 @@ class Helpers
                 }
                 $item['variations'] = $variations;
                 $item['food_variations'] = $item['food_variations'] ? json_decode($item['food_variations'], true) : '';
+
+                // Add commission to price - Customer pays commission on top of base price
+                $store_for_commission = $item->store;
+                $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+                $base_price = $item['price'];
+                $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
+                $item['price'] = $base_price + $commission_amount;
+                $item['base_price'] = $base_price;
+                $item['commission_amount'] = $commission_amount;
+                $item['commission_percentage'] = $commission_percentage;
+
+                // Also add commission to variation prices
+                if (!empty($item['variations'])) {
+                    $variations_with_commission = [];
+                    foreach ($item['variations'] as $var) {
+                        $var_base_price = $var['price'];
+                        $var_commission = round(($commission_percentage / 100) * $var_base_price, config('round_up_to_digit'));
+                        $variations_with_commission[] = [
+                            'type' => $var['type'],
+                            'price' => (float) ($var_base_price + $var_commission),
+                            'stock' => $var['stock'],
+                            'base_price' => $var_base_price,
+                        ];
+                    }
+                    $item['variations'] = $variations_with_commission;
+                }
+
                 $item['module_type'] = $item->module->module_type;
                 $item['store_name'] = $item->store?->name;
                 $item['is_campaign'] = $item->store?->campaigns_count > 0 ? 1 : 0;
@@ -440,6 +503,33 @@ class Helpers
             }
             $data['variations'] = $variations;
             $data['food_variations'] = $data['food_variations'] ? json_decode($data['food_variations'], true) : '';
+
+            // Add commission to price - Customer pays commission on top of base price
+            $store_for_commission = $data->store;
+            $commission_percentage = $store_for_commission->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+            $base_price = $data['price'];
+            $commission_amount = round(($commission_percentage / 100) * $base_price, config('round_up_to_digit'));
+            $data['price'] = $base_price + $commission_amount;
+            $data['base_price'] = $base_price;
+            $data['commission_amount'] = $commission_amount;
+            $data['commission_percentage'] = $commission_percentage;
+
+            // Also add commission to variation prices
+            if (!empty($data['variations'])) {
+                $variations_with_commission = [];
+                foreach ($data['variations'] as $var) {
+                    $var_base_price = $var['price'];
+                    $var_commission = round(($commission_percentage / 100) * $var_base_price, config('round_up_to_digit'));
+                    $variations_with_commission[] = [
+                        'type' => $var['type'],
+                        'price' => (float) ($var_base_price + $var_commission),
+                        'stock' => $var['stock'],
+                        'base_price' => $var_base_price,
+                    ];
+                }
+                $data['variations'] = $variations_with_commission;
+            }
+
             $data['store_name'] = $data->store->name;
             $data['is_campaign'] = $data->store?->campaigns_count > 0 ? 1 : 0;
             $data['module_type'] = $data->module->module_type;
