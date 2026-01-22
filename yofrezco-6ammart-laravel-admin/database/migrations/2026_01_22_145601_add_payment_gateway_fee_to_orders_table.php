@@ -11,8 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('payment_gateway_fee', 24, 2)->default(0)->after('delivery_tax_amount');
-            $table->json('payment_gateway_fee_details')->nullable()->after('payment_gateway_fee');
+            $table->decimal('payment_gateway_fee', 24, 2)->default(0);
+            $table->json('payment_gateway_fee_details')->nullable();
         });
     }
 
