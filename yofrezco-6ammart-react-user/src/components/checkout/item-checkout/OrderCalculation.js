@@ -102,15 +102,10 @@ const OrderCalculation = (props) => {
 
     );
 
-    // Add delivery commission to display the total delivery fee including commission
+    // Add delivery commission to display the delivery fee including commission (but NOT tax)
     const commissionPercentage = configData?.delivery_commission_percentage ?? 0;
     const deliveryCommission = (commissionPercentage / 100) * price;
     const feeWithCommission = price + deliveryCommission;
-
-    // Add delivery tax on top of (base + commission)
-    const taxPercentage = configData?.delivery_tax_percentage ?? 0;
-    const deliveryTax = (taxPercentage / 100) * feeWithCommission;
-    const totalDeliveryFee = feeWithCommission + deliveryTax;
 
     setDeliveryFee(orderType !== "delivery" ? 0 : price);
     if (price === 0) {
@@ -125,7 +120,7 @@ const OrderCalculation = (props) => {
           width="100%"
         >
           <Typography>{"(+)"}</Typography>
-          <Typography>{storeData && getAmountWithSign(totalDeliveryFee)}</Typography>
+          <Typography>{storeData && getAmountWithSign(feeWithCommission)}</Typography>
         </Stack>
       );
     }
@@ -486,6 +481,27 @@ const OrderCalculation = (props) => {
                         storeData && handleDeliveryFee()
                       )}
                     </Grid>
+                    {/* Delivery Tax/ITBMS - shown separately */}
+                    {getDeliveryTax() > 0 && (
+                      <>
+                        <Grid item xs={8} sx={{ textTransform: "capitalize" }}>
+                          <Typography component="span">
+                            {t("Delivery Tax/ITBMS")}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4} align="right">
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="flex-end"
+                            spacing={0.5}
+                          >
+                            <Typography>{"(+)"}</Typography>
+                            <Typography>{getAmountWithSign(getDeliveryTax())}</Typography>
+                          </Stack>
+                        </Grid>
+                      </>
+                    )}
                   </>
                 ) : null}
               </>
