@@ -1175,6 +1175,7 @@ const ItemCheckout = (props) => {
                     initVauleEx={storeData?.extra_packaging_amount}
                     isLoading={isLoading}
                     scheduleAt={scheduleAt}
+                    paymentMethod={paymentMethod}
                   />
 
                   <PlaceOrder

@@ -61,7 +61,8 @@ const OrderCalculation = (props) => {
     initVauleEx,
     isLoading,
     taxAmount,
-    scheduleAt
+    scheduleAt,
+    paymentMethod
   } = props;
 
   const token = getToken();
@@ -197,6 +198,59 @@ const OrderCalculation = (props) => {
     return (taxPercentage / 100) * feeWithCommission;
   };
 
+  // Calculate payment gateway fee based on selected payment method
+  // CyberSource + Fygaro (Visa/Mastercard): 3.5% card fee + $0.50 bank fee + 7% ITBMS on fees + $0.10 fygaro
+  // Tilopay (Yappy): 1% fee + 7% ITBMS on fee
+  const getPaymentGatewayFee = (baseTotal) => {
+    if (!paymentMethod) return { total: 0, details: null };
+
+    const isCyberSource = paymentMethod === 'cybersource';
+    const isTilopay = paymentMethod === 'tilopay';
+
+    if (isCyberSource) {
+      const cardFeePercent = 3.5;
+      const bankFixedFee = 0.50;
+      const itbmsPercent = 7;
+      const fygaroFixedFee = 0.10;
+
+      const cardFee = (cardFeePercent / 100) * baseTotal;
+      const feesBeforeItbms = cardFee + bankFixedFee;
+      const itbmsFee = (itbmsPercent / 100) * feesBeforeItbms;
+      const totalFee = cardFee + bankFixedFee + itbmsFee + fygaroFixedFee;
+
+      return {
+        total: totalFee,
+        type: 'visa_mastercard',
+        details: {
+          cardFee,
+          bankFixedFee,
+          itbmsFee,
+          fygaroFixedFee
+        }
+      };
+    }
+
+    if (isTilopay) {
+      const yappyFeePercent = 1;
+      const itbmsPercent = 7;
+
+      const yappyFee = (yappyFeePercent / 100) * baseTotal;
+      const itbmsFee = (itbmsPercent / 100) * yappyFee;
+      const totalFee = yappyFee + itbmsFee;
+
+      return {
+        total: totalFee,
+        type: 'yappy',
+        details: {
+          yappyFee,
+          itbmsFee
+        }
+      };
+    }
+
+    return { total: 0, details: null };
+  };
+
   const handleOrderAmount = () => {
     let totalAmount = getCalculatedTotal(
       cartList,
@@ -222,7 +276,11 @@ const OrderCalculation = (props) => {
     const deliveryCommission = getDeliveryCommission();
     // Add delivery tax on (delivery fee + commission)
     const deliveryTax = getDeliveryTax();
-    totalAmount = totalAmount + deliveryCommission + deliveryTax;
+    // Calculate base total before payment fees
+    const baseTotalBeforePaymentFee = totalAmount + deliveryCommission + deliveryTax;
+    // Add payment gateway fee
+    const paymentFee = getPaymentGatewayFee(baseTotalBeforePaymentFee);
+    totalAmount = baseTotalBeforePaymentFee + paymentFee.total;
     setPayableAmount(totalAmount);
     dispatch(setTotalAmount(totalAmount));
     return totalAmount;
@@ -502,6 +560,57 @@ const OrderCalculation = (props) => {
                         </Grid>
                       </>
                     )}
+                    {/* Payment Gateway Fee - shown based on selected payment method */}
+                    {(() => {
+                      // Calculate base total for payment fee
+                      const baseTotal = getCalculatedTotal(
+                        cartList,
+                        couponDiscount,
+                        storeData,
+                        configData,
+                        distanceData,
+                        couponType,
+                        orderType,
+                        freeDelivery,
+                        Number(deliveryTip),
+                        zoneData,
+                        origin,
+                        destination,
+                        extraCharge,
+                        additionalCharge,
+                        packagingCharge,
+                        referDiscount,
+                        taxAmount?.tax_amount,
+                        surgePrice
+                      ) + getDeliveryCommission() + getDeliveryTax();
+                      const paymentFee = getPaymentGatewayFee(baseTotal);
+
+                      if (paymentFee.total > 0) {
+                        return (
+                          <>
+                            <Grid item xs={8} sx={{ textTransform: "capitalize" }}>
+                              <Typography component="span">
+                                {paymentFee.type === 'visa_mastercard'
+                                  ? t("Visa/Mastercard Fee")
+                                  : t("Yappy Fee")}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={4} align="right">
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                                justifyContent="flex-end"
+                                spacing={0.5}
+                              >
+                                <Typography>{"(+)"}</Typography>
+                                <Typography>{getAmountWithSign(paymentFee.total)}</Typography>
+                              </Stack>
+                            </Grid>
+                          </>
+                        );
+                      }
+                      return null;
+                    })()}
                   </>
                 ) : null}
               </>

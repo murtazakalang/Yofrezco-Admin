@@ -506,6 +506,59 @@ trait PlaceNewOrder
             $order->flash_admin_discount_amount = round($flash_sale_admin_discount_amount, config('round_up_to_digit'));
             $order->flash_store_discount_amount = round($flash_sale_vendor_discount_amount, config('round_up_to_digit'));
 
+            // Calculate payment gateway fees based on payment method
+            // Base total for payment fee calculation (before dm_tips and additional charges)
+            $base_total_for_payment_fee = $order->order_amount;
+            $payment_gateway_fee = 0;
+            $payment_gateway_fee_details = [];
+
+            if ($request->payment_method === 'cybersource') {
+                // CyberSource (Visa/Mastercard via Fygaro)
+                // Card fee: 3.5%, Bank fixed fee: $0.50, ITBMS: 7% on fees, Fygaro: $0.10
+                $card_fee_percent = 3.5;
+                $bank_fixed_fee = 0.50;
+                $itbms_percent = 7;
+                $fygaro_fixed_fee = 0.10;
+
+                $card_fee = ($card_fee_percent / 100) * $base_total_for_payment_fee;
+                $fees_before_itbms = $card_fee + $bank_fixed_fee;
+                $itbms_fee = ($itbms_percent / 100) * $fees_before_itbms;
+                $payment_gateway_fee = round($card_fee + $bank_fixed_fee + $itbms_fee + $fygaro_fixed_fee, config('round_up_to_digit'));
+
+                $payment_gateway_fee_details = [
+                    'type' => 'cybersource',
+                    'card_fee' => round($card_fee, config('round_up_to_digit')),
+                    'bank_fixed_fee' => $bank_fixed_fee,
+                    'itbms_fee' => round($itbms_fee, config('round_up_to_digit')),
+                    'fygaro_fixed_fee' => $fygaro_fixed_fee,
+                    'banco_general_receives' => round($card_fee + $bank_fixed_fee + $itbms_fee, config('round_up_to_digit')),
+                    'fygaro_receives' => $fygaro_fixed_fee
+                ];
+            } elseif ($request->payment_method === 'tilopay') {
+                // Tilopay (Yappy)
+                // Yappy fee: 1%, ITBMS: 7% on yappy fee
+                $yappy_fee_percent = 1;
+                $itbms_percent = 7;
+
+                $yappy_fee = ($yappy_fee_percent / 100) * $base_total_for_payment_fee;
+                $itbms_fee = ($itbms_percent / 100) * $yappy_fee;
+                $payment_gateway_fee = round($yappy_fee + $itbms_fee, config('round_up_to_digit'));
+
+                $payment_gateway_fee_details = [
+                    'type' => 'tilopay',
+                    'yappy_fee' => round($yappy_fee, config('round_up_to_digit')),
+                    'itbms_fee' => round($itbms_fee, config('round_up_to_digit')),
+                    'yappy_receives' => $payment_gateway_fee
+                ];
+            }
+
+            // Store payment gateway fee in order
+            $order->payment_gateway_fee = $payment_gateway_fee;
+            $order->payment_gateway_fee_details = json_encode($payment_gateway_fee_details);
+
+            // Add payment gateway fee to order amount
+            $order->order_amount = $order->order_amount + $payment_gateway_fee;
+
             //DM TIPS
             $order->order_amount = $order->order_amount + $order->dm_tips + $order->additional_charge + $order->extra_packaging_amount;
             if ($request->payment_method == 'wallet' && $request->user->wallet_balance < $order->order_amount) {

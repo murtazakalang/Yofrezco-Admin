@@ -943,6 +943,18 @@
                                             + {{ \App\CentralLogics\Helpers::format_currency($order['delivery_tax_amount']) }}
                                         </dd>
                                     @endif
+                                    @if (($order['payment_gateway_fee'] ?? 0) > 0)
+                                        @php
+                                            $feeDetails = json_decode($order['payment_gateway_fee_details'] ?? '{}', true);
+                                            $feeLabel = ($feeDetails['type'] ?? '') === 'cybersource' 
+                                                ? translate('messages.visa_mastercard_fee') 
+                                                : translate('messages.yappy_fee');
+                                        @endphp
+                                        <dt class="col-6">{{ $feeLabel }}:</dt>
+                                        <dd class="col-6">
+                                            + {{ \App\CentralLogics\Helpers::format_currency($order['payment_gateway_fee']) }}
+                                        </dd>
+                                    @endif
                                     <dt class="col-6">{{ translate('messages.delivery_man_tips') }}</dt>
                                     <dd class="col-6">
                                         + {{ \App\CentralLogics\Helpers::format_currency($deliverman_tips) }}</dd>
