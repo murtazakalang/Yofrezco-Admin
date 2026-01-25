@@ -95,26 +95,36 @@ const BottomNav = () => {
             <CustomBottomNavigationAction
               label={t("Home")}
               value="home"
-              icon={<HomeIcon />}
+              icon={
+                <img
+                  src="/home_select.png"
+                  alt="Home"
+                  style={{
+                    width: "24px",
+                    height: "24px",
+                    objectFit: "contain"
+                  }}
+                />
+              }
             />
 
-              {selectedModule?.module_type === "rental" ? (<CustomBottomNavigationAction
-                  label={t("My Trips")}
-                  value="my-trips"
-                  icon={
-                      <Badge color="error">
-                          <LocalTaxiIcon />
-                      </Badge>
-                  }
-              />) : (<CustomBottomNavigationAction
-                  label={t("My Orders")}
-                  value="my-orders"
-                  icon={
-                      <Badge color="error">
-                          <LibraryBooksIcon/>
-                      </Badge>
-                  }
-              />)}
+            {selectedModule?.module_type === "rental" ? (<CustomBottomNavigationAction
+              label={t("My Trips")}
+              value="my-trips"
+              icon={
+                <Badge color="error">
+                  <LocalTaxiIcon />
+                </Badge>
+              }
+            />) : (<CustomBottomNavigationAction
+              label={t("My Orders")}
+              value="my-orders"
+              icon={
+                <Badge color="error">
+                  <LibraryBooksIcon />
+                </Badge>
+              }
+            />)}
 
             {selectedModule?.module_type !== "parcel" &&
               selectedModule?.module_type !== "rental" && (

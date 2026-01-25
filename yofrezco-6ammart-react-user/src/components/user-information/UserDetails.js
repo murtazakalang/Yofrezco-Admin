@@ -60,15 +60,20 @@ const UserDetails = ({
             height="100%"
           />
         </Stack>
-        <Stack justifyContent="start" width="150px">
-          <CustomTypographyEllipsis fontWeight="600" fontSize="18px">
+        <Stack justifyContent="start" flexShrink={0}>
+          <Typography
+            fontWeight="600"
+            fontSize="18px"
+            color="white"
+            sx={{ wordBreak: "break-word" }}
+          >
             {data ? (
               `${data?.f_name} ${data?.l_name ? data?.l_name : ""}`
             ) : (
               <Skeleton variant="text" width="200px" height="30px" />
             )}
-          </CustomTypographyEllipsis>
-          <Typography variant="body" color={theme.palette.neutral[400]}>
+          </Typography>
+          <Typography variant="body" color="rgba(255,255,255,0.8)">
             {t("Join")} {CustomDateFormat(data?.created_at)}
           </Typography>
         </Stack>

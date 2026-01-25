@@ -118,16 +118,8 @@ const SignUp = ({
       profileRefetch();
       toast.success(t(signup_successfull));
       dispatch(setWelcomeModal(true));
-      const zoneSelected = JSON.parse(localStorage.getItem("zoneid"));
-      if (zoneSelected && getCurrentModuleType()) {
-        if (getCurrentModuleType() !== "parcel" && getCurrentModuleType() !== "rental") {
-          router.push("/interest", undefined, { shallow: true });
-        } else {
-          router.push("/home", undefined, { shallow: true });
-        }
-      } else {
-        router.push("/home", undefined, { shallow: true });
-      }
+      // Skip interest/preferences selection - go directly to home
+      router.push("/home", undefined, { shallow: true });
       handleClose();
     }
   };
@@ -140,11 +132,8 @@ const SignUp = ({
         dispatch(setWelcomeModal(true));
       }
 
-      if (item.module_type !== "parcel" && item?.module_type !== "rental") {
-        router.push("/interest", undefined, { shallow: true });
-      } else {
-        //router.push("/home", undefined, { shallow: true });
-      }
+      // Skip interest/preferences selection - go directly to home
+      router.push("/home", undefined, { shallow: true });
     }
 
     setOpenModuleSelection(false);

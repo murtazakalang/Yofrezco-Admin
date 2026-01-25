@@ -69,11 +69,6 @@ const ModuleWiseNav = (props) => {
 			justifyContent="flex-end"
 			alignItems="center"
 		>
-			<Avatar
-				src={profileImageUrl}
-				sx={{ width: 18, height: 18, cursor: "pointer" }}
-				onClick={handleProfileClick}
-			/>
 			<DrawerMenu
 				setToggled={setToggled}
 				setOpenDrawer={setOpenDrawer}

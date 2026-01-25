@@ -95,7 +95,7 @@ const BasicInformation = (props) => {
                       fontSize={{ xs: "14px", sm: "14px", md: "16px" }}
                       fontWeight="700"
                     >
-                      {t("Personal ojo Details")}
+                      {t("Personal Details")}
                     </Typography>
                     {isSmall && (
                       <SmallDeviceIconButton onClick={handleClick}>
@@ -125,9 +125,8 @@ const BasicInformation = (props) => {
                             marginLeft={{ xs: "13px", md: "10px" }}
                             fontSize={{ xs: "12px", md: "14px" }}
                           >
-                            {`${data?.f_name ? data?.f_name : ""} ${
-                              data?.l_name ? data?.l_name : ""
-                            }`}
+                            {`${data?.f_name ? data?.f_name : ""} ${data?.l_name ? data?.l_name : ""
+                              }`}
                           </Typography>
                         </Typography>
                         <Box

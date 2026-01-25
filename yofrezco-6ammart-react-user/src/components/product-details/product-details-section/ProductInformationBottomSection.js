@@ -67,7 +67,7 @@ const ProductInformationBottomSection = ({
         (item) =>
           item?.id === id &&
           JSON.stringify(item?.selectedOption) ===
-            JSON.stringify(productDetailsData?.selectedOption)
+          JSON.stringify(productDetailsData?.selectedOption)
       );
       if (isInCart) {
         return true;
@@ -139,7 +139,7 @@ const ProductInformationBottomSection = ({
       },
     });
   };
-  useEffect(() => {}, [wishListCount]);
+  useEffect(() => { }, [wishListCount]);
 
   const handleVariationAvailability = (checkFor, cartItem) => {
     if (productDetailsData?.selectedOption?.length > 0) {
@@ -180,19 +180,19 @@ const ProductInformationBottomSection = ({
   const actionsHandler = () => (
     <BottomStack direction="row" width="100%" gap={2.5}>
       {productDetailsData?.stock > 0 &&
-      isVariationAvailable(productDetailsData) ? (
+        isVariationAvailable(productDetailsData) ? (
         <PrimaryButton
           onClick={() => handleRedirectToCheckoutClick()}
           sx={{
             backgroundColor: theme.palette.customColor.buyButton,
-            color: "black",
+            color: "white",
             width: {
               xs: "100%",
               sm: productDetailsData?.isCampaignItem ? "100%" : 200,
             },
             "&:hover": {
-              color: "black",
-              backgroundColor: alpha(theme.palette.customColor.buyButton, 0.6),
+              color: "white",
+              backgroundColor: alpha(theme.palette.customColor.buyButton, 0.8),
             },
           }}
         >

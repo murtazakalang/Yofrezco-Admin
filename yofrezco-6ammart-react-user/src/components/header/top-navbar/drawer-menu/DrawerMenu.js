@@ -62,7 +62,7 @@ const DrawerMenu = ({ setToggled, openDrawer, setOpenDrawer }) => {
           paddingRight: "0px",
         }}
       >
-        <MenuIcon />
+        <MenuIcon sx={{ fontSize: "32px" }} />
       </IconButton>
       {openDrawer && (
         <CustomDrawer

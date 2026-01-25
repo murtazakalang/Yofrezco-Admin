@@ -57,6 +57,7 @@ const CategoriesGrid = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     gap: "10px",
     padding: "0 8px",
+    justifyContent: "space-between",
   },
 }));
 

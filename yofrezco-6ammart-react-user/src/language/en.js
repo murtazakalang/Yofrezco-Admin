@@ -677,6 +677,7 @@ export const english = {
   "All Restaurants": "All Restaurants",
   History: "History",
   "Total Orders": "Total Orders",
+  "Total Orders/Bookings": "Total Orders/Bookings",
   Suggestions: "Suggestions",
   "Days Since Joining": "Days Since Joining",
   "amount in wallet": "amount in wallet",

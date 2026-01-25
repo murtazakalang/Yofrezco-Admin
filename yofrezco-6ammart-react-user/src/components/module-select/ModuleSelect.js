@@ -86,14 +86,7 @@ const ModuleSelect = ({
     dispatch(setRecommendedStores([]))
     dispatch(setSelectedModule(item));
     moduleSelectHandler(item);
-    const isModuleExist = existingModuleId?.includes(item?.id);
-    if (
-      interestId?.length > 0 &&
-      !isModuleExist &&
-      item.module_type !== "parcel" && item?.module !== "rental"
-    ) {
-      router.push("/interest", undefined, { shallow: true });
-    }
+    // Skip interest/preferences selection - removed redirect to /interest
   };
 
   return (

@@ -1,7 +1,6 @@
 import { Grid, useTheme } from "@mui/material";
 import React from "react";
 import { getAmountWithSign } from "../../helper-functions/CardHelpers";
-import loyaltyImage from "./asset/loyalty.png";
 import wallet from "./asset/newWallet.png";
 import orderImage from "./asset/order.png";
 
@@ -20,17 +19,7 @@ const UserDashBoard = ({ data, configData, isLoading }) => {
       xs={12}
       sm={12}
     >
-      <Grid item xs={6} sm={6} md={3}>
-        <ProfileStatistics
-          isLoading={isLoading}
-          value={data?.member_since_days}
-          title="Days Since Joining"
-          image={data?.image_full_url}
-          pathname="profile-settings"
-          storage={data?.storage}
-        />
-      </Grid>
-      <Grid item xs={6} sm={6} md={3}>
+      <Grid item xs={12} sm={6} md={6}>
         <ProfileStatistics
           isLoading={isLoading}
           value={getAmountWithSign(data?.wallet_balance)}
@@ -40,23 +29,13 @@ const UserDashBoard = ({ data, configData, isLoading }) => {
           storage={data?.storage}
         />
       </Grid>
-      <Grid item xs={6} sm={6} md={3}>
+      <Grid item xs={12} sm={6} md={6}>
         <ProfileStatistics
           isLoading={isLoading}
           value={data?.order_count}
-          title="Total Orders"
+          title="Total Orders/Bookings"
           image={orderImage.src}
           pathname="my-orders"
-          storage={data?.storage}
-        />
-      </Grid>
-      <Grid item xs={6} sm={6} md={3}>
-        <ProfileStatistics
-          isLoading={isLoading}
-          value={data?.loyalty_point}
-          title="loyalty points"
-          image={loyaltyImage.src}
-          pathname="loyalty-points"
           storage={data?.storage}
         />
       </Grid>

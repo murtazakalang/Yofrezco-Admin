@@ -115,7 +115,7 @@ const footer = {
 const customColor = {
   textGray: "#9c9c9c",
   textGrayDeep: "#787676",
-  buyButton: "#F9E091",
+  buyButton: "#E53935",
   parcelWallet: "#8B3FFD",
 };
 const whiteContainer = {

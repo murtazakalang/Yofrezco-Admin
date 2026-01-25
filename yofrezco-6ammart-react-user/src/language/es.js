@@ -687,6 +687,7 @@ export const spain = {
   "All Restaurants": "Todos los restaurantes",
   History: "Historial",
   "Total Orders": "Total de pedidos",
+  "Total Orders/Bookings": "Total Compras/Reservas",
   Suggestions: "Sugerencias",
   "Days Since Joining": "Días desde la incorporación",
   "amount in wallet": "monto en la billetera",

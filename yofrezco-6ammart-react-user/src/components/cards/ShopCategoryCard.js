@@ -30,6 +30,11 @@ const Wrapper = styled(Box)(({ theme }) => ({
       transform: "scale(1.1)",
     },
   },
+  // Mobile responsive - 2 cards per row
+  [theme.breakpoints.down("sm")]: {
+    width: "calc(50% - 5px)",
+    minWidth: "140px",
+  },
 }));
 const ImageWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
   position: "relative",
