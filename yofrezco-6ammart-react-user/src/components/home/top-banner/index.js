@@ -20,15 +20,15 @@ const TopBanner = () => {
   return (
     <CustomBoxFullWidth
       sx={{
-        minHeight: {
-          xs: moduleType === "parcel" ? "250px" : "160px",
-          sm: "290px",
-          md: "290px",
-        },
+        // minHeight: {
+        //   xs: moduleType === "parcel" ? "250px" : "160px",
+        //   sm: "290px",
+        //   md: "290px",
+        // },
         backgroundColor: "#002bfe",
         position: "relative",
         overflow: "hidden",
-        paddingTop: "10px",
+        padding: "10px 0",
       }}
     >
       {getCurrentModuleType() === "rental" && (
