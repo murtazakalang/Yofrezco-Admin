@@ -13,7 +13,7 @@ import { t } from "i18next";
 import { useSelector } from "react-redux";
 
 const VehicleSearchPage = () => {
-  
+
   useScrollToTop();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -56,60 +56,61 @@ const VehicleSearchPage = () => {
             }}
           >
             {/* Top Banner */}
-            <TopBanner />
-            <CustomStackFullWidth
-						alignItems="center"
-						justifyContent="center"
-						sx={{
-							position: "absolute",
-							top: { xs: -4, sm: 50 },
-							left: 0,
-							right: 0,
-						}}
-					>
-					<CustomStackFullWidth
-      alignItems="center"
-      justifyContent="center"
-      spacing={isSmall ? 1 : 3}
-      p={isSmall ? "25px" : "20px"}
-      mt={{ xs: 0, sm: 2 }}
-    >
-      <CustomStackFullWidth
-        alignItems="center"
-        justifyContent="center"
-        spacing={1.5}
-      >
-        <Typography
-          variant={isSmall ? "h6" : "h5"}
-          textAlign="center"
-          fontWeight="600"
-          lineHeight="33.18px"
-          component="h1"
-          sx={{
-            fontSize: {
-              md: "30px !important",
-            },
-            textTransform:
-               "capitalize" ,
-          }}
-        >
-          {t("Rent best car for best experience")}
-        </Typography>
-        <Typography
-          variant={isSmall ? "subtitle2" : "subtitle1"}
-          textAlign="center"
-          sx={{ color: (theme) => theme.palette.neutral[400] }}
-          fontWeight="400"
-          lineHeight="18.75px"
-          component="p"
-        >
-          {t(`${getBannerTexts}${configData?.business_name} ${getBannerSubTexts}`)}
-        </Typography>
-      </CustomStackFullWidth>
+            <TopBanner>
+              <CustomStackFullWidth
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                  position: "relative",
+                  top: { xs: 0, sm: 0 },
+                  left: 0,
+                  right: 0,
+                }}
+              >
+                <CustomStackFullWidth
+                  alignItems="center"
+                  justifyContent="center"
+                  spacing={isSmall ? 1 : 3}
+                  p={isSmall ? "25px" : "20px"}
+                  mt={{ xs: 0, sm: 2 }}
+                >
+                  <CustomStackFullWidth
+                    alignItems="center"
+                    justifyContent="center"
+                    spacing={1.5}
+                  >
+                    <Typography
+                      variant={isSmall ? "h6" : "h5"}
+                      textAlign="center"
+                      fontWeight="600"
+                      lineHeight="33.18px"
+                      component="h1"
+                      sx={{
+                        fontSize: {
+                          md: "30px !important",
+                        },
+                        textTransform:
+                          "capitalize",
+                      }}
+                    >
+                      {t("Rent best car for best experience")}
+                    </Typography>
+                    <Typography
+                      variant={isSmall ? "subtitle2" : "subtitle1"}
+                      textAlign="center"
+                      sx={{ color: (theme) => theme.palette.neutral[400] }}
+                      fontWeight="400"
+                      lineHeight="18.75px"
+                      component="p"
+                    >
+                      {t(`${getBannerTexts}${configData?.business_name} ${getBannerSubTexts}`)}
+                    </Typography>
+                  </CustomStackFullWidth>
 
-  
-    </CustomStackFullWidth>
-					</CustomStackFullWidth>
+
+                </CustomStackFullWidth>
+              </CustomStackFullWidth>
+            </TopBanner>
 
             <Box
               ref={searchPanelRef}
@@ -118,10 +119,10 @@ const VehicleSearchPage = () => {
                 position: isSticky ? { xs: "fixed" } : "relative",
                 top: isSticky
                   ? {
-                      xs: "70px",
-                      sm: "20px",
-                      md: scrolling ? "43px" : "74px",
-                    }
+                    xs: "70px",
+                    sm: "20px",
+                    md: scrolling ? "43px" : "74px",
+                  }
                   : "auto",
                 pt: isSticky && { xs: "25px", md: "0px" },
                 zIndex: isSticky ? 1100 : "auto",
@@ -129,18 +130,18 @@ const VehicleSearchPage = () => {
                 transition: "all 0.4s ease",
                 backgroundColor: isSticky
                   ? {
-                      xs: theme.palette.background.paper,
-                      sm: "transparent",
-                    }
+                    xs: theme.palette.background.paper,
+                    sm: "transparent",
+                  }
                   : "transparent",
                 boxShadow: isSticky
                   ? {
-                      xs: `0px 10px 20px 0px ${alpha(
-                        theme.palette.neutral[1000],
-                        0.2
-                      )}`,
-                      sm: `none`,
-                    }
+                    xs: `0px 10px 20px 0px ${alpha(
+                      theme.palette.neutral[1000],
+                      0.2
+                    )}`,
+                    sm: `none`,
+                  }
                   : "transparent",
               }}
             >

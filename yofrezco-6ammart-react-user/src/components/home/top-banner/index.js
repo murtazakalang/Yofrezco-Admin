@@ -8,7 +8,7 @@ import LeftCar from "/public/static/rental/left_car.png";
 import RightCar from "/public/static/rental/right_car.png";
 import { useEffect, useState } from "react";
 
-const TopBanner = () => {
+const TopBanner = ({ children }) => {
   const [moduleType, setModuleType] = useState(null);
   const theme = useTheme();
   // Ensure moduleType is set on the client
@@ -28,7 +28,7 @@ const TopBanner = () => {
         backgroundColor: "#002bfe",
         position: "relative",
         overflow: "hidden",
-        padding: "10px 0",
+        padding: "16px 0",
       }}
     >
       {getCurrentModuleType() === "rental" && (
@@ -70,6 +70,7 @@ const TopBanner = () => {
           />
         </Box>
       )}
+      {children}
     </CustomBoxFullWidth>
   );
 };

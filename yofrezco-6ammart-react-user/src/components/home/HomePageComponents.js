@@ -144,18 +144,10 @@ const HomePageComponents = ({ configData, landingPageData }) => {
     <PushNotificationLayout>
       <HomeLocationDetector />
       <CustomStackFullWidth>
-        <CustomStackFullWidth sx={{ position: "relative" }}>
-          <TopBanner />
+        <TopBanner>
           <CustomStackFullWidth
             alignItems="center"
             justifyContent="center"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: 0,
-              right: 0,
-              transform: "translateY(-50%)",
-            }}
           >
             <SearchWithTitle
               currentTab={currentTab}
@@ -170,7 +162,7 @@ const HomePageComponents = ({ configData, landingPageData }) => {
               query={router.query}
             />
           </CustomStackFullWidth>
-        </CustomStackFullWidth>
+        </TopBanner>
         {moduleType === "rental" && (
           <Box>
             <TaxiSearchPanel position="relative" />

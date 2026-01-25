@@ -20,21 +20,17 @@ const PercelComponents = () => {
   }
   return (
     <CustomStackFullWidth>
-      <CustomStackFullWidth sx={{ position: "relative" }}>
-        <TopBanner />
+      <TopBanner>
         <CustomStackFullWidth
           alignItems="center"
           justifyContent="center"
           sx={{
-            position: "absolute",
-            top: 0,
             height: "100%",
           }}
         >
           <SearchWithTitle zoneid={zoneid} token={token} />
         </CustomStackFullWidth>
-        {/* <ParcelHero /> */}
-      </CustomStackFullWidth>
+      </TopBanner>
       <CustomContainer>
         <ParcelCategory />
       </CustomContainer>
