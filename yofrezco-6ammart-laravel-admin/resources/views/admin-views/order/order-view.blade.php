@@ -946,7 +946,8 @@
                                     @if (($order['payment_gateway_fee'] ?? 0) > 0)
                                         @php
                                             $feeDetails = json_decode($order['payment_gateway_fee_details'] ?? '{}', true);
-                                            $feeLabel = ($feeDetails['type'] ?? '') === 'cybersource' 
+                                            $feeType = $feeDetails['type'] ?? '';
+                                            $feeLabel = $feeType === 'cybersource' 
                                                 ? translate('messages.visa_mastercard_fee') 
                                                 : translate('messages.yappy_fee');
                                         @endphp
@@ -954,6 +955,28 @@
                                         <dd class="col-6">
                                             + {{ \App\CentralLogics\Helpers::format_currency($order['payment_gateway_fee']) }}
                                         </dd>
+
+                                        {{-- Breakdown for Admin --}}
+                                        @if(isset($feeDetails['card_fee']) && $feeDetails['card_fee'] > 0)
+                                            <dt class="col-6 text-muted" style="font-weight: normal; padding-left: 20px;">- {{ translate('messages.card_fee') }} (3.5%)</dt>
+                                            <dd class="col-6 text-muted" style="font-weight: normal;">{{ \App\CentralLogics\Helpers::format_currency($feeDetails['card_fee']) }}</dd>
+                                        @endif
+                                        @if(isset($feeDetails['bank_fixed_fee']) && $feeDetails['bank_fixed_fee'] > 0)
+                                            <dt class="col-6 text-muted" style="font-weight: normal; padding-left: 20px;">- {{ translate('messages.bank_fee') }} ($0.50)</dt>
+                                            <dd class="col-6 text-muted" style="font-weight: normal;">{{ \App\CentralLogics\Helpers::format_currency($feeDetails['bank_fixed_fee']) }}</dd>
+                                        @endif
+                                        @if(isset($feeDetails['itbms_fee']) && $feeDetails['itbms_fee'] > 0)
+                                            <dt class="col-6 text-muted" style="font-weight: normal; padding-left: 20px;">- {{ translate('messages.itbms') }} (7%)</dt>
+                                            <dd class="col-6 text-muted" style="font-weight: normal;">{{ \App\CentralLogics\Helpers::format_currency($feeDetails['itbms_fee']) }}</dd>
+                                        @endif
+                                        @if(isset($feeDetails['fygaro_fixed_fee']) && $feeDetails['fygaro_fixed_fee'] > 0)
+                                            <dt class="col-6 text-muted" style="font-weight: normal; padding-left: 20px;">- {{ translate('messages.fygaro_fee') }} ($0.10)</dt>
+                                            <dd class="col-6 text-muted" style="font-weight: normal;">{{ \App\CentralLogics\Helpers::format_currency($feeDetails['fygaro_fixed_fee']) }}</dd>
+                                        @endif
+                                        @if(isset($feeDetails['yappy_fee']) && $feeDetails['yappy_fee'] > 0)
+                                            <dt class="col-6 text-muted" style="font-weight: normal; padding-left: 20px;">- {{ translate('messages.yappy_fee') }} (1%)</dt>
+                                            <dd class="col-6 text-muted" style="font-weight: normal;">{{ \App\CentralLogics\Helpers::format_currency($feeDetails['yappy_fee']) }}</dd>
+                                        @endif
                                     @endif
                                     <dt class="col-6">{{ translate('messages.delivery_man_tips') }}</dt>
                                     <dd class="col-6">
