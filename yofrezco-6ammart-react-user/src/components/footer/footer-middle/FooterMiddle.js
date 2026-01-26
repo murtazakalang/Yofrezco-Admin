@@ -96,13 +96,13 @@ const FooterMiddle = (props) => {
                 component="img"
                 src="/Visa Mastercard.png"
                 alt="Visa Mastercard"
-                sx={{ height: "45px", width: "auto", objectFit: "contain" }}
+                sx={{ height: "65px", width: "auto", objectFit: "contain" }}
               />
               <Box
                 component="img"
                 src="/Yappy.png"
                 alt="Yappy"
-                sx={{ height: "45px", width: "auto", objectFit: "contain" }}
+                sx={{ height: "35px", width: "auto", objectFit: "contain" }}
               />
             </Stack>
           </CustomStackFullWidth>

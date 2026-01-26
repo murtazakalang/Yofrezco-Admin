@@ -238,7 +238,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
                   </>
                 ) : (
                   <>
-                    {data?.products?.map((item, index) => (
+                    {data?.products?.slice(0, 9).map((item, index) => (
                       <Grid item xs={12} sm={6} md={4} key={index}>
                         <ProductCard
                           item={item}
