@@ -88,7 +88,7 @@ const FooterMiddle = (props) => {
             {/* Payment Methods */}
             <Stack
               direction="row"
-              spacing={1}
+              spacing={2}
               alignItems="center"
               sx={{ mt: 2 }}
             >
@@ -96,19 +96,13 @@ const FooterMiddle = (props) => {
                 component="img"
                 src="/Visa Mastercard.png"
                 alt="Visa Mastercard"
-                sx={{ height: "30px", width: "auto", objectFit: "contain" }}
+                sx={{ height: "45px", width: "auto", objectFit: "contain" }}
               />
               <Box
                 component="img"
                 src="/Yappy.png"
                 alt="Yappy"
-                sx={{ height: "30px", width: "auto", objectFit: "contain" }}
-              />
-              <Box
-                component="img"
-                src="/Rapidpay.png"
-                alt="Rapidpay"
-                sx={{ height: "30px", width: "auto", objectFit: "contain" }}
+                sx={{ height: "45px", width: "auto", objectFit: "contain" }}
               />
             </Stack>
           </CustomStackFullWidth>

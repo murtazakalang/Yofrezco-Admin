@@ -225,51 +225,30 @@ const PopularItemsNearby = ({ title, subTitle }) => {
               <LocalizedPopularProductsTitle />
             )}
 
-            {/* Popular Products Section */}
+            {/* Popular Products Section - Fixed Grid (No Scrolling) */}
             <CustomBoxFullWidth>
               <Grid container spacing={2} sx={{ marginTop: "1px" }}>
                 {isLoading ? (
-                  <Grid item xs={12} sm={12} md={12}>
-                    <SliderCustom
-                      nopadding="true"
-                      sx={{
-                        "& .slick-slide": {
-                          marginY: "-15px",
-                        },
-                      }}
-                    >
-                      <Slider {...settings}>
-                        {[...Array(15)].map((item, index) => {
-                          return <ProductCardSimmerHorizontal key={index} />;
-                        })}
-                      </Slider>
-                    </SliderCustom>
-                  </Grid>
+                  <>
+                    {[...Array(9)].map((item, index) => (
+                      <Grid item xs={12} sm={6} md={4} key={index}>
+                        <ProductCardSimmerHorizontal />
+                      </Grid>
+                    ))}
+                  </>
                 ) : (
-                  <Grid item xs={12} sm={12} md={12}>
-                    <SliderCustom
-                      nopadding="true"
-                      sx={{
-                        "& .slick-slide": {
-                          marginY: "-15px",
-                        },
-                      }}
-                    >
-                      <Slider currentSlide={0} {...settings}>
-                        {data?.products?.map((item, index) => {
-                          return (
-                            <ProductCard
-                              key={index}
-                              item={item}
-                              cardheight="160px"
-                              horizontalcard="true"
-                              cardFor="popular items"
-                            />
-                          );
-                        })}
-                      </Slider>
-                    </SliderCustom>
-                  </Grid>
+                  <>
+                    {data?.products?.map((item, index) => (
+                      <Grid item xs={12} sm={6} md={4} key={index}>
+                        <ProductCard
+                          item={item}
+                          cardheight="160px"
+                          horizontalcard="true"
+                          cardFor="popular items"
+                        />
+                      </Grid>
+                    ))}
+                  </>
                 )}
               </Grid>
             </CustomBoxFullWidth>
