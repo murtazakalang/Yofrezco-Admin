@@ -114,75 +114,78 @@ const ModuleWiseNav = (props) => {
 	return (
 		<CustomStackFullWidth>
 			{!!modules && (
-				<Grid container alignItems="center">
-					<Grid
-						item
-						xs={10}
-						align={
-							lanDirection
-								? lanDirection === "ltr"
-									? "left"
-									: "right"
-								: "left"
-						}
-						container
+				<Box sx={{ width: '100%' }}>
+					{/* Row 1: Centered Logo */}
+					<Box
+						sx={{
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							width: '100%',
+							py: 1,
+						}}
 					>
-						<CustomBoxFullWidth>
-							<Grid
-								container
-								justifyContent={{ xs: "flex-start", md: "center" }}
-								alignItems="center"
-								spacing={1}
-							>
-								<Grid
-									item
-									xs={router.pathname === "/home" ? 2 : 4}
-									sm={4}
-									align="left"
-									justifyItems="flex-start"
+						{router.pathname === "/home" && !router.query.search ? (
+							modules.length >= 2 ? (
+								<MobileModuleSelection />
+							) : (
+								<Box
+									onClick={handleIconClick}
+									sx={{
+										height: "40px",
+										cursor: "pointer",
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+									}}
 								>
-									{router.pathname === "/home" &&
-										!router.query.search ? (
-										modules.length >= 2 ? (
-											<MobileModuleSelection />
-										) : (
-											getIcon()
-										)
-									) : (
-										getIcon()
-									)}
-								</Grid>
-								{location ? (
-									<Grid
-										item
-										xs={
-											router.pathname === "/home" ? 10 : 8
-										}
-										sm={8}
-										align="left"
-									>
-										<AddressReselect
-											setOpenDrawer={setOpenDrawer}
-											location={location}
-											openDrawer={openDrawer}
-										/>
-									</Grid>
-								) : (
-									<Grid
-										item
-										xs={
-											router.pathname === "/home" ? 2 : 10
-										}
-										sm={11}
-									></Grid>
-								)}
-							</Grid>
-						</CustomBoxFullWidth>
+									<CustomLogo
+										atlText="logo"
+										logoImg={favIcon}
+										width="150px"
+										height="40px"
+										objectFit="contain"
+									/>
+								</Box>
+							)
+						) : (
+							<Box
+								onClick={handleIconClick}
+								sx={{
+									height: "40px",
+									cursor: "pointer",
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<CustomLogo
+									atlText="logo"
+									logoImg={favIcon}
+									width="150px"
+									height="40px"
+									objectFit="contain"
+								/>
+							</Box>
+						)}
+					</Box>
+
+					{/* Row 2: Address (left) and Menu (right) */}
+					<Grid container alignItems="center" sx={{ py: 0.5 }}>
+						<Grid item xs={10} align="left">
+							{location ? (
+								<AddressReselect
+									setOpenDrawer={setOpenDrawer}
+									location={location}
+									openDrawer={openDrawer}
+								/>
+							) : null}
+						</Grid>
+						<Grid item xs={2} align="right">
+							{handleFlexendSide()}
+						</Grid>
 					</Grid>
-					<Grid item xs={2} align="right">
-						{handleFlexendSide()}
-					</Grid>
-				</Grid>
+				</Box>
 			)}
 		</CustomStackFullWidth>
 	);
