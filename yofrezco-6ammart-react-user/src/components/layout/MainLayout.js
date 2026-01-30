@@ -54,7 +54,7 @@ const MainLayout = ({ children, configData }) => {
         <HeaderComponent />
       </header>
       <CustomStackFullWidth
-        sx={{ flexGrow: 1, mt: isSmall ? "3.5rem" : "5.9rem" }}
+        sx={{ flexGrow: 1, mt: isSmall ? "6.5rem" : "5.9rem" }}
       >
         {/* <CustomStackFullWidth sx={{ flexGrow: 1 }}> */}
         <div style={{ overflowY: "auto" }}>{children}</div>

@@ -132,7 +132,7 @@ const ModuleWiseNav = (props) => {
 								<Box
 									onClick={handleIconClick}
 									sx={{
-										height: "40px",
+										height: "50px",
 										cursor: "pointer",
 										display: "flex",
 										justifyContent: "center",
@@ -142,8 +142,8 @@ const ModuleWiseNav = (props) => {
 									<CustomLogo
 										atlText="logo"
 										logoImg={favIcon}
-										width="150px"
-										height="40px"
+										width="200px"
+										height="50px"
 										objectFit="contain"
 									/>
 								</Box>
@@ -152,7 +152,7 @@ const ModuleWiseNav = (props) => {
 							<Box
 								onClick={handleIconClick}
 								sx={{
-									height: "40px",
+									height: "50px",
 									cursor: "pointer",
 									display: "flex",
 									justifyContent: "center",
@@ -162,8 +162,8 @@ const ModuleWiseNav = (props) => {
 								<CustomLogo
 									atlText="logo"
 									logoImg={favIcon}
-									width="150px"
-									height="40px"
+									width="200px"
+									height="50px"
 									objectFit="contain"
 								/>
 							</Box>
