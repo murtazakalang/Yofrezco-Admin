@@ -59,6 +59,7 @@ const NewArrivals = ({ bannerData }) => {
   const { data, refetch, isLoading } = useNewArrivals();
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.only("sm"));
 
