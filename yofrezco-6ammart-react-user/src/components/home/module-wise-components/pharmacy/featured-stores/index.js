@@ -14,7 +14,7 @@ import useGetStoresByFiltering from "../../../../../api-manage/hooks/react-query
 import PharmacyFeaturedStoreCard from "../../../../cards/PharmacyFeaturedStoreCard";
 import SpecialOfferCardShimmer from "../../../../Shimmer/SpecialOfferCardSimmer";
 import H2 from "../../../../typographies/H2";
-import { HomeComponentsWrapper } from "../../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../../HomeStyles";
 
 // Localized Title Image Component for Popular Store
 const LocalizedPopularStoreTitle = () => {

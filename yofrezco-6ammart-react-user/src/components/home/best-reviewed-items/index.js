@@ -18,7 +18,7 @@ import ProductCard from "../../cards/ProductCard";
 import CustomImageContainer from "../../CustomImageContainer";
 import ProductCardSimmer from "../../Shimmer/ProductCardSimmer";
 import H2 from "../../typographies/H2";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import { loveItemSettings } from "../love-item/loveItemSettings";
 import Menus from "./Menus";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
@@ -102,7 +102,7 @@ const BestReviewedItems = (props) => {
         cardheight="340px"
         cardFor="vertical"
         cardType="vertical-type"
-        // cardFor="popular items"
+      // cardFor="popular items"
       />
     ));
 
@@ -115,7 +115,7 @@ const BestReviewedItems = (props) => {
     slidesToShow: info?.best_reviewed_section_banner ? 4 : 5,
     slidesToScroll: 2,
     cssEase: "linear",
-    ...createEnhancedArrows(isSliderHovered, { 
+    ...createEnhancedArrows(isSliderHovered, {
       displayNoneOnMobile: true,
       variant: "primary",
       noBackground: true
@@ -177,7 +177,7 @@ const BestReviewedItems = (props) => {
     slidesToShow: info?.best_reviewed_section_banner ? 2.1 : 2.7,
     slidesToScroll: 1,
     cssEase: "linear",
-    ...createEnhancedArrows(isSliderHovered, { 
+    ...createEnhancedArrows(isSliderHovered, {
       displayNoneOnMobile: true,
       variant: "primary",
       noBackground: true
@@ -314,8 +314,8 @@ const BestReviewedItems = (props) => {
                       sm={12}
                       lg={info?.best_reviewed_section_banner ? 9.5 : 12}
                     >
-                      <SliderCustom 
-                        nopadding="false" 
+                      <SliderCustom
+                        nopadding="false"
                         paddingBottom="1rem"
                         onMouseEnter={() => setIsSliderHovered(true)}
                         onMouseLeave={() => setIsSliderHovered(false)}

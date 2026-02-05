@@ -14,7 +14,7 @@ import { RTL } from "../../rtl";
 import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 import H2 from "../../typographies/H2";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import { useRouter } from "next/router";
 
 // Localized Title Image Component for Special Offer

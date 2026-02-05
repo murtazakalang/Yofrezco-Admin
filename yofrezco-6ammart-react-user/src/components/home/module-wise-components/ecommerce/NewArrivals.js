@@ -15,7 +15,7 @@ import MenuSimmer from "../../../Shimmer/MenuSimmer";
 import ProductCardSimmer from "../../../Shimmer/ProductCardSimmer";
 import ProductCard from "../../../cards/ProductCard";
 import H2 from "../../../typographies/H2";
-import { HomeComponentsWrapper } from "../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../HomeStyles";
 import TabMenu from "../../best-reviewed-items/TabMenu";
 
 // Localized Title Image Component for New Arrivals

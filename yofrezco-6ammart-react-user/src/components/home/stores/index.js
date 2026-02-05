@@ -6,7 +6,7 @@ import {
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
 import H2 from "../../typographies/H2";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import Menus from "../best-reviewed-items/Menus";
 
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";

@@ -6,7 +6,7 @@ import {
   CustomBoxFullWidth,
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
-import { HomeComponentsWrapper } from "../../../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../../../HomeStyles";
 import { Box } from "@mui/system";
 import H2 from "components/typographies/H2";
 import { useTranslation } from "react-i18next";
@@ -26,9 +26,9 @@ const VehicleCategories = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const sliderRef = useRef(null); // Ref for the slider
-  const { data: categories, isFetching ,isLoading} = useGetCategoryVehicleLists();
+  const { data: categories, isFetching, isLoading } = useGetCategoryVehicleLists();
 
-  
+
 
   // Update arrow visibility based on the current slide
   const updateArrowVisibility = (currentSlide) => {
@@ -37,10 +37,10 @@ const VehicleCategories = () => {
       window.innerWidth >= 1400
         ? 4
         : window.innerWidth >= 1200
-        ? 3
-        : window.innerWidth >= 992
-        ? 2
-        : 1;
+          ? 3
+          : window.innerWidth >= 992
+            ? 2
+            : 1;
 
     setShowLeftArrow(currentSlide > 0);
     setShowRightArrow(currentSlide < totalSlides - slidesToShow);

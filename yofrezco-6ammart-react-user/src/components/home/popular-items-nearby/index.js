@@ -24,7 +24,7 @@ import ProductCardSimmerHorizontal from "../../Shimmer/ProductCardSimmerHorizont
 import H2 from "../../typographies/H2";
 import Subtitle1 from "../../typographies/Subtitle1";
 import { NextFood, PrevFood } from "../best-reviewed-items/SliderSettings";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import ItemsCampaign from "./items-campaign-slide";
 
 // Localized Title Image Component for Popular Products

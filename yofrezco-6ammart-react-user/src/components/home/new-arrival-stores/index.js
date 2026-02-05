@@ -22,7 +22,7 @@ import CustomImageContainer from "../../CustomImageContainer";
 import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 import NearbyStoreCard from "../../cards/NearbyStoreCard";
 import ClosedNow from "../../closed-now";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import Menus from "../best-reviewed-items/Menus";
 import { foodNewArrivalsettings, settings } from "./sliderSettings";
 import NextImage from "components/NextImage";
@@ -199,7 +199,7 @@ const NewArrivalStores = () => {
                                 borderRadius: "50%",
                                 overflow: "hidden",
                                 width: "100%",
-                                img:{
+                                img: {
                                   width: "100%",
                                   height: "100%",
                                 }

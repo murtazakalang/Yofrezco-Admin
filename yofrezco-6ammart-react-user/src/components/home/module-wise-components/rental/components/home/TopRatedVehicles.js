@@ -7,7 +7,7 @@ import {
 	CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
 import { RTL } from "components/rtl";
-import { HomeComponentsWrapper } from "../../../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../../../HomeStyles";
 import { Box } from "@mui/system";
 import CarCard from "components/home/module-wise-components/rental/components/global/CarCard";
 import H2 from "components/typographies/H2";

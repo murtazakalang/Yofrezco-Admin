@@ -10,7 +10,7 @@ import { setCampaignItem } from "redux/slices/cart";
 import { setRunningCampaigns } from "redux/slices/storedData";
 import FoodDetailModal from "../../food-details/foodDetail-modal/FoodDetailModal";
 import H2 from "../../typographies/H2";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import SliderShimmer from "../SliderShimmer";
 import Grocery from "./Grocery";
 import Pharmacy from "./pharmacy";
@@ -24,7 +24,7 @@ const RunningCampaigns = () => {
   const router = useRouter();
   const { runningCampaigns } = useSelector((state) => state.storedData);
   const dispatch = useDispatch();
- 
+
   useEffect(() => {
     dispatch(setRunningCampaigns(data));
   }, [data]);

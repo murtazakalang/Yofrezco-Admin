@@ -16,9 +16,9 @@ import ProductCard from "../../../cards/ProductCard";
 import DotSpin from "../../../DotSpin";
 import EmptySearchResults from "../../../EmptySearchResults";
 import H2 from "../../../typographies/H2";
-import { HomeComponentsWrapper } from "../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../HomeStyles";
 import { Next, Prev } from "../../popular-items-nearby/SliderSettings";
-import {useQueryClient} from "react-query";
+import { useQueryClient } from "react-query";
 
 export const settings = {
   dots: false,
@@ -101,7 +101,7 @@ const FeaturedCategoriesWithFilter = (props) => {
   const offset = 1;
   const type = "all";
   const { t } = useTranslation();
-  const[tempData,setTempData] = useState([])
+  const [tempData, setTempData] = useState([])
 
 
   const handleDataSuccess = (res) => {
@@ -117,7 +117,7 @@ const FeaturedCategoriesWithFilter = (props) => {
     page_limit,
     offset,
     type,
-  },handleDataSuccess);
+  }, handleDataSuccess);
   const handleSuccess = (res) => {
     if (res) {
       setCategoryId(res?.data[0]?.id);
@@ -141,18 +141,18 @@ const FeaturedCategoriesWithFilter = (props) => {
 
 
   const handleCheckData = useCallback(() => {
-     const queryState=queryClient.getQueryState(`[categories-details-items-${categoryId}]`)
-     
-     if(!queryState || queryState.isStale){
-          refetch()
-     }else{
-      setTempData(queryState?.data)
-     }
-  },[tempData])
+    const queryState = queryClient.getQueryState(`[categories-details-items-${categoryId}]`)
 
- useEffect(() => {
-  handleCheckData()
-}, [categoryId]);
+    if (!queryState || queryState.isStale) {
+      refetch()
+    } else {
+      setTempData(queryState?.data)
+    }
+  }, [tempData])
+
+  useEffect(() => {
+    handleCheckData()
+  }, [categoryId]);
 
   return (
     <>
@@ -202,73 +202,74 @@ const FeaturedCategoriesWithFilter = (props) => {
               </Tabs>
             </Grid>
             <Grid item xs={12} sm={12} md={9}
-            sx={{
-              margin: { xs: "-4px", md: "-7.5px" },
-              opacity: itemIsLoading ? ".5" : "",
-              transition: "all ease .3s",
-              position: "relative",
-              "&::before": {
-                position: "absolute",
-                inset: "0",
-                content: '""',
-                zIndex: "999",
-                display: itemIsLoading ? "block" : "none",
-              },
-            }}
+              sx={{
+                margin: { xs: "-4px", md: "-7.5px" },
+                opacity: itemIsLoading ? ".5" : "",
+                transition: "all ease .3s",
+                position: "relative",
+                "&::before": {
+                  position: "absolute",
+                  inset: "0",
+                  content: '""',
+                  zIndex: "999",
+                  display: itemIsLoading ? "block" : "none",
+                },
+              }}
             >
-              
+
               {itemIsLoading ? (
                 <CustomStackFullWidth
-                  sx={{ height: "100%" ,position:"absolute",
-                  inset: "0",
-                  zIndex: "9999",
-                 
+                  sx={{
+                    height: "100%", position: "absolute",
+                    inset: "0",
+                    zIndex: "9999",
+
                   }}
                   alignItems="center"
                   justifyContent="center"
                 >
                   <DotSpin />
-                 
+
                 </CustomStackFullWidth>
               ) : null}
-               <CustomBoxFullWidth>
-                  <SliderCustom
-                    nopadding="true"
-                    // sx={{
-                    //   mt: { md: "-22px" },
-                    //   "& .slick-slide": {
-                    //     marginRight: {
-                    //       xs: "0px",
-                    //       md: "-25px",
-                    //     },
-                    //   },
-                    // }}
+              <CustomBoxFullWidth>
+                <SliderCustom
+                  nopadding="true"
+                // sx={{
+                //   mt: { md: "-22px" },
+                //   "& .slick-slide": {
+                //     marginRight: {
+                //       xs: "0px",
+                //       md: "-25px",
+                //     },
+                //   },
+                // }}
+                >
+                  <Slider {...settings}>
+                    {tempData?.products?.map((item, index) => {
+                      return (
+                        <ProductCard
+                          key={index}
+                          item={item}
+                          cardheight="150px"
+                          cardWidth="100%"
+                          horizontalcard="true"
+                          cardFor="popular items"
+                        />
+                      );
+                    })}
+                  </Slider>
+                </SliderCustom>
+                {tempData?.products?.length === 0 && (
+                  <CustomStackFullWidth
+                    sx={{ height: "100%", padding: "2rem" }}
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    <Slider {...settings}>
-                      {tempData?.products?.map((item, index) => {
-                        return (
-                          <ProductCard
-                            key={index}
-                            item={item}
-                            cardheight="150px"
-                            cardWidth="100%"
-                            horizontalcard="true"
-                            cardFor="popular items"
-                          />
-                        );
-                      })}
-                    </Slider>
-                  </SliderCustom>
-                  {tempData?.products?.length === 0 && (
-                    <CustomStackFullWidth
-                      sx={{ height: "100%", padding: "2rem" }}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <EmptySearchResults text="Items Not Found!" isItems />
-                    </CustomStackFullWidth>
-                  )}
-                </CustomBoxFullWidth>
+                    <EmptySearchResults text="Items Not Found!" isItems />
+                  </CustomStackFullWidth>
+                )}
+              </CustomBoxFullWidth>
             </Grid>
           </Grid>
         </HomeComponentsWrapper>

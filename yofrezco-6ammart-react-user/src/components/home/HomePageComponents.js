@@ -37,10 +37,7 @@ import { useGetWishList } from "api-manage/hooks/react-query/rental-wishlist/use
 import Rental from "components/home/module-wise-components/rental/Rental";
 import HomeLocationDetector from "./HomeLocationDetector";
 
-export const HomeComponentsWrapper = styled(Box)(({ theme }) => ({
-  width: "100%",
-  gap: "8px",
-}));
+import { HomeComponentsWrapper } from "./HomeStyles";
 
 const HomePageComponents = ({ configData, landingPageData }) => {
   const [wishListsData, setWishListsData] = useState();

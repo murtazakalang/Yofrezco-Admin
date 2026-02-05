@@ -24,7 +24,7 @@ import ProductCard from "../../../../cards/ProductCard";
 import DotSpin from "../../../../DotSpin";
 import EmptySearchResults from "../../../../EmptySearchResults";
 import H2 from "../../../../typographies/H2";
-import { HomeComponentsWrapper } from "../../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../../HomeStyles";
 import { Next, Prev } from "../../../popular-items-nearby/SliderSettings";
 import { useQueryClient } from "react-query";
 
@@ -63,14 +63,14 @@ const CommonConditions = (props) => {
 	const isSmall = useMediaQuery(theme.breakpoints.down("md"));
 	const [selected, setSelected] = useState(0);
 	const [conditionId, setConditionId] = useState(null);
-	const [commonConditionData,setCommonConditionData] = useState([])
+	const [commonConditionData, setCommonConditionData] = useState([])
 	const page_limit = "20";
 	const offset = 1;
 
-   const queryClient = useQueryClient()
-  const handleSuccess = (res) => {
-    setCommonConditionData(res)
-  }
+	const queryClient = useQueryClient()
+	const handleSuccess = (res) => {
+		setCommonConditionData(res)
+	}
 
 	const {
 		data: conditions,
@@ -84,7 +84,7 @@ const CommonConditions = (props) => {
 			conditionId,
 			page_limit,
 			offset,
-		},handleSuccess);
+		}, handleSuccess);
 
 	useEffect(() => {
 		setConditionId(conditions?.data[0]?.id);
@@ -106,18 +106,18 @@ const CommonConditions = (props) => {
 	};
 
 	const handleCheckData = useCallback(() => {
-		const queryState=queryClient.getQueryState(`[common-condition-products-${conditionId}]`)
-		
-		if(!queryState || queryState.isStale){
-			 refetch()
-		}else{
+		const queryState = queryClient.getQueryState(`[common-condition-products-${conditionId}]`)
+
+		if (!queryState || queryState.isStale) {
+			refetch()
+		} else {
 			setCommonConditionData(queryState?.data)
 		}
-	 },[commonConditionData])
-   
+	}, [commonConditionData])
+
 	useEffect(() => {
-	 handleCheckData()
-   }, [conditionId]);
+		handleCheckData()
+	}, [conditionId]);
 
 	const settings = {
 		dots: true,
@@ -260,26 +260,27 @@ const CommonConditions = (props) => {
 					</CustomStackFullWidth>
 				</Grid>
 				<Grid item xs={12} sm={12} md={9}
-				 sx={{
-					//margin: { xs: "-4px", md: "-7.5px" },
-					opacity: isLoading ? ".5" : "",
-					transition: "all ease .3s",
-					position: "relative",
-					"&::before": {
-					  position: "absolute",
-					  inset: "0",
-					  content: '""',
-					  zIndex: "999",
-					  display: isLoading ? "block" : "none",
-					},
-				  }}
+					sx={{
+						//margin: { xs: "-4px", md: "-7.5px" },
+						opacity: isLoading ? ".5" : "",
+						transition: "all ease .3s",
+						position: "relative",
+						"&::before": {
+							position: "absolute",
+							inset: "0",
+							content: '""',
+							zIndex: "999",
+							display: isLoading ? "block" : "none",
+						},
+					}}
 				>
 					{isLoading ? (
 						<CustomStackFullWidth
-						sx={{ height: "100%" ,position:"absolute",
-							inset: "0",
-							zIndex: "9999",
-						   
+							sx={{
+								height: "100%", position: "absolute",
+								inset: "0",
+								zIndex: "9999",
+
 							}}
 							alignItems="center"
 							justifyContent="center"
@@ -288,38 +289,38 @@ const CommonConditions = (props) => {
 						</CustomStackFullWidth>
 					) : null}
 					<>
-							{commonConditionData?.products?.length === 0 ? (
-								<CustomStackFullWidth
-									sx={{ height: "100%", padding: "2rem" }}
-									alignItems="center"
-									justifyContent="center"
-								>
-									<EmptySearchResults
-										text="Items Not Found!"
-										isItems
-									/>
-								</CustomStackFullWidth>
-							) : (
-								<CustomBoxFullWidth>
-									<StyledCustomSlider>
-										<Slider {...settings}>
-											{commonConditionData?.products?.length > 0 &&
-												commonConditionData?.products?.map((item) => (
-													<ProductCard
-														key={item?.id}
-														item={item}
-														cardheight="340px"
-														cardFor="vertical"
-														cardType="vertical-type"
-														noMargin="true"
-														pharmaCommon={true}
-													/>
-												))}
-										</Slider>
-									</StyledCustomSlider>
-								</CustomBoxFullWidth>
-							)}
-						</>
+						{commonConditionData?.products?.length === 0 ? (
+							<CustomStackFullWidth
+								sx={{ height: "100%", padding: "2rem" }}
+								alignItems="center"
+								justifyContent="center"
+							>
+								<EmptySearchResults
+									text="Items Not Found!"
+									isItems
+								/>
+							</CustomStackFullWidth>
+						) : (
+							<CustomBoxFullWidth>
+								<StyledCustomSlider>
+									<Slider {...settings}>
+										{commonConditionData?.products?.length > 0 &&
+											commonConditionData?.products?.map((item) => (
+												<ProductCard
+													key={item?.id}
+													item={item}
+													cardheight="340px"
+													cardFor="vertical"
+													cardType="vertical-type"
+													noMargin="true"
+													pharmaCommon={true}
+												/>
+											))}
+									</Slider>
+								</StyledCustomSlider>
+							</CustomBoxFullWidth>
+						)}
+					</>
 				</Grid>
 			</Grid>
 		</HomeComponentsWrapper>

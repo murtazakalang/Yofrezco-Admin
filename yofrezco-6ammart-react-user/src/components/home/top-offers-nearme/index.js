@@ -13,7 +13,7 @@ import { RTL } from "../../rtl";
 import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 import H2 from "../../typographies/H2";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import CustomContainer from "components/container";
 import useGetTopOffers from "api-manage/hooks/react-query/product-details/useGetTopOffers";
 import CustomImageContainer from "components/CustomImageContainer";
@@ -21,14 +21,14 @@ import fire_image from "../../../assets/fire.svg";
 import StoreCard from "components/cards/StoreCard";
 import Link from "next/link";
 
-const TopOffersNearMe = ({ title}) => {
+const TopOffersNearMe = ({ title }) => {
   const { t } = useTranslation();
-  const type=""
-  const sortBy=""
-  const searchKey=""
+  const type = ""
+  const sortBy = ""
+  const searchKey = ""
 
 
-  const { data, refetch, isLoading, isFetching } = useGetTopOffers(sortBy,searchKey,type);
+  const { data, refetch, isLoading, isFetching } = useGetTopOffers(sortBy, searchKey, type);
 
   const [isHover, setIsHover] = useState(false);
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
@@ -45,7 +45,7 @@ const TopOffersNearMe = ({ title}) => {
     speed: 800,
     autoplaySpeed: 4000,
     variableHeight: true,
-    ...createEnhancedArrows(isHover, { 
+    ...createEnhancedArrows(isHover, {
       displayNoneOnMobile: true,
       variant: "primary",
       noBackground: true
@@ -166,7 +166,7 @@ const TopOffersNearMe = ({ title}) => {
                     <H2 text={title ? title : t("Special Offer")} />
                   </Stack>
                 )}
-                {isFetching  ? (
+                {isFetching ? (
                   <Skeleton width="100px" variant="80px" />
                 ) : (
                   <Link
@@ -200,7 +200,7 @@ const TopOffersNearMe = ({ title}) => {
                 }}
               >
                 <>
-                  {isFetching  ? (
+                  {isFetching ? (
                     <Slider {...settings}>
                       {[...Array(5)].map((item, index) => {
                         return <SpecialOfferCardShimmer key={index} />;

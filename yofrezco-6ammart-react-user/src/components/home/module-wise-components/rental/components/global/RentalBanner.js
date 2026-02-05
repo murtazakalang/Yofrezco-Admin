@@ -6,7 +6,7 @@ import {
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
 import { RTL } from "components/rtl";
-import { HomeComponentsWrapper } from "../../../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../../../HomeStyles";
 import { Box } from "@mui/system";
 import { useGetVehicleBannerList } from "../../rental-api-manage/hooks/react-query/banner/useGetVehicleBannerList";
 import Link from "next/link";
@@ -112,10 +112,12 @@ const RentalBanner = () => {
                   </Link>
                 ) : item?.link ? (
                   <Link key={index} href={item?.link || ""}>
-                    <Box sx={{img:{
-                      width:"100%",
+                    <Box sx={{
+                      img: {
+                        width: "100%",
 
-                      }}}>{imageElement}</Box>
+                      }
+                    }}>{imageElement}</Box>
                   </Link>
                 ) : (
                   <Box key={index}>

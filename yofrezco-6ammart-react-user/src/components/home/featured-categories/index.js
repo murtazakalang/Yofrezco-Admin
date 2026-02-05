@@ -10,7 +10,7 @@ import { ModuleTypes } from "helper-functions/moduleTypes";
 import FoodCategoryCard from "../../cards/FoodCategoryCard";
 import PharmacyCategoryCard from "../../cards/PharmacyCategoryCard";
 import ShopCategoryCard from "../../cards/ShopCategoryCard";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../../HomeStyles";
 import FeaturedItemCard from "./card";
 import { useTranslation } from "react-i18next";
 

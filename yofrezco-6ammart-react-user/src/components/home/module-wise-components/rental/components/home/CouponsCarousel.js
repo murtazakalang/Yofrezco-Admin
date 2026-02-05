@@ -5,7 +5,7 @@ import {
 	CustomBoxFullWidth,
 	CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
-import { HomeComponentsWrapper } from "../../../../HomePageComponents";
+import { HomeComponentsWrapper } from "../../../../HomeStyles";
 import { Box } from "@mui/system";
 import H2 from "components/typographies/H2";
 import Link from "next/link";

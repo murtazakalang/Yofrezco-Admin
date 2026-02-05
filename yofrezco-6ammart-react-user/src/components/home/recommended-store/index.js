@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import { createEnhancedArrows } from "../../common/EnhancedSliderArrows";
 import StoreCard from "components/cards/StoreCard";
 import { useGetRecommendStores } from "api-manage/hooks/react-query/store/useGetRecommendStores";

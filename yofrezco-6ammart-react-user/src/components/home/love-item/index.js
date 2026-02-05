@@ -15,7 +15,7 @@ import {
 import ProductCard from "../../cards/ProductCard";
 import ProductCardSimmer from "../../Shimmer/ProductCardSimmer";
 import H2 from "../../typographies/H2";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 import { loveItemSettings } from "./loveItemSettings";
 import Menus from "./Menus";
 
