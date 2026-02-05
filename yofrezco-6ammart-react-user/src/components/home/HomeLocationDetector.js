@@ -56,14 +56,16 @@ const HomeLocationDetector = () => {
         // If user denied permission or geolocation not available
         if (positionError) {
             hasProcessedCoords.current = true;
-            setShowMapModal(true);
+            // setShouldSkip(true); // Don't show map, just skip
+            // setShowMapModal(true); 
             return;
         }
 
         // Check if geolocation is explicitly disabled
         if (isGeolocationEnabled === false) {
             hasProcessedCoords.current = true;
-            setShowMapModal(true);
+            // setShouldSkip(true); // Don't show map, just skip
+            // setShowMapModal(true);
             return;
         }
 
@@ -107,6 +109,7 @@ const HomeLocationDetector = () => {
 
             // Validate current module against new zone
             // If module is not valid for this zone, clear it so auto-selection kicks in
+            /* 
             try {
                 const currentModule = localStorage.getItem("module");
                 if (currentModule) {
@@ -132,6 +135,7 @@ const HomeLocationDetector = () => {
                 localStorage.removeItem("module");
                 localStorage.setItem("forceModuleSelection", "true");
             }
+            */
 
             invalidateHeaderCache();
             // Reload to apply the new location
@@ -144,7 +148,7 @@ const HomeLocationDetector = () => {
         if (zoneError && location) {
             console.log("Zone error - showing map modal", zoneError);
             // Location detected but not in service area, let user pick manually
-            setShowMapModal(true);
+            // setShowMapModal(true); 
         }
     }, [zoneError, location]);
 
