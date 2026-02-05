@@ -780,8 +780,7 @@
                         <li class="navbar-vertical-aside-has-menu">
                             <a class="js-navbar-vertical-aside-menu-link nav-link" href="https://wa.link/yofrezco"
                                 target="_blank" title="{{ translate('messages.whatsapp') }}">
-                                <img src="{{asset('public/assets/admin/img/whatsapp.png')}}" alt="WhatsApp" class="nav-icon"
-                                    width="18">
+                                <i class="tio-chat nav-icon"></i>
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
                                     {{ translate('messages.Whatsapp') }}
                                 </span>
