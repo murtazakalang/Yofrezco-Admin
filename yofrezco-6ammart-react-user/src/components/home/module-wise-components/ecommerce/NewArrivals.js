@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import styled from "@emotion/styled";
-import { Grid, Skeleton, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, Skeleton, useMediaQuery, useTheme, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 import useNewArrivals from "../../../../api-manage/hooks/react-query/product-details/useNewArrivals";
 import {
   CustomBoxFullWidth,
@@ -57,6 +58,7 @@ const NewArrivals = ({ bannerData }) => {
   const [selectedMenuIndex, setSelectedMenuIndex] = useState(0);
   const { data, refetch, isLoading } = useNewArrivals();
   const theme = useTheme();
+  const router = useRouter();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.only("sm"));
 
@@ -143,6 +145,25 @@ const NewArrivals = ({ bannerData }) => {
                   </Grid>
                 ))}
             </Grid>
+            <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
+              <Typography
+                onClick={() => router.push({
+                  pathname: '/product/latest',
+                  query: {
+                    type: 'latest'
+                  }
+                })}
+                sx={{
+                  textDecoration: "underLine",
+                  color: theme.palette.primary.main,
+                  cursor: "pointer"
+                }}
+                fontSize="16px"
+                fontWeight="600"
+              >
+                {t("View All")}
+              </Typography>
+            </Stack>
           </Grid>
         </HomeComponentsWrapper>
       );
@@ -270,6 +291,25 @@ const NewArrivals = ({ bannerData }) => {
                   </Grid>
                 )}
               </Grid>
+              <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
+                <Typography
+                  onClick={() => router.push({
+                    pathname: '/product/latest',
+                    query: {
+                      type: 'latest'
+                    }
+                  })}
+                  sx={{
+                    textDecoration: "underLine",
+                    color: theme.palette.primary.main,
+                    cursor: "pointer"
+                  }}
+                  fontSize="16px"
+                  fontWeight="600"
+                >
+                  {t("View All")}
+                </Typography>
+              </Stack>
             </CustomStackFullWidth>
           </Box>
         </HomeComponentsWrapper>
