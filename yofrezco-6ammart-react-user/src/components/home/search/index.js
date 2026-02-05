@@ -66,26 +66,7 @@ const SearchResult = (props) => {
     dispatch(setSelectedCategories(data_type === "category" ? [id] : []));
   }, []);
 
-  useEffect(() => {
-    setHasScrolled(false);
-  }, [id, data_type]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && !isLoadingSearch && searchData && !hasScrolled && itemsContainerRef.current) {
-      try {
-        const elementPosition = itemsContainerRef.current.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - 180;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth"
-        });
-        setHasScrolled(true);
-      } catch (error) {
-        console.error("Error scrolling to items:", error);
-      }
-    }
-  }, [searchData, isLoadingSearch, hasScrolled, id]);
 
   // Handle scroll behavior for independent sidebar scrolling
   // The sidebar remains fixed until the main content area has mostly scrolled past,
@@ -213,6 +194,29 @@ const SearchResult = (props) => {
     isFetchingNextPage,
     isLoading: isLoadingSearch,
   } = useGetSearchPageData(pageParams, handleSuccess);
+
+  // Reset hasScrolled when id or data_type changes
+  useEffect(() => {
+    setHasScrolled(false);
+  }, [id, data_type]);
+
+  // Scroll to items container when search data loads
+  useEffect(() => {
+    if (typeof window !== "undefined" && !isLoadingSearch && searchData && !hasScrolled && itemsContainerRef.current) {
+      try {
+        const elementPosition = itemsContainerRef.current.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - 180;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+        setHasScrolled(true);
+      } catch (error) {
+        console.error("Error scrolling to items:", error);
+      }
+    }
+  }, [searchData, isLoadingSearch, hasScrolled, id]);
 
   // Update items container height when data changes
   useEffect(() => {
