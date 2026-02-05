@@ -3,9 +3,10 @@ import { Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { useTranslation } from "react-i18next";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
-import { getAllSchedule, getDayNumber } from "../../../utils/CustomFunctions";
+import { getDayNumber } from "../../../utils/CustomFunctions";
 import { DeliveryCaption, PreferableTimeInput } from "../CheckOut.style";
 import CustomAlert from "../../alert/CustomAlert";
+import moment from "moment";
 
 const RestaurantScheduleTime = (props) => {
 	const {
@@ -23,21 +24,55 @@ const RestaurantScheduleTime = (props) => {
 			? 30
 			: configData?.schedule_order_slot_duration;
 
-	// Filter schedule options to only show times between 10:00 and 20:00
+	// Generate time slots between 10:00 and 20:00 for tomorrow
 	const filteredScheduleOptions = useMemo(() => {
-		const allSchedules = getAllSchedule(
-			getDayNumber(tomorrow), // Always use tomorrow's schedule
-			storeData?.schedules,
-			slotDurationTime
+		const slots = [];
+		const tomorrowDate = moment().add(1, "days").format("yyyy-MM-DD");
+		const dayNumber = getDayNumber(tomorrow);
+
+		// Check if store has schedules for tomorrow
+		const tomorrowSchedules = storeData?.schedules?.filter(
+			(s) => s.day === dayNumber
 		);
 
-		// Filter to only include slots between 10:00 and 20:00
-		return allSchedules.filter((slot) => {
-			if (!slot?.value) return false;
-			const timeStr = slot.value.split(" - ")[0]; // Get start time
-			const hour = parseInt(timeStr.split(":")[0], 10);
-			return hour >= 10 && hour < 20;
-		});
+		if (!tomorrowSchedules || tomorrowSchedules.length === 0) {
+			return [];
+		}
+
+		// Generate slots from 10:00 to 20:00
+		let currentSlotStart = moment("10:00", "HH:mm");
+		const endTime = moment("20:00", "HH:mm");
+
+		while (currentSlotStart.isBefore(endTime)) {
+			const slotEnd = moment(currentSlotStart).add(slotDurationTime, "minutes");
+
+			// Don't go past 20:00
+			if (slotEnd.isAfter(endTime)) {
+				break;
+			}
+
+			// Check if this slot falls within any of the store's schedules for tomorrow
+			const isWithinSchedule = tomorrowSchedules.some((schedule) => {
+				const openTime = moment(schedule.opening_time, "HH:mm");
+				const closeTime = moment(schedule.closing_time, "HH:mm");
+				return (
+					currentSlotStart.isSameOrAfter(openTime) &&
+					slotEnd.isSameOrBefore(closeTime)
+				);
+			});
+
+			if (isWithinSchedule) {
+				const label = `${currentSlotStart.format("HH:mm")} - ${slotEnd.format("HH:mm")}`;
+				slots.push({
+					label: label,
+					value: `${tomorrowDate} ${slotEnd.format("HH:mm")}`,
+				});
+			}
+
+			currentSlotStart = slotEnd;
+		}
+
+		return slots;
 	}, [storeData?.schedules, slotDurationTime, tomorrow]);
 
 	// Auto-select tomorrow's day on mount
@@ -105,7 +140,7 @@ const RestaurantScheduleTime = (props) => {
 						)}
 						{filteredScheduleOptions.length === 0 && (
 							<Grid item xs={12}>
-								<CustomAlert type="info" text="No delivery slots available for tomorrow between 10:00-20:00." />
+								<CustomAlert type="info" text={t("No delivery slots available for tomorrow between 10:00-20:00.")} />
 							</Grid>
 						)}
 					</Grid>
@@ -118,4 +153,5 @@ const RestaurantScheduleTime = (props) => {
 RestaurantScheduleTime.propTypes = {};
 
 export default RestaurantScheduleTime;
+
 
