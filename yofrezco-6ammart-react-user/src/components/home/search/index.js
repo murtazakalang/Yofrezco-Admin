@@ -52,6 +52,7 @@ const SearchResult = (props) => {
   const [linkRouteTo, setLinkRouteTo] = useState(routeTo);
   const [sidebarScrollEnabled, setSidebarScrollEnabled] = useState(false);
   const [itemsContainerHeight, setItemsContainerHeight] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const itemsContainerRef = useRef(null);
   const sidebarRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
@@ -64,6 +65,23 @@ const SearchResult = (props) => {
     dispatch(setSelectedBrands(data_type === "brand" ? [brand_id] : []));
     dispatch(setSelectedCategories(data_type === "category" ? [id] : []));
   }, []);
+
+  useEffect(() => {
+    setHasScrolled(false);
+  }, [id, data_type]);
+
+  useEffect(() => {
+    if (!isLoadingSearch && searchData && !hasScrolled && itemsContainerRef.current) {
+      const elementPosition = itemsContainerRef.current.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - 180;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+      setHasScrolled(true);
+    }
+  }, [searchData, isLoadingSearch, hasScrolled, id]);
 
   // Handle scroll behavior for independent sidebar scrolling
   // The sidebar remains fixed until the main content area has mostly scrolled past,

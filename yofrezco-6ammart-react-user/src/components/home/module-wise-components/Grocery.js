@@ -108,6 +108,7 @@ const Grocery = (props) => {
           <PaidAds />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Popular Items Section
       <Grid item xs={12}>
         <CustomContainer>
           <PopularItemsNearby
@@ -116,6 +117,7 @@ const Grocery = (props) => {
           />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <PharmacyStaticBanners />

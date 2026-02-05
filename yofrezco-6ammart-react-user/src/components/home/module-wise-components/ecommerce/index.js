@@ -121,6 +121,7 @@ const Shop = ({ configData }) => {
           <PaidAds />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Popular Items Section
       <Grid item xs={12}>
         <CustomContainer>
           <PopularItemsNearby
@@ -129,6 +130,7 @@ const Shop = ({ configData }) => {
           />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <TopOffersNearMe title="Top offers near me" />
