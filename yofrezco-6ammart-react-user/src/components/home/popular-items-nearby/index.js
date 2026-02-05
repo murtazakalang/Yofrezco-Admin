@@ -218,62 +218,7 @@ const PopularItemsNearby = ({ title, subTitle }) => {
               )
             )}
 
-            {/* Popular Products Title - After Flash Sale - TEMPORARILY HIDDEN */}
-            {/* 
-             {isLoading ? (
-               <Skeleton varient="text" width="110px" />
-             ) : (
-               <LocalizedPopularProductsTitle />
-             )} 
-             */}
 
-            {/* Popular Products Section - Fixed Grid (No Scrolling) - TEMPORARILY HIDDEN */}
-            {/* 
-             <CustomBoxFullWidth>
-               <Grid container spacing={2} sx={{ marginTop: "1px" }}>
-                 {isLoading ? (
-                   <>
-                     {[...Array(9)].map((item, index) => (
-                       <Grid item xs={12} sm={6} md={4} key={index}>
-                         <ProductCardSimmerHorizontal />
-                       </Grid>
-                     ))}
-                   </>
-                 ) : (
-                   <>
-                     {data?.products?.slice(0, 9).map((item, index) => (
-                       <Grid item xs={12} sm={6} md={4} key={index}>
-                         <ProductCard
-                           item={item}
-                           cardheight="160px"
-                           horizontalcard="true"
-                           cardFor="popular items"
-                         />
-                       </Grid>
-                     ))}
-                   </>
-                 )}
-               </Grid>
-             </CustomBoxFullWidth> 
-             */}
-
-            {/* View All Link - TEMPORARILY HIDDEN */}
-            {/* 
-             <Stack width="100%" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
-               <Typography
-                 onClick={() => router.push('/product/popular')}
-                 sx={{
-                   textDecoration: "underLine",
-                   color: theme.palette.primary.main,
-                   cursor: "pointer"
-                 }}
-                 fontSize="16px"
-                 fontWeight="600"
-               >
-                 {t("View All")}
-               </Typography>
-             </Stack> 
-             */}
           </CustomStackFullWidth>
         </>
       )}
