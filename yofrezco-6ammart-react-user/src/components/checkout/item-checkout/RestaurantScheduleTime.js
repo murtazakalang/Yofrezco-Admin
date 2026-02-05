@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,28 @@ const RestaurantScheduleTime = (props) => {
 			? 30
 			: configData?.schedule_order_slot_duration;
 
+	// Filter schedule options to only show times between 10:00 and 20:00
+	const filteredScheduleOptions = useMemo(() => {
+		const allSchedules = getAllSchedule(
+			getDayNumber(tomorrow), // Always use tomorrow's schedule
+			storeData?.schedules,
+			slotDurationTime
+		);
+
+		// Filter to only include slots between 10:00 and 20:00
+		return allSchedules.filter((slot) => {
+			if (!slot?.value) return false;
+			const timeStr = slot.value.split(" - ")[0]; // Get start time
+			const hour = parseInt(timeStr.split(":")[0], 10);
+			return hour >= 10 && hour < 20;
+		});
+	}, [storeData?.schedules, slotDurationTime, tomorrow]);
+
+	// Auto-select tomorrow's day on mount
+	React.useEffect(() => {
+		handleChange({ target: { value: getDayNumber(tomorrow) } });
+	}, []);
+
 	return (
 		<>
 			{storeData?.schedule_order && (
@@ -42,18 +64,9 @@ const RestaurantScheduleTime = (props) => {
 								<Select
 									label={t("Time")}
 									onChange={handleChange}
-									defaultValue={getDayNumber(today)}
+									defaultValue={getDayNumber(tomorrow)}
+									value={getDayNumber(tomorrow)}
 								>
-									<MenuItem
-										value={getDayNumber(today)}
-										sx={{
-											"&:hover": {
-												backgroundColor: "primary.main",
-											},
-										}}
-									>
-										{t("Today")}
-									</MenuItem>
 									<MenuItem
 										value={getDayNumber(tomorrow)}
 										sx={{
@@ -67,29 +80,16 @@ const RestaurantScheduleTime = (props) => {
 								</Select>
 							</FormControl>
 						</Grid>
-						{getAllSchedule(
-							numberOfDay,
-							storeData?.schedules,
-							slotDurationTime
-						).length !== 0 && (
+						{filteredScheduleOptions.length !== 0 && (
 							<Grid item md={6} xs={12}>
 								{storeData?.schedules &&
 									storeData?.schedules?.length > 0 && (
 										<PreferableTimeInput
 											key={numberOfDay}
-											defaultValue={
-												getDayNumber(today) ===
-												numberOfDay
-													? t("Now")
-													: ""
-											}
+											defaultValue=""
 											disablePortal
 											id="combo-box-demo"
-											options={getAllSchedule(
-												numberOfDay,
-												storeData?.schedules,
-												slotDurationTime
-											)}
+											options={filteredScheduleOptions}
 											onChange={(e, option) =>
 												setScheduleAt(option?.value)
 											}
@@ -103,13 +103,9 @@ const RestaurantScheduleTime = (props) => {
 									)}
 							</Grid>
 						)}
-						{getAllSchedule(
-							numberOfDay,
-							storeData?.schedules,
-							slotDurationTime
-						).length === 0 && (
+						{filteredScheduleOptions.length === 0 && (
 							<Grid item xs={12}>
-								<CustomAlert type="info" text="Store closed." />
+								<CustomAlert type="info" text="No delivery slots available for tomorrow between 10:00-20:00." />
 							</Grid>
 						)}
 					</Grid>
@@ -122,3 +118,4 @@ const RestaurantScheduleTime = (props) => {
 RestaurantScheduleTime.propTypes = {};
 
 export default RestaurantScheduleTime;
+
