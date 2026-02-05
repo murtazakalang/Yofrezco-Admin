@@ -537,7 +537,8 @@ const ItemCheckout = (props) => {
         if (Number(walletAmount) < Number(totalAmount)) {
           toast.error(t("Wallet balance is below total amount."), {
             id: "wallet",
-            position: "bottom-right",
+            position: "top-center",
+            style: { marginTop: '40vh' },
           });
         } else {
           let totalQty = 0;
@@ -566,7 +567,10 @@ const ItemCheckout = (props) => {
                 setOrderSuccess(true);
               } else {
                 if (response.status === 203) {
-                  toast.error(response.data.errors[0].message);
+                  toast.error(response.data.errors[0].message, {
+                    position: "top-center",
+                    style: { marginTop: '40vh' },
+                  });
                 }
                 //setOrderSuccess(true)
               }
@@ -579,7 +583,8 @@ const ItemCheckout = (props) => {
               onError: (error) => {
                 error?.response?.data?.errors?.forEach((item) =>
                   toast.error(item.message, {
-                    position: "bottom-right",
+                    position: "top-center",
+                    style: { marginTop: '40vh' },
                   })
                 );
               },
@@ -645,7 +650,8 @@ const ItemCheckout = (props) => {
             onError: (error) => {
               error?.response?.data?.errors?.forEach((item) =>
                 toast.error(item.message, {
-                  position: "bottom-right",
+                  position: "top-center",
+                  style: { marginTop: '40vh' },
                 })
               );
             },
@@ -656,7 +662,10 @@ const ItemCheckout = (props) => {
       toast.error(
         t(
           "One or more item is not available for the chosen preferable schedule time."
-        )
+        ), {
+        position: "top-center",
+        style: { marginTop: '40vh' },
+      }
       );
     }
   };
@@ -666,7 +675,10 @@ const ItemCheckout = (props) => {
   };
   const storeCloseToast = () =>
     toast.error(
-      t(`${getStoresOrRestaurants().slice(0, -1)} is closed. Try again later.`)
+      t(`${getStoresOrRestaurants().slice(0, -1)} is closed. Try again later.`), {
+      position: "top-center",
+      style: { marginTop: '40vh' },
+    }
     );
   //totalAmount
   const handlePlaceOrderBasedOnAvailability = () => {
@@ -682,6 +694,8 @@ const ItemCheckout = (props) => {
         } else {
           toast.error(t(cod_exceeds_message), {
             duration: 5000,
+            position: "top-center",
+            style: { marginTop: '40vh' },
           });
         }
       } else {

@@ -6,15 +6,16 @@ import { Typography } from "@mui/material";
 import moment from "moment";
 
 const Container = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: "#FF0000",
   color: theme.palette.whiteContainer.main,
-  width: "42px",
-  height: "42px",
+  width: "84px",
+  height: "84px",
+  fontSize: "2rem",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   fontWeight: "bold",
-  borderRadius: "4px",
+  borderRadius: "8px",
 }));
 
 // Random component

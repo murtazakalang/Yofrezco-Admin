@@ -71,11 +71,11 @@ const VideoPlayerWithCenteredControl = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            backgroundColor: (theme) => theme.palette.neutral[100],
+            backgroundColor: "#FF0000",
             "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              backgroundColor: "#CC0000",
             },
-            color: (theme) => theme.palette.neutral[500],
+            color: "#FFFFFF",
           }}
         >
           {ended ? (
