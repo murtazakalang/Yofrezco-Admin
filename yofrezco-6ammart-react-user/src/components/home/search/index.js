@@ -71,15 +71,19 @@ const SearchResult = (props) => {
   }, [id, data_type]);
 
   useEffect(() => {
-    if (!isLoadingSearch && searchData && !hasScrolled && itemsContainerRef.current) {
-      const elementPosition = itemsContainerRef.current.getBoundingClientRect().top + window.scrollY;
-      const offsetPosition = elementPosition - 180;
+    if (typeof window !== "undefined" && !isLoadingSearch && searchData && !hasScrolled && itemsContainerRef.current) {
+      try {
+        const elementPosition = itemsContainerRef.current.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - 180;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-      setHasScrolled(true);
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+        setHasScrolled(true);
+      } catch (error) {
+        console.error("Error scrolling to items:", error);
+      }
     }
   }, [searchData, isLoadingSearch, hasScrolled, id]);
 

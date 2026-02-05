@@ -29,6 +29,8 @@ import {
   getSubTotalPrice,
   getTaxableTotalPrice,
   handlePurchasedAmount,
+  handleDistance,
+  getInfoFromZoneData,
 } from "utils/CustomFunctions";
 import CustomDivider from "../../CustomDivider";
 import { CalculationGrid, TotalGrid } from "../CheckOut.style";
@@ -301,7 +303,24 @@ const OrderCalculation = (props) => {
   const text3 = t("However, the maximum cashback amount is");
   const extraText = t("This delivery fee includes all the applicable charges on delivery");
   const badText = t("and bad weather charge");
-  const deliveryToolTipsText = `${extraText}${surgePrice?.customer_note_status !== 0
+
+  // Calculate delivery details for debug/verification
+  const distanceKm = handleDistance(distanceData?.data, origin, destination);
+  let perKmCharge = 0;
+  let minCharge = 0;
+
+  if (Number.parseInt(storeData?.self_delivery_system) === 1) {
+    perKmCharge = storeData?.per_km_shipping_charge || 0;
+    minCharge = storeData?.minimum_shipping_charge || 0;
+  } else {
+    const chargeInfo = getInfoFromZoneData(zoneData);
+    perKmCharge = chargeInfo?.pivot?.per_km_shipping_charge || 0;
+    minCharge = chargeInfo?.pivot?.minimum_shipping_charge || 0;
+  }
+
+  const deliveryDebugText = ` (Dist: ${distanceKm?.toFixed(2)}km, Rate: ${getAmountWithSign(perKmCharge)}/km, Min: ${getAmountWithSign(minCharge)})`;
+
+  const deliveryToolTipsText = `${extraText}${deliveryDebugText}${surgePrice?.customer_note_status !== 0
     ? `. ${surgePrice?.customer_note} `
     : ""
     }`;
