@@ -777,13 +777,13 @@
                     @endif
                     <!-- End Business Settings -->
                     @if (\App\CentralLogics\Helpers::employee_module_permission_check('chat'))
-                        <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('vendor-panel/message*') ? 'active' : '' }}">
-                            <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('vendor.message.list') }}"
-                                title="{{ translate('messages.chat') }}">
-                                <i class="tio-chat nav-icon"></i>
+                        <li class="navbar-vertical-aside-has-menu">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link" href="https://wa.link/yofrezco"
+                                target="_blank" title="{{ translate('messages.whatsapp') }}">
+                                <img src="{{asset('public/assets/admin/img/whatsapp.svg')}}" alt="WhatsApp" class="nav-icon"
+                                    style="width: 20px; height: 20px;">
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                    {{ translate('messages.Chat') }}
+                                    {{ translate('messages.Whatsapp') }}
                                 </span>
                             </a>
                         </li>
