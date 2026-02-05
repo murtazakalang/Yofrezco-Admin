@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import StoresFilteringNav from "./StoresFilteringNav";
 import useGetStoresByFiltering from "../../../api-manage/hooks/react-query/store/useGetStoresByFiltering";
 import CardsGrid from "./cards-grid";
 import Shimmer from "./Shimmer";
 import useGetPopularStore from "../../../api-manage/hooks/react-query/store/useGetPopularStore";
-import {HomeComponentsWrapper} from "../HomePageComponents";
+import { HomeComponentsWrapper } from "../HomeStyles";
 
 const StoresWithFilter = () => {
     const [storesType, setStoresType] = useState("all");
@@ -12,7 +12,7 @@ const StoresWithFilter = () => {
     const [offset, setOffset] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    const {data, refetch, isFetching, isSuccess, isRefetching, isStale} = useGetStoresByFiltering({
+    const { data, refetch, isFetching, isSuccess, isRefetching, isStale } = useGetStoresByFiltering({
         type: type,
         offset: offset,
         limit: limit,
@@ -70,15 +70,15 @@ const StoresWithFilter = () => {
         <>
             {
                 data &&
-                data?.stores?.length > 0 && <HomeComponentsWrapper sx={{paddingTop: ".5rem"}} spacing={2}>
+                data?.stores?.length > 0 && <HomeComponentsWrapper sx={{ paddingTop: ".5rem" }} spacing={2}>
                     <StoresFilteringNav
                         storesType={storesType}
                         setStoresType={setStoresType}
                         setType={setType}
                     />
                     {handleDataVisibility()}
-                    {storesType === 'all' && !isSuccess && <Shimmer count={10}/>}
-                    {storesType === 'popular' && !isSuccessPopular && <Shimmer count={10}/>}
+                    {storesType === 'all' && !isSuccess && <Shimmer count={10} />}
+                    {storesType === 'popular' && !isSuccessPopular && <Shimmer count={10} />}
 
                 </HomeComponentsWrapper>
             }</>
