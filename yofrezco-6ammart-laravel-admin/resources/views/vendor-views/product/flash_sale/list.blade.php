@@ -1,6 +1,6 @@
 @extends('layouts.vendor.app')
 
-@section('title',translate('messages.flash_sales'))
+@section('title', translate('messages.flash_sales'))
 
 @push('css_or_js')
 
@@ -20,6 +20,13 @@
             </h1>
         </div>
         <!-- End Page Header -->
+
+        <div class="mb-3">
+            <a href="{{route('vendor.item.flash_sale_list')}}" class="btn btn--primary">
+                <i class="tio-flash mr-1"></i>{{translate('messages.view_available_flash_sales')}}
+            </a>
+        </div>
+
         <div class="row g-3">
 
 
@@ -28,14 +35,16 @@
                     <div class="card-header py-2 border-0">
                         <div class="search--button-wrapper">
                             <h5 class="card-title">
-                                {{translate('messages.flash_sale_product_list')}}<span class="badge badge-soft-dark ml-2" id="itemCount">{{$items->total()}}</span>
+                                {{translate('messages.flash_sale_product_list')}}<span class="badge badge-soft-dark ml-2"
+                                    id="itemCount">{{$items->total()}}</span>
                             </h5>
-                            <form  class="search-form">
+                            <form class="search-form">
                                 <!-- Search -->
 
                                 <div class="input-group input--group">
-                                    <input id="datatableSearch_" value="{{ request()?->search ?? null }}" type="search" name="search" class="form-control"
-                                            placeholder="{{translate('ex_:_name')}}" aria-label="Search" >
+                                    <input id="datatableSearch_" value="{{ request()?->search ?? null }}" type="search"
+                                        name="search" class="form-control" placeholder="{{translate('ex_:_name')}}"
+                                        aria-label="Search">
                                     <button type="submit" class="btn btn--secondary"><i class="tio-search"></i></button>
                                 </div>
                                 <!-- End Search -->
@@ -45,98 +54,102 @@
                     <!-- Table -->
                     <div class="table-responsive datatable-custom">
                         <table id="columnSearchDatatable"
-                               class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                               data-hs-datatables-options='{
-                                 "order": [],
-                                 "orderCellsTop": true,
-                                 "paging":false
-                               }'>
+                            class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
+                            data-hs-datatables-options='{
+                                     "order": [],
+                                     "orderCellsTop": true,
+                                     "paging":false
+                                   }'>
                             <thead class="thead-light">
-                            <tr class="text-center">
-                                <th class="border-0">{{translate('sl')}}</th>
-                                <th class="border-0">{{translate('messages.product')}}</th>
-                                <th class="border-0">{{translate('messages.Current_Stock')}}</th>
-                                <th class="border-0">{{translate('messages.Flash_sale_Qty')}}</th>
-                                <th class="border-0">{{translate('messages.Qty_Sold')}}</th>
-                                <th class="border-0">{{translate('messages.Discount')}}</th>
-                                <th class="border-0">{{translate('messages.Sold_Amount')}}</th>
-                                <th class="border-0">{{translate('messages.status')}}</th>
-                            </tr>
+                                <tr class="text-center">
+                                    <th class="border-0">{{translate('sl')}}</th>
+                                    <th class="border-0">{{translate('messages.product')}}</th>
+                                    <th class="border-0">{{translate('messages.Current_Stock')}}</th>
+                                    <th class="border-0">{{translate('messages.Flash_sale_Qty')}}</th>
+                                    <th class="border-0">{{translate('messages.Qty_Sold')}}</th>
+                                    <th class="border-0">{{translate('messages.Discount')}}</th>
+                                    <th class="border-0">{{translate('messages.Sold_Amount')}}</th>
+                                    <th class="border-0">{{translate('messages.status')}}</th>
+                                </tr>
 
                             </thead>
 
                             <tbody id="set-rows">
-                            @foreach($items as $key=>$item)
-                                <tr>
-                                    <td class="text-center">
-                                        <span class="mr-3">
-                                            {{$key+$items->firstItem()}}
-                                        </span>
-                                    </td>
+                                @foreach($items as $key => $item)
+                                                            <tr>
+                                                                <td class="text-center">
+                                                                    <span class="mr-3">
+                                                                        {{$key + $items->firstItem()}}
+                                                                    </span>
+                                                                </td>
 
-                                    <?php
-                                    $t2= Carbon\Carbon::parse($item->flashSale->end_date) ;
-                                    ?>
+                                                                <?php
+                                    $t2 = Carbon\Carbon::parse($item->flashSale->end_date);
+                                                                    ?>
 
 
-                                    <td class="text-center">
-                                        <a class="media align-items-center" href="{{route('vendor.item.view',[$item['item_id']])}}">
-                                            <img class="avatar avatar-lg mr-3 onerror-image" src="{{ $item->item['image_full_url'] }}"
-                                                    data-onerror-image="{{asset('public/assets/admin/img/160x160/img2.jpg')}}" alt="{{$item->item->name}} image">
-                                            <div class="media-body">
-                                                <h5 class="text-hover-primary mb-0">{{Str::limit($item->item['name'],20,'...')}}</h5>
-                                            </div>
-                                        </a>
-                                    </td>
+                                                                <td class="text-center">
+                                                                    <a class="media align-items-center"
+                                                                        href="{{route('vendor.item.view', [$item['item_id']])}}">
+                                                                        <img class="avatar avatar-lg mr-3 onerror-image"
+                                                                            src="{{ $item->item['image_full_url'] }}"
+                                                                            data-onerror-image="{{asset('public/assets/admin/img/160x160/img2.jpg')}}"
+                                                                            alt="{{$item->item->name}} image">
+                                                                        <div class="media-body">
+                                                                            <h5 class="text-hover-primary mb-0">
+                                                                                {{Str::limit($item->item['name'], 20, '...')}}</h5>
+                                                                        </div>
+                                                                    </a>
+                                                                </td>
 
-                                    <td class="text-center">
-                                        {{ $item['available_stock'] }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ $item['stock'] }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ $item['sold'] }}
-                                    </td>
-                                    <td class="text-center">
-                                        @if($item->discount_type == 'percent')
-                                        {{$item['discount']}} %
-                                        @else
-                                        {{\App\CentralLogics\Helpers::format_currency($item['discount'])}}
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        {{\App\CentralLogics\Helpers::format_currency($item['price'] * $item['sold'])}}
+                                                                <td class="text-center">
+                                                                    {{ $item['available_stock'] }}
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    {{ $item['stock'] }}
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    {{ $item['sold'] }}
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    @if($item->discount_type == 'percent')
+                                                                        {{$item['discount']}} %
+                                                                    @else
+                                                                        {{\App\CentralLogics\Helpers::format_currency($item['discount'])}}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    {{\App\CentralLogics\Helpers::format_currency($item['price'] * $item['sold'])}}
 
-                                    </td>
-                                    <td class="text-center">
-                                        @if($item['status'] == 0 || $item->flashSale->is_publish == 0)
-                                        <span class="badge badge-soft-info">{{ translate('off')}}</span>
-                                        @elseif($item->flashSale->is_publish == 1 && $t2->gte(now())  )
-                                        <span class="badge badge-soft-success"> {{ translate('running')}} </span>
-                                        @else
-                                        <span class="badge badge-soft-danger">{{ translate('expired')}}</span>
-                                        @endif
-                                    </td>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    @if($item['status'] == 0 || $item->flashSale->is_publish == 0)
+                                                                        <span class="badge badge-soft-info">{{ translate('off')}}</span>
+                                                                    @elseif($item->flashSale->is_publish == 1 && $t2->gte(now()))
+                                                                        <span class="badge badge-soft-success"> {{ translate('running')}} </span>
+                                                                    @else
+                                                                        <span class="badge badge-soft-danger">{{ translate('expired')}}</span>
+                                                                    @endif
+                                                                </td>
 
-                                </tr>
-                            @endforeach
+                                                            </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                     @if(count($items) !== 0)
-                    <hr>
+                        <hr>
                     @endif
                     <div class="page-area">
                         {!! $items->links() !!}
                     </div>
                     @if(count($items) === 0)
-                    <div class="empty--data">
-                        <img src="{{asset('/public/assets/admin/svg/illustrations/sorry.svg')}}" alt="public">
-                        <h5>
-                            {{translate('no_data_found')}}
-                        </h5>
-                    </div>
+                        <div class="empty--data">
+                            <img src="{{asset('/public/assets/admin/svg/illustrations/sorry.svg')}}" alt="public">
+                            <h5>
+                                {{translate('no_data_found')}}
+                            </h5>
+                        </div>
                     @endif
                 </div>
             </div>
