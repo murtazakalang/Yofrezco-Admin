@@ -139,6 +139,19 @@ const SearchResult = (props) => {
     }
   };
 
+  const selectedStoresHandler = (dataArray) => {
+    if (linkRouteTo === "nav") {
+      dispatch(setSelectedStores([]));
+    } else {
+      const filteredArray = dataArray.filter((item) => !isNaN(item));
+      if (filteredArray.length > 0) {
+        dispatch(setSelectedStores([...new Set(filteredArray)]));
+      } else {
+        dispatch(setSelectedStores([]));
+      }
+    }
+  };
+
   const tabs = [
     {
       name:
