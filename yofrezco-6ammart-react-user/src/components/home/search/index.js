@@ -28,6 +28,7 @@ const SearchResult = (props) => {
     searchValue,
     configData,
     fromAllCategories,
+    fromNav,
     routeTo,
     currentTab,
     setCurrentTab,
