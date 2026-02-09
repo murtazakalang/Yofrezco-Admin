@@ -11,6 +11,9 @@ import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-
 import { setCategories } from "redux/slices/storedData";
 import { setBrands } from "redux/slices/brands";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
+import useGetStoresList from "api-manage/hooks/react-query/stores/useGetStoresList";
+import StoresSelectBox from "components/multiple-checkbox-with-title/StoresSelectBox";
+import { setStores } from "redux/slices/storedData";
 
 const CustomPaperBox = styled(Box)(({ theme }) => ({
   backgroundColor: "paper.default",
@@ -30,6 +33,7 @@ const SearchFilter = (props) => {
     sideDrawer,
     selectedBrandsHandler,
     selectedCategoriesHandler,
+    selectedStoresHandler,
     currentTab,
     fromNav,
     linkRouteTo,
@@ -49,6 +53,7 @@ const SearchFilter = (props) => {
   const { data: categoriesData, refetch } = useGetCategories();
   const { data: brandsData, refetch: brandRefetch } =
     useGetBrandsList(handleSuccess);
+  const { data: storesData, refetch: storeRefetch } = useGetStoresList();
 
   useEffect(() => {
     if (categories.length === 0) {
@@ -80,16 +85,16 @@ const SearchFilter = (props) => {
           fromNav={fromNav}
         />
       )}
-      {brands && currentTab !== 1 && getCurrentModuleType() === "ecommerce" && (
-        <BrandCheckBox
+      {storesData && currentTab !== 1 && getCurrentModuleType() === "ecommerce" && (
+        <StoresSelectBox
           linkRouteTo={linkRouteTo}
-          title="Brands"
+          title="Stores"
           cId={id}
-          data={brands}
-          id={brand_id}
+          data={storesData}
+          id={brand_id} // You might need a different ID for stores if applicable, or remove if not needed
           searchValue={searchValue}
           showAll
-          selectedBrandsHandler={selectedBrandsHandler}
+          selectedStoresHandler={selectedStoresHandler}
         />
       )}
 

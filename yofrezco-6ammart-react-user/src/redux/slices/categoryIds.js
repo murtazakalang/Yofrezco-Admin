@@ -7,6 +7,7 @@ const initialState = {
   filterData: [],
   rating_count: 0,
   selectedBrands: [],
+  selectedStores: [],
   interestId: [],
   existingModuleId: [],
 };
@@ -30,6 +31,9 @@ export const categoryIdsSlice = createSlice({
     setSelectedBrands: (state, action) => {
       state.selectedBrands = action.payload;
     },
+    setSelectedStores: (state, action) => {
+      state.selectedStores = action.payload;
+    },
     setRating_Count: (state, action) => {
       state.rating_count = action.payload;
     },
@@ -50,6 +54,7 @@ export const {
   setStoreSelectedItems,
   setFilterData,
   setSelectedBrands,
+  setSelectedStores,
   setStoreSelectedItems2,
   setExistingModuleIds,
 } = categoryIdsSlice.actions;

@@ -28,6 +28,7 @@ const SideBarWithData = forwardRef((props, ref) => {
     setFilterData,
     selectedCategoriesHandler,
     selectedBrandsHandler,
+    selectedStoresHandler,
     fromNav,
     linkRouteTo,
   } = props;
@@ -73,7 +74,7 @@ const SideBarWithData = forwardRef((props, ref) => {
                           cardheight="318px"
                           cardFor="vertical"
                           cardType="vertical-type"
-                          // cardFor="popular items"
+                        // cardFor="popular items"
                         />
                       </Grid>
                     ))
@@ -95,7 +96,7 @@ const SideBarWithData = forwardRef((props, ref) => {
                           cardType="vertical-type"
                           horizontalcard="true"
                           cardFor="list-view"
-                          // cardFor="popular items"
+                        // cardFor="popular items"
                         />
                       </Grid>
                     ))
@@ -151,8 +152,8 @@ const SideBarWithData = forwardRef((props, ref) => {
               position: 'sticky',
               top: '80px',
               height: 'calc(100vh - 100px)',
-            
-            
+
+
             }}
           >
             <SearchFilter
@@ -162,6 +163,7 @@ const SideBarWithData = forwardRef((props, ref) => {
               selectedCategoriesHandler={selectedCategoriesHandler}
               fromNav={fromNav}
               selectedBrandsHandler={selectedBrandsHandler}
+              selectedStoresHandler={selectedStoresHandler}
               currentTab={currentTab}
               linkRouteTo={linkRouteTo}
             />
@@ -171,7 +173,7 @@ const SideBarWithData = forwardRef((props, ref) => {
           <CustomStackFullWidth spacing={2} sx={{ paddingTop: "1rem" }}>
             <AppliedFilters
               filterData={filterData}
-              //setFilterData={setFilterData}
+            //setFilterData={setFilterData}
             />
             <CustomBoxFullWidth ref={ref}>
               <Grid container spacing={2}>
