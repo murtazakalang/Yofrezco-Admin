@@ -48,6 +48,8 @@ const FlashSales = () => {
 		offset: 1
 	});
 
+	const [currentTab, setCurrentTab] = useState(0);
+
 	return (
 		<NoSsr>
 			<CustomBoxFullWidth>
@@ -92,6 +94,8 @@ const FlashSales = () => {
 					data_type="flash_sale"
 					configData={configData}
 					flash_sale_id={id}
+					currentTab={currentTab}
+					setCurrentTab={setCurrentTab}
 				/>
 			</CustomBoxFullWidth >
 		</NoSsr >

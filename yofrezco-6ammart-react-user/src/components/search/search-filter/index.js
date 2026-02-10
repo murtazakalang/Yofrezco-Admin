@@ -85,7 +85,7 @@ const SearchFilter = (props) => {
           fromNav={fromNav}
         />
       )}
-      {storesData && currentTab !== 1 && getCurrentModuleType() === "ecommerce" && (
+      {storesData && currentTab !== 1 && (
         <StoresSelectBox
           linkRouteTo={linkRouteTo}
           title="Stores"

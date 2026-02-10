@@ -15,6 +15,7 @@ const LatestProductsPage = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
+    const [currentTab, setCurrentTab] = React.useState(0);
 
     const { landingPageData, configData } = useSelector(
         (state) => state.configData
@@ -52,6 +53,8 @@ const LatestProductsPage = () => {
                         searchValue=""
                         data_type="latest"
                         configData={configData}
+                        currentTab={currentTab}
+                        setCurrentTab={setCurrentTab}
                     />
                 </CustomBoxFullWidth>
             </MainLayout>
