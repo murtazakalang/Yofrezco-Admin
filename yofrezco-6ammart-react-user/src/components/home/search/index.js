@@ -20,7 +20,6 @@ import {
   setRating_Count,
   setSelectedBrands,
   setSelectedCategories,
-  setSelectedStores,
 } from "redux/slices/categoryIds";
 
 const SearchResult = (props) => {
@@ -32,12 +31,10 @@ const SearchResult = (props) => {
     routeTo,
     currentTab,
     setCurrentTab,
-    data_type,
-    flash_sale_id,
   } = props;
   const router = useRouter();
   const dispatch = useDispatch();
-  const DataType = data_type ? data_type : router.query.data_type;
+  const { data_type } = router.query;
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const id = router.query.id;
@@ -62,11 +59,11 @@ const SearchResult = (props) => {
   const { ref, inView } = useInView({
     rootMargin: "0px 0px 38% 0px",
   });
-  const { selectedBrands, selectedCategories, filterData, rating_count, selectedStores } =
+  const { selectedBrands, selectedCategories, filterData, rating_count } =
     useSelector((state) => state.categoryIds);
   useEffect(() => {
-    dispatch(setSelectedBrands(DataType === "brand" ? [brand_id] : []));
-    dispatch(setSelectedCategories(DataType === "category" ? [id] : []));
+    dispatch(setSelectedBrands(data_type === "brand" ? [brand_id] : []));
+    dispatch(setSelectedCategories(data_type === "category" ? [id] : []));
   }, []);
 
 
@@ -140,19 +137,6 @@ const SearchResult = (props) => {
     }
   };
 
-  const selectedStoresHandler = (dataArray) => {
-    if (linkRouteTo === "nav") {
-      dispatch(setSelectedStores([]));
-    } else {
-      const filteredArray = dataArray.filter((item) => !isNaN(item));
-      if (filteredArray.length > 0) {
-        dispatch(setSelectedStores([...new Set(filteredArray)]));
-      } else {
-        dispatch(setSelectedStores([]));
-      }
-    }
-  };
-
   const tabs = [
     {
       name:
@@ -164,6 +148,10 @@ const SearchResult = (props) => {
               ? "Medicines"
               : "Groceries",
       value: "items",
+    },
+    {
+      name: getCurrentModuleType() === "food" ? "Restaurants" : "Stores",
+      value: "stores",
     },
   ];
 
@@ -183,12 +171,11 @@ const SearchResult = (props) => {
     }
   };
   const pageParams = {
-    data_type: DataType,
+    data_type,
     searchValue,
     category_id,
     selectedCategoriesIds,
     selectedBrands,
-    selectedStores,
     page_limit,
     offset,
     type,
@@ -196,7 +183,6 @@ const SearchResult = (props) => {
     filterValue,
     rating_count,
     minMax,
-    flash_sale_id: flash_sale_id ? flash_sale_id : null,
   };
 
   const {
@@ -242,7 +228,6 @@ const SearchResult = (props) => {
 
   const prevSelectedCategoriesIds = useRef(pageParams.selectedCategoriesIds);
   const prevBrands = useRef(pageParams.selectedBrands);
-  const prevStores = useRef(pageParams.selectedStores);
   const prvMinmax = useRef(pageParams.minMax);
   const prvRating = useRef(pageParams.rating_count);
 
@@ -259,8 +244,6 @@ const SearchResult = (props) => {
       prevSelectedCategoriesIds.current !== pageParams.selectedCategoriesIds;
     const selectedBrandsChanged =
       prevBrands.current !== pageParams.selectedBrands;
-    const selectedStoresChanged =
-      JSON.stringify(pageParams.selectedStores) !== JSON.stringify(prevStores.current);
     prevSelectedCategoriesIds.current = pageParams.selectedCategoriesIds;
     const selectedMinMaxChanged = prvRating.current !== pageParams.minMax;
     prvMinmax.current = pageParams.minMax;
@@ -271,8 +254,7 @@ const SearchResult = (props) => {
       (!hasData && selectedCategoriesChanged && isEmpty) ||
       (!hasData && selectedMinMaxChanged && isEmpty) ||
       (!hasData && selectedRating && isEmpty) ||
-      (!hasData && selectedBrandsChanged && isEmpty) ||
-      (!hasData && selectedStoresChanged && isEmpty)
+      (!hasData && selectedBrandsChanged && isEmpty)
     ) {
       serachRefetch();
     }
@@ -476,7 +458,6 @@ const SearchResult = (props) => {
             filterData={filterData}
             selectedCategoriesHandler={selectedCategoriesHandler}
             selectedBrandsHandler={selectedBrandsHandler}
-            selectedStoresHandler={selectedStoresHandler}
             fromAllCategories={fromAllCategories}
             pageData={searchData}
             isFetchingNextPage={isFetchingNextPage || isLoadingSearch}
@@ -496,7 +477,6 @@ const SearchResult = (props) => {
             brand_id={brand_id}
             selectedCategoriesHandler={selectedCategoriesHandler}
             selectedBrandsHandler={selectedBrandsHandler}
-            selectedStoresHandler={selectedStoresHandler}
             currentTab={currentTab}
             handleChangeRatings={handleChangeRatings}
             //setFilterData={setFilterData}

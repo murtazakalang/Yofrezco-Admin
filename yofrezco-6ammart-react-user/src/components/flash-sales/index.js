@@ -7,24 +7,28 @@ import {
 	CustomStackFullWidth,
 } from "../../styled-components/CustomStyles.style";
 import CustomContainer from "../container";
-import { useGetFlashSalesInfinityScroll } from "../../api-manage/hooks/react-query/useGetFlashSales";
+import { useGetFlashSales, useGetFlashSalesInfinityScroll } from "../../api-manage/hooks/react-query/useGetFlashSales";
 import ProductCard from "../cards/ProductCard";
 import CustomCountdown from "../countdown";
 import CounterSimmer from "../Shimmer/CounterSimmer";
 import DotSpin from "../DotSpin";
 import EmptySearchResults from "../EmptySearchResults";
 
+import FlashSaleIcon from "./assets/FlashSaleIcon";
+import BgImageSvg from "./assets/flashSaleBGShape.svg"
 import { useInView } from "react-intersection-observer";
 import { removeDuplicates } from "../../utils/CustomFunctions";
 import { useRouter } from "next/router";
-import SearchResult from "../home/search";
-import { useSelector } from "react-redux";
 
-const BgBox = styled(Box)(({ theme }) => ({
+const BgBox = styled(Box)(({ theme, src }) => ({
+	backgroundImage: `url(${src})`,
+	backgroundPosition: "center",
+	backgroundColor: alpha(theme.palette.secondary.main, 0.5),
+	backgroundRepeat: "no-repeat",
+	backgroundSize: "cover",
+	padding: "20px",
 	display: "flex",
 	alignItems: "center",
-	justifyContent: "center",
-	padding: "20px 0",
 }));
 
 const CustomCounterBox = styled(CustomStackFullWidth)(({ theme }) => ({
@@ -33,27 +37,61 @@ const CustomCounterBox = styled(CustomStackFullWidth)(({ theme }) => ({
 }));
 
 const FlashSales = () => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const router = useRouter();
 	const { id } = router.query;
-	const { landingPageData, configData } = useSelector((state) => state.configData);
+	const [offset, setOffset] = useState(1);
+	const [limit, setLimit] = useState(10);
+	const { ref, inView } = useInView();
+	const [itemData, setItemData] = useState([]);
+	const [loading, setLoading] = useState(false);
+	useEffect(() => {
+		const timeoutId = setTimeout(() => {
+			setLoading(true);
+		}, 2000);
+		return () => clearTimeout(timeoutId);
+	}, []);
+	const pageParams = {
+		offset,
+		limit: limit,
+		id: id
+	};
+	const {
+		data: flashSales,
+		refetch: flashSalesRefetch,
+		isFetchingNextPage,
+		fetchNextPage,
+		isLoading,
+		isRefetching,
+		hasNextPage
+	} = useGetFlashSalesInfinityScroll(pageParams);
 
-	const flashSaleImage = i18n.language === "es"
-		? "/flash_sale_spanish.png"
-		: "/flash_sale_english.png";
+	const handleItemData = () => {
+		if (flashSales && flashSales?.pages?.length > 0) {
+			flashSales?.pages?.forEach((item) => {
+				setItemData((prev) =>
+					removeDuplicates([...new Set([...prev, ...item?.products])], "id")
+				);
+			});
+		}
+	};
+	useEffect(() => {
+		handleItemData();
+	}, [flashSales]);
 
-	const { data: flashSales, isLoading } = useGetFlashSalesInfinityScroll({
-		limit: 1,
-		id: id,
-		offset: 1
-	});
-
-	const [currentTab, setCurrentTab] = useState(0);
+	useEffect(() => {
+		if (inView) {
+			fetchNextPage();
+			if (!isLoading) {
+				setOffset((prevState) => prevState + 1);
+			}
+		}
+	}, [inView]);
 
 	return (
 		<NoSsr>
 			<CustomBoxFullWidth>
-				<BgBox referenece="bg-box">
+				<BgBox src={BgImageSvg.src}>
 					<CustomContainer>
 						<Box
 							sx={{
@@ -65,12 +103,14 @@ const FlashSales = () => {
 								padding: "20px"
 							}}
 						>
-							<img
-								src={flashSaleImage}
-								alt="Flash Sale"
-								style={{ maxWidth: "100%", height: "auto", maxHeight: "150px", objectFit: "contain" }}
-							/>
-
+							<FlashSaleIcon />
+							<Typography
+								fontSize="26px"
+								fontWeight={700}
+								textAlign="center"
+							>
+								{flashSales?.pages[0]?.flash_sale?.title}
+							</Typography>
 							<Box>
 								{isLoading ? (
 									<CounterSimmer />
@@ -88,15 +128,82 @@ const FlashSales = () => {
 						</Box>
 					</CustomContainer>
 				</BgBox>
-				<SearchResult
-					key={id}
-					searchValue=""
-					data_type="flash_sale"
-					configData={configData}
-					flash_sale_id={id}
-					currentTab={currentTab}
-					setCurrentTab={setCurrentTab}
-				/>
+				{isLoading ? (
+					<CustomStackFullWidth
+						sx={{
+							width: "100%",
+							height: "70vh",
+							alignItems: "center",
+							justifyContent: "center"
+						}}
+						alignItems="center"
+						justifyContent="center"
+					>
+						<DotSpin />
+					</CustomStackFullWidth>
+				) : (
+					<>{
+						itemData.length === 0 && loading && !isLoading ?
+							(<CustomStackFullWidth
+								sx={{ height: "100%", padding: "2rem" }}
+								alignItems="center"
+								justifyContent="center"
+							>
+								<EmptySearchResults text="No Flash Sales Product Found!" isItems />
+							</CustomStackFullWidth>
+							) : (
+								<Box>
+									{itemData?.length > 0 && <Box sx={{ paddingTop: "50px", paddingBottom: "80px" }}>
+										<CustomContainer>
+											<Grid container rowSpacing={4} columnSpacing={2}>
+												{itemData?.map((item, index) => {
+													return (
+														<Grid
+															key={item?.item?.id}
+															item
+															xs={12}
+															sm={4}
+															md={3}
+															lg={2.4}
+														>
+															<ProductCard
+																item={{ ...item?.item }}
+																cardheight="365px"
+																cardFor="flashSale"
+																cardType="vertical-type"
+																sold={item?.sold}
+																stock={item?.available_stock}
+															/>
+														</Grid>
+													);
+												})}
+												{isFetchingNextPage &&
+													<CustomStackFullWidth
+														sx={{
+															width: "100%",
+															height: "20vh",
+															alignItems: "center",
+															justifyContent: "center"
+														}}
+														alignItems="center"
+														justifyContent="center"
+													>
+														<DotSpin />
+													</CustomStackFullWidth>}
+											</Grid>
+										</CustomContainer>
+									</Box>}
+								</Box>
+							)
+
+					}
+
+					</>
+				)
+				}
+				{flashSales?.total_size !== itemData?.length && (
+					<CustomBoxFullWidth ref={ref}></CustomBoxFullWidth>
+				)}
 			</CustomBoxFullWidth >
 		</NoSsr >
 	);
