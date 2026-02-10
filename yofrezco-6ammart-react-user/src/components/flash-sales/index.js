@@ -14,21 +14,16 @@ import CounterSimmer from "../Shimmer/CounterSimmer";
 import DotSpin from "../DotSpin";
 import EmptySearchResults from "../EmptySearchResults";
 
-import FlashSaleIcon from "./assets/FlashSaleIcon";
-import BgImageSvg from "./assets/flashSaleBGShape.svg"
+
 import { useInView } from "react-intersection-observer";
 import { removeDuplicates } from "../../utils/CustomFunctions";
 import { useRouter } from "next/router";
 
-const BgBox = styled(Box)(({ theme, src }) => ({
-	backgroundImage: `url(${src})`,
-	backgroundPosition: "center",
-	backgroundColor: alpha(theme.palette.secondary.main, 0.5),
-	backgroundRepeat: "no-repeat",
-	backgroundSize: "cover",
-	padding: "20px",
+const BgBox = styled(Box)(({ theme }) => ({
 	display: "flex",
 	alignItems: "center",
+	justifyContent: "center",
+	padding: "20px 0",
 }));
 
 const CustomCounterBox = styled(CustomStackFullWidth)(({ theme }) => ({
@@ -37,7 +32,7 @@ const CustomCounterBox = styled(CustomStackFullWidth)(({ theme }) => ({
 }));
 
 const FlashSales = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const router = useRouter();
 	const { id } = router.query;
 	const [offset, setOffset] = useState(1);
@@ -45,6 +40,11 @@ const FlashSales = () => {
 	const { ref, inView } = useInView();
 	const [itemData, setItemData] = useState([]);
 	const [loading, setLoading] = useState(false);
+
+	const flashSaleImage = i18n.language === "es"
+		? "/flash_sale_spanish.png"
+		: "/flash_sale_english.png";
+
 	useEffect(() => {
 		const timeoutId = setTimeout(() => {
 			setLoading(true);
@@ -91,7 +91,7 @@ const FlashSales = () => {
 	return (
 		<NoSsr>
 			<CustomBoxFullWidth>
-				<BgBox src={BgImageSvg.src}>
+				<BgBox referenece="bg-box">
 					<CustomContainer>
 						<Box
 							sx={{
@@ -103,14 +103,12 @@ const FlashSales = () => {
 								padding: "20px"
 							}}
 						>
-							<FlashSaleIcon />
-							<Typography
-								fontSize="26px"
-								fontWeight={700}
-								textAlign="center"
-							>
-								{flashSales?.pages[0]?.flash_sale?.title}
-							</Typography>
+							<img
+								src={flashSaleImage}
+								alt="Flash Sale"
+								style={{ maxWidth: "100%", height: "auto", maxHeight: "150px", objectFit: "contain" }}
+							/>
+
 							<Box>
 								{isLoading ? (
 									<CounterSimmer />
