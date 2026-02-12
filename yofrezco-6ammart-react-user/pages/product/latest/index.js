@@ -308,7 +308,7 @@ const LatestProductsPage = () => {
                                                                             <ProductCard
                                                                                 item={item}
                                                                                 cardheight="365px"
-                                                                                cardFor="latest items"
+                                                                                cardFor="vertical"
                                                                                 cardType="vertical-type"
                                                                             />
                                                                         </Grid>
