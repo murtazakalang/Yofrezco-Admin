@@ -80,18 +80,6 @@ const SearchFilter = (props) => {
           fromNav={fromNav}
         />
       )}
-      {brands && currentTab !== 1 && getCurrentModuleType() === "ecommerce" && (
-        <BrandCheckBox
-          linkRouteTo={linkRouteTo}
-          title="Brands"
-          cId={id}
-          data={brands}
-          id={brand_id}
-          searchValue={searchValue}
-          showAll
-          selectedBrandsHandler={selectedBrandsHandler}
-        />
-      )}
 
       {/*<MultipleCheckboxWithTitle title="Brands" data={Dummy} showAll />*/}
       {/*<TagsCheckbox title="Popular Tags" data={Dummy} showAll />*/}
