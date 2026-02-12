@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Grid, NoSsr, styled, useMediaQuery, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -91,6 +91,13 @@ const FlashSales = () => {
 		isRefetching,
 		hasNextPage
 	} = useGetFlashSalesInfinityScroll(pageParams);
+
+	// Force initial data fetch when id is available
+	useEffect(() => {
+		if (id) {
+			flashSalesRefetch();
+		}
+	}, [id]);
 
 	const handleItemData = () => {
 		if (flashSales && flashSales?.pages?.length > 0) {
@@ -188,7 +195,6 @@ const FlashSales = () => {
 						</Box>
 					</CustomContainer>
 				</BgBox>
-
 				{isLoading ? (
 					<CustomStackFullWidth
 						sx={{
@@ -203,82 +209,82 @@ const FlashSales = () => {
 						<DotSpin />
 					</CustomStackFullWidth>
 				) : (
-					<CustomContainer>
-						{/* Search menu header */}
-						<CustomBoxFullWidth sx={{ marginBottom: "20px", marginTop: "20px" }}>
-							<Grid container alignItems="center" justifyContent="center">
-								<Grid item xs={9} md={6}>
-									<H1
-										textTransform="capitalize"
-										textAlign="start"
-										text={`${filteredItems.length} ${t("Items")} ${t("Found")}`}
-									/>
-								</Grid>
-								<Grid item xs={3} md={6} container spacing={2}>
-									<Grid item xs={3} md={2}>
-										<ViewWrapper
-											active={currentView === 0 ? "true" : "false"}
-											onClick={() => setCurrentView(0)}
-										>
-											<WindowIcon />
-											{isSmall ? null : <Body2 text="Grid view" />}
-										</ViewWrapper>
-									</Grid>
-									<Grid item xs={4} md={2}>
-										<ViewWrapper
-											active={currentView === 1 ? "true" : "false"}
-											onClick={() => setCurrentView(1)}
-										>
-											<ViewListIcon sx={{ fontSize: "30px" }} />
-											{isSmall ? null : <Body2 text="List view" />}
-										</ViewWrapper>
-									</Grid>
-									{isSmall ? null : (
-										<Grid item xs={0} md={5.5} align="center">
-											<HighToLow
-												handleSortBy={handleSortBy}
-												sortBy={sortBy}
-											/>
-										</Grid>
-									)}
-								</Grid>
-							</Grid>
-						</CustomBoxFullWidth>
+					<>
+						{itemData.length === 0 && loading && !isLoading ? (
+							<CustomStackFullWidth
+								sx={{ height: "100%", padding: "2rem" }}
+								alignItems="center"
+								justifyContent="center"
+							>
+								<EmptySearchResults text="No Flash Sales Product Found!" isItems />
+							</CustomStackFullWidth>
+						) : (
+							<Box>
+								{itemData?.length > 0 && <Box sx={{ paddingTop: "20px", paddingBottom: "80px" }}>
+									<CustomContainer>
+										{/* Search menu header */}
+										<CustomBoxFullWidth sx={{ marginBottom: "20px" }}>
+											<Grid container alignItems="center" justifyContent="center">
+												<Grid item xs={9} md={6}>
+													<H1
+														textTransform="capitalize"
+														textAlign="start"
+														text={`${filteredItems.length} ${t("Items")} ${t("Found")}`}
+													/>
+												</Grid>
+												<Grid item xs={3} md={6} container spacing={2}>
+													<Grid item xs={3} md={2}>
+														<ViewWrapper
+															active={currentView === 0 ? "true" : "false"}
+															onClick={() => setCurrentView(0)}
+														>
+															<WindowIcon />
+															{isSmall ? null : <Body2 text="Grid view" />}
+														</ViewWrapper>
+													</Grid>
+													<Grid item xs={4} md={2}>
+														<ViewWrapper
+															active={currentView === 1 ? "true" : "false"}
+															onClick={() => setCurrentView(1)}
+														>
+															<ViewListIcon sx={{ fontSize: "30px" }} />
+															{isSmall ? null : <Body2 text="List view" />}
+														</ViewWrapper>
+													</Grid>
+													{isSmall ? null : (
+														<Grid item xs={0} md={5.5} align="center">
+															<HighToLow
+																handleSortBy={handleSortBy}
+																sortBy={sortBy}
+															/>
+														</Grid>
+													)}
+												</Grid>
+											</Grid>
+										</CustomBoxFullWidth>
 
-						{/* Main content with sidebar */}
-						<CustomBoxFullWidth sx={{ marginTop: "20px" }}>
-							<Grid container>
-								{/* Sidebar */}
-								<Grid item xs={0} sm={0} md={0} lg={3} sx={{ display: { xs: 'none', lg: 'block' } }}>
-									<CustomBoxFullWidth
-										sx={{
-											position: 'sticky',
-											top: '80px',
-											height: 'calc(100vh - 100px)',
-										}}
-									>
-										<SearchFilter
-											searchValue=""
-											selectedCategoriesHandler={selectedCategoriesHandler}
-											currentTab={0}
-										/>
-									</CustomBoxFullWidth>
-								</Grid>
-
-								{/* Products Grid */}
-								<Grid item xs={12} sm={12} md={12} lg={9}>
-									<CustomStackFullWidth spacing={2} sx={{ paddingTop: "1rem" }}>
-										<CustomBoxFullWidth>
-											{itemData.length === 0 && loading && !isLoading ? (
-												<CustomStackFullWidth
-													sx={{ height: "100%", padding: "2rem" }}
-													alignItems="center"
-													justifyContent="center"
+										{/* Main content with sidebar */}
+										<Grid container>
+											{/* Sidebar */}
+											<Grid item xs={0} sm={0} md={0} lg={3} sx={{ display: { xs: 'none', lg: 'block' } }}>
+												<CustomBoxFullWidth
+													sx={{
+														position: 'sticky',
+														top: '80px',
+														height: 'calc(100vh - 100px)',
+													}}
 												>
-													<EmptySearchResults text="No Flash Sales Product Found!" isItems />
-												</CustomStackFullWidth>
-											) : (
-												<Grid container spacing={2}>
+													<SearchFilter
+														searchValue=""
+														selectedCategoriesHandler={selectedCategoriesHandler}
+														currentTab={0}
+													/>
+												</CustomBoxFullWidth>
+											</Grid>
+
+											{/* Products Grid */}
+											<Grid item xs={12} sm={12} md={12} lg={9}>
+												<Grid container rowSpacing={4} columnSpacing={2}>
 													{currentView === 0 ? (
 														<>
 															{filteredItems?.map((item, index) => (
@@ -323,7 +329,7 @@ const FlashSales = () => {
 															))}
 														</>
 													)}
-													{isFetchingNextPage && (
+													{isFetchingNextPage &&
 														<CustomStackFullWidth
 															sx={{
 																width: "100%",
@@ -335,20 +341,18 @@ const FlashSales = () => {
 															justifyContent="center"
 														>
 															<DotSpin />
-														</CustomStackFullWidth>
-													)}
+														</CustomStackFullWidth>}
 												</Grid>
-											)}
-										</CustomBoxFullWidth>
-									</CustomStackFullWidth>
-								</Grid>
-							</Grid>
-						</CustomBoxFullWidth>
-
-						{flashSales?.total_size !== itemData?.length && (
-							<CustomBoxFullWidth ref={ref}></CustomBoxFullWidth>
+											</Grid>
+										</Grid>
+									</CustomContainer>
+								</Box>}
+							</Box>
 						)}
-					</CustomContainer>
+					</>
+				)}
+				{flashSales?.total_size !== itemData?.length && (
+					<CustomBoxFullWidth ref={ref}></CustomBoxFullWidth>
 				)}
 			</CustomBoxFullWidth>
 		</NoSsr>
