@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, NoSsr, Typography, useTheme } from "@mui/material";
+import { Box, Grid, NoSsr, Typography, useTheme, styled, useMediaQuery } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 
@@ -20,6 +20,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetConfigData } from "../../../src/api-manage/hooks/useGetConfigData";
 import { setConfigData } from "../../../src/redux/slices/configData";
 import CssBaseline from "@mui/material/CssBaseline";
+import SearchFilter from "../../../src/components/search/search-filter";
+import H1 from "../../../src/components/typographies/H1";
+import HighToLow from "../../../src/sort/HighToLow";
+import WindowIcon from "@mui/icons-material/Window";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import Body2 from "../../../src/components/typographies/Body2";
+
+const ViewWrapper = styled(Box)(({ theme, active }) => ({
+    display: "flex",
+    direction: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    gap: "5px",
+    cursor: "pointer",
+    color:
+        active === "true"
+            ? theme.palette.primary.main
+            : theme.palette.neutral[500],
+}));
 
 // Localized Title Image Component for Latest Products
 const LocalizedLatestProductsTitle = () => {
@@ -57,11 +77,15 @@ const LatestProductsPage = () => {
     const { t } = useTranslation();
     const theme = useTheme();
     const dispatch = useDispatch();
+    const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const [offset, setOffset] = useState(1);
     const [limit] = useState(12);
     const { ref, inView } = useInView();
     const [itemData, setItemData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [currentView, setCurrentView] = useState(0);
+    const [sortBy, setSortBy] = useState("");
 
     const { landingPageData, configData } = useSelector(
         (state) => state.configData
@@ -129,6 +153,41 @@ const LatestProductsPage = () => {
         }
     }, [inView]);
 
+    // Category filter handler
+    const selectedCategoriesHandler = (ids) => {
+        setSelectedCategories(ids);
+    };
+
+    // Sort handler
+    const handleSortBy = (value) => {
+        setSortBy(value);
+    };
+
+    // Filter items by selected categories
+    const getFilteredItems = () => {
+        let filtered = itemData;
+
+        // Filter by categories
+        if (selectedCategories.length > 0 && selectedCategories[0] !== "undefined") {
+            filtered = filtered.filter((item) => {
+                const itemCategoryId = item?.category_id;
+                return selectedCategories.includes(String(itemCategoryId)) ||
+                    selectedCategories.includes(itemCategoryId);
+            });
+        }
+
+        // Sort
+        if (sortBy === "high") {
+            filtered = [...filtered].sort((a, b) => (b?.price || 0) - (a?.price || 0));
+        } else if (sortBy === "low") {
+            filtered = [...filtered].sort((a, b) => (a?.price || 0) - (b?.price || 0));
+        }
+
+        return filtered;
+    };
+
+    const filteredItems = getFilteredItems();
+
     return (
         <>
             <CssBaseline />
@@ -171,42 +230,129 @@ const LatestProductsPage = () => {
                                             <EmptySearchResults text={t("No Latest Products Found!")} isItems />
                                         </CustomStackFullWidth>
                                     ) : (
-                                        <Box sx={{ paddingTop: "20px", paddingBottom: "80px" }}>
-                                            <Grid container rowSpacing={4} columnSpacing={2}>
-                                                {itemData?.map((item, index) => {
-                                                    return (
-                                                        <Grid
-                                                            key={item?.id || index}
-                                                            item
-                                                            xs={6}
-                                                            sm={4}
-                                                            md={3}
-                                                            lg={2.4}
-                                                        >
-                                                            <ProductCard
-                                                                item={item}
-                                                                cardheight="365px"
-                                                                cardFor="latest items"
-                                                                cardType="vertical-type"
+                                        <Box>
+                                            {itemData?.length > 0 && <Box sx={{ paddingTop: "20px", paddingBottom: "80px" }}>
+                                                {/* Search menu header */}
+                                                <CustomBoxFullWidth sx={{ marginBottom: "20px" }}>
+                                                    <Grid container alignItems="center" justifyContent="center">
+                                                        <Grid item xs={9} md={6}>
+                                                            <H1
+                                                                textTransform="capitalize"
+                                                                textAlign="start"
+                                                                text={`${filteredItems.length} ${t("Items")} ${t("Found")}`}
                                                             />
                                                         </Grid>
-                                                    );
-                                                })}
-                                                {isFetchingNextPage && (
-                                                    <CustomStackFullWidth
-                                                        sx={{
-                                                            width: "100%",
-                                                            height: "20vh",
-                                                            alignItems: "center",
-                                                            justifyContent: "center"
-                                                        }}
-                                                        alignItems="center"
-                                                        justifyContent="center"
-                                                    >
-                                                        <DotSpin />
-                                                    </CustomStackFullWidth>
-                                                )}
-                                            </Grid>
+                                                        <Grid item xs={3} md={6} container spacing={2}>
+                                                            <Grid item xs={3} md={2}>
+                                                                <ViewWrapper
+                                                                    active={currentView === 0 ? "true" : "false"}
+                                                                    onClick={() => setCurrentView(0)}
+                                                                >
+                                                                    <WindowIcon />
+                                                                    {isSmall ? null : <Body2 text="Grid view" />}
+                                                                </ViewWrapper>
+                                                            </Grid>
+                                                            <Grid item xs={4} md={2}>
+                                                                <ViewWrapper
+                                                                    active={currentView === 1 ? "true" : "false"}
+                                                                    onClick={() => setCurrentView(1)}
+                                                                >
+                                                                    <ViewListIcon sx={{ fontSize: "30px" }} />
+                                                                    {isSmall ? null : <Body2 text="List view" />}
+                                                                </ViewWrapper>
+                                                            </Grid>
+                                                            {isSmall ? null : (
+                                                                <Grid item xs={0} md={5.5} align="center">
+                                                                    <HighToLow
+                                                                        handleSortBy={handleSortBy}
+                                                                        sortBy={sortBy}
+                                                                    />
+                                                                </Grid>
+                                                            )}
+                                                        </Grid>
+                                                    </Grid>
+                                                </CustomBoxFullWidth>
+
+                                                {/* Main content with sidebar */}
+                                                <Grid container>
+                                                    {/* Sidebar */}
+                                                    <Grid item xs={0} sm={0} md={0} lg={3} sx={{ display: { xs: 'none', lg: 'block' } }}>
+                                                        <CustomBoxFullWidth
+                                                            sx={{
+                                                                position: 'sticky',
+                                                                top: '80px',
+                                                                height: 'calc(100vh - 100px)',
+                                                            }}
+                                                        >
+                                                            <SearchFilter
+                                                                searchValue=""
+                                                                selectedCategoriesHandler={selectedCategoriesHandler}
+                                                                currentTab={0}
+                                                            />
+                                                        </CustomBoxFullWidth>
+                                                    </Grid>
+
+                                                    {/* Products Grid */}
+                                                    <Grid item xs={12} sm={12} md={12} lg={9}>
+                                                        <Grid container rowSpacing={4} columnSpacing={2}>
+                                                            {currentView === 0 ? (
+                                                                <>
+                                                                    {filteredItems?.map((item, index) => (
+                                                                        <Grid
+                                                                            key={item?.id || index}
+                                                                            item
+                                                                            xs={6}
+                                                                            sm={4}
+                                                                            md={3}
+                                                                        >
+                                                                            <ProductCard
+                                                                                item={item}
+                                                                                cardheight="365px"
+                                                                                cardFor="latest items"
+                                                                                cardType="vertical-type"
+                                                                            />
+                                                                        </Grid>
+                                                                    ))}
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {filteredItems?.map((item, index) => (
+                                                                        <Grid
+                                                                            key={item?.id || index}
+                                                                            item
+                                                                            xs={12}
+                                                                            sm={6}
+                                                                            md={6}
+                                                                        >
+                                                                            <ProductCard
+                                                                                item={item}
+                                                                                cardheight="150px"
+                                                                                cardType="vertical-type"
+                                                                                horizontalcard="true"
+                                                                                cardFor="list-view"
+                                                                            />
+                                                                        </Grid>
+                                                                    ))}
+                                                                </>
+                                                            )}
+                                                            {isFetchingNextPage && (
+                                                                <CustomStackFullWidth
+                                                                    sx={{
+                                                                        width: "100%",
+                                                                        height: "20vh",
+                                                                        alignItems: "center",
+                                                                        justifyContent: "center"
+                                                                    }}
+                                                                    alignItems="center"
+                                                                    justifyContent="center"
+                                                                >
+                                                                    <DotSpin />
+                                                                </CustomStackFullWidth>
+                                                            )}
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Box>}
                                         </Box>
                                     )}
                                 </>
