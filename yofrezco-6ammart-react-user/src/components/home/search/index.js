@@ -31,10 +31,12 @@ const SearchResult = (props) => {
     routeTo,
     currentTab,
     setCurrentTab,
+    data_type: propDataType,
+    flash_sale_id,
   } = props;
   const router = useRouter();
   const dispatch = useDispatch();
-  const { data_type } = router.query;
+  const data_type = propDataType || router.query.data_type;
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const id = router.query.id;
@@ -179,6 +181,7 @@ const SearchResult = (props) => {
     filterValue,
     rating_count,
     minMax,
+    flash_sale_id: flash_sale_id || null,
   };
 
   const {

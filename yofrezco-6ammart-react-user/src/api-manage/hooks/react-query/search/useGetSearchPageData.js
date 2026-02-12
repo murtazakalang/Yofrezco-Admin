@@ -17,6 +17,7 @@ const getSearch = async (pageParams) => {
     rating_count,
     minMax,
     pageParam,
+    flash_sale_id,
   } = pageParams;
   const selectedCategoriesId =
     selectedCategoriesIds[0] !== "undefined"
@@ -26,17 +27,17 @@ const getSearch = async (pageParams) => {
     selectedBrands[0] !== "undefined" ? JSON.stringify(selectedBrands) : [];
   const tempFilter = filterValue?.length > 0 ? JSON.stringify(filterValue) : [];
 
-  const { data } = await MainApi.get(
-    `${get_search_page_data}?name=${
-      data_type === "searched" ? searchValue : ""
-    }&offset=${
-      pageParam ? pageParam : offset
-    }&data_type=${data_type}&list_type=${
-      currentTab === 0 ? "item" : "store"
-    }&limit=12&category_ids=${selectedCategoriesId}&brand_ids=${selectedBrandId}&filter=${tempFilter}&rating_count=${rating_count}&min_price=${
-      minMax[0]
-    }&max_price=${minMax[1]}`
-  );
+  let queryUrl = `${get_search_page_data}?name=${data_type === "searched" ? searchValue : ""
+    }&offset=${pageParam ? pageParam : offset
+    }&data_type=${data_type}&list_type=${currentTab === 0 ? "item" : "store"
+    }&limit=12&category_ids=${selectedCategoriesId}&brand_ids=${selectedBrandId}&filter=${tempFilter}&rating_count=${rating_count}&min_price=${minMax[0]
+    }&max_price=${minMax[1]}`;
+
+  if (flash_sale_id) {
+    queryUrl += `&flash_sale_id=${flash_sale_id}`;
+  }
+
+  const { data } = await MainApi.get(queryUrl);
   return data;
 };
 
@@ -52,6 +53,7 @@ export default function useGetSearchPageData(pageParams, handleSuccess) {
       pageParams?.minMax,
       pageParams?.searchValue,
       pageParams?.selectedBrands,
+      pageParams?.flash_sale_id,
     ],
     ({ pageParam = 1 }) => getSearch({ ...pageParams, pageParam }),
     {
