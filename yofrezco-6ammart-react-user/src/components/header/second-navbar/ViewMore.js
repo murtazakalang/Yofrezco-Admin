@@ -14,18 +14,7 @@ const ViewMore = ({ redirect, handlePopoverCloseSub, buttonType }) => {
   const handleClick = () => {
     handlePopoverCloseSub?.();
     if (redirect === "/categories") {
-      const query =
-        getCurrentModuleType() === "rental"
-          ? { pathname: "/rental/vehicle-search", query: { all_category: 1 } }
-          : {
-              pathname: "/home",
-              query: {
-                search: VIEW_ALL_TEXT.allCategories,
-                from: "allCategories",
-                data_type: "category",
-              },
-            };
-      router.push(query, undefined, { shallow: true });
+      router.push("/product/latest?type=latest");
     } else {
       router.push(redirect, undefined, { shallow: true });
     }
