@@ -99,10 +99,6 @@ const MobileMenus = (props) => {
     { label: "All", value: "all" },
     { label: "Newly Joined", value: "newly_joined" },
     {
-      label: "Popular",
-      value: "popular",
-    },
-    {
       label: "Top Rated",
       value: "top_rated",
     },

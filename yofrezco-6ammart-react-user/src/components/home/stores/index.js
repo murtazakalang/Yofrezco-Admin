@@ -65,7 +65,6 @@ const LocalizedStoresTitle = () => {
 const menus = [
   { label: t("All"), value: "all" },
   { label: t("Newly Joined"), value: "newly_joined" },
-  { label: t("Popular"), value: "popular" },
   { label: t("Top Rated"), value: "top_rated" },
 ];
 const filterLabels = [

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Stack } from "@mui/system";
 import { alpha, Grid, useTheme } from "@mui/material";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
-import NavPopularStore from "./nav-store-component/NavPopularStores";
 import NavNewStore from "./nav-store-component/NavNewStore";
 import NavFoodCampaigns from "./nav-store-component/NavFoodCampaigns";
 import useGetBasicCampaigns from "../../../api-manage/hooks/react-query/useGetBasicCampaigns";
@@ -52,10 +51,7 @@ const NavStorePopover = () => {
 
       <CustomStackFullWidth sx={{ padding: "2.5rem" }}>
         <Grid container spacing={2}>
-          <Grid item md={basicCampaigns?.length > 0 ? 3 : 6}>
-            <NavPopularStore />
-          </Grid>
-          <Grid item md={basicCampaigns?.length > 0 ? 3 : 6}>
+          <Grid item md={basicCampaigns?.length > 0 ? 6 : 12}>
             <NavNewStore />
           </Grid>
           {basicCampaigns?.length > 0 && (
