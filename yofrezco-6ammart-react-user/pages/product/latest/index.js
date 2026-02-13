@@ -43,10 +43,10 @@ const ViewWrapper = styled(Box)(({ theme, active }) => ({
 
 // Localized Title Image Component for Latest Products
 const LocalizedLatestProductsTitle = () => {
-    const { i18n, t } = useTranslation();
-    const theme = useTheme();
+    const { i18n } = useTranslation();
     const currentLang = i18n.language || "en";
     const isSpanish = currentLang === "es" || currentLang.startsWith("es");
+    const bannerSrc = isSpanish ? "/new_arrival_spanish.png" : "/new_arrival_english.png";
 
     return (
         <Box
@@ -59,16 +59,16 @@ const LocalizedLatestProductsTitle = () => {
                 mt: 2
             }}
         >
-            <Typography
-                variant="h4"
-                sx={{
-                    fontWeight: 700,
-                    color: theme.palette.primary.main,
-                    textAlign: "center"
+            <img
+                src={bannerSrc}
+                alt={isSpanish ? "Últimas llegadas" : "Latest Arrivals"}
+                style={{
+                    maxWidth: "280px",
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "contain",
                 }}
-            >
-                {isSpanish ? "Productos Más Recientes" : "Latest Products"}
-            </Typography>
+            />
         </Box>
     );
 };
