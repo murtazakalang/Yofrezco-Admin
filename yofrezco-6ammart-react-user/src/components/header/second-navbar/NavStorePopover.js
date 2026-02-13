@@ -27,7 +27,7 @@ const NavStorePopover = () => {
 
   return (
     <Stack
-      width={basicCampaigns?.length > 0 ? "843px" : "500px"}
+      width={basicCampaigns?.length > 0 ? "843px" : "300px"}
       sx={{
         position: "relative",
         zIndex: "1",

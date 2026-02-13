@@ -11,7 +11,7 @@ import {
   CustomStackFullWidth,
   CustomTypographyGray,
 } from "../../../../styled-components/CustomStyles.style";
-import ViewMore from "../ViewMore";
+
 import NavStoreShimmer from "./NavStoreShimmer";
 import { getCurrentModuleType } from "../../../../helper-functions/getCurrentModuleType";
 
@@ -91,9 +91,7 @@ const NavNewStore = () => {
             <NavStoreShimmer />
           </Stack>
         )}
-        <Stack width="70%" justifyContent="flex-start" alignItems="center">
-          <ViewMore redirect={getCurrentModuleType() === "rental"? "/rental/provider/latest": "/store/latest"} />
-        </Stack>
+
       </Stack>
     </CustomStackFullWidth>
   );

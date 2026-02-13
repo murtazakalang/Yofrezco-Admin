@@ -16,7 +16,7 @@ const ButtonsContainer = ({
 }) => {
   return (
     <CustomStackFullWidth>
-      {token && (
+      {token ? (
         <ButtonContainer>
           <Button
             variant="contained"
@@ -25,6 +25,17 @@ const ButtonsContainer = ({
             onClick={() => setOpenModal(true)}
           >
             {t("Logout")}
+          </Button>
+        </ButtonContainer>
+      ) : (
+        <ButtonContainer>
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ mt: 3, mb: 1 }}
+            onClick={() => handleRoute("/auth/sign-in")}
+          >
+            {t("Sign In")}
           </Button>
         </ButtonContainer>
       )}
