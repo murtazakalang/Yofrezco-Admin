@@ -73,6 +73,7 @@ const ModuleWiseNav = (props) => {
 				setToggled={setToggled}
 				setOpenDrawer={setOpenDrawer}
 				openDrawer={openDrawer}
+				setOpenSignIn={setOpenSignIn}
 			/>
 		</CustomStackFullWidth>
 	);

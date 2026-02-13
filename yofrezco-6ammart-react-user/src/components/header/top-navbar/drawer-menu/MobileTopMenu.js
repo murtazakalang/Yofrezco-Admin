@@ -9,13 +9,13 @@ import { useRouter } from "next/router";
 import CollapsableMenu from "./CollapsableMenu";
 import useGetLatestStore from "../../../../api-manage/hooks/react-query/store/useGetLatestStore";
 import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-categorys";
-import useGetPopularStore from "../../../../api-manage/hooks/react-query/store/useGetPopularStore";
+
 import { useDispatch, useSelector } from "react-redux";
 import { Scrollbar } from "../../../srollbar";
 import ButtonsContainer from "./ButtonsContainer";
 import { getStoresOrRestaurants } from "helper-functions/getStoresOrRestaurants";
 import { getModuleId } from "helper-functions/getModuleId";
-import { setPopularStores } from "redux/slices/storedData";
+
 import ThemeSwitches from "../ThemeSwitches";
 import CustomLanguage from "../language/CustomLanguage";
 import { getModule } from "helper-functions/getLanguage";
@@ -29,6 +29,7 @@ const MobileTopMenu = ({
   openModal,
   isLogoutLoading,
   setOpenModal,
+  setOpenSignIn,
 }) => {
   const { wishLists } = useSelector((state) => state.wishList);
   const router = useRouter();
@@ -45,40 +46,14 @@ const MobileTopMenu = ({
 
   const { data: categoriesData, refetch } = useGetCategories();
   const { data: latestStore, refetch: refetchStore } = useGetLatestStore();
-  const type = "all";
-  const pageLimit = 12;
-  const {
-    data,
-    refetch: popularRefetch,
-    isFetching,
-  } = useGetPopularStore({
-    type,
-    offset: 1,
-    limit: pageLimit,
-  });
-  const { popularStores } = useSelector((state) => state.storedData);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (popularStores.length === 0 && getModuleId()) {
-      popularRefetch();
-    }
-  }, []);
-  useEffect(() => {
-    if (
-      data &&
-      data?.pages?.length > 0 &&
-      data?.pages?.[0]?.stores?.length > 0
-    ) {
-      dispatch(setPopularStores(data?.pages?.[0]?.stores));
-    }
-  }, [data]);
+
   useEffect(() => {
     if (getModuleId()) {
       refetch();
       refetchStore();
     }
   }, []);
-  const popular = t("Popular");
+
   const latest = t("Latest");
 
 
@@ -94,13 +69,9 @@ const MobileTopMenu = ({
     latest: {
       text: `${latest} ${getStoresOrRestaurants()}`,
       items: latestStore?.stores?.slice(0, 12)?.map((i) => i),
-      path:  getCurrentModuleType() === "rental" ? "/rental/provider-details" : "/store",
-    },
-    popularStore: {
-      text: `${popular} ${getStoresOrRestaurants()}`,
-      items: popularStores?.map((i) => i),
       path: getCurrentModuleType() === "rental" ? "/rental/provider-details" : "/store",
     },
+
     profile: {
       text: "Profile",
     },
@@ -155,12 +126,7 @@ const MobileTopMenu = ({
                     toggleDrawers={toggleDrawer}
                     pathName="/store/latest"
                   />
-                  <CollapsableMenu
-                    value={collapsableMenu.popularStore}
-                    setOpenDrawer={setOpenDrawer}
-                    toggleDrawers={toggleDrawer}
-                    pathName="/store/popular"
-                  />
+
                 </>
               )}
               <ListItemButton
@@ -214,6 +180,8 @@ const MobileTopMenu = ({
         openModal={openModal}
         isLogoutLoading={isLogoutLoading}
         setOpenModal={setOpenModal}
+        setOpenSignIn={setOpenSignIn}
+        setOpenDrawer={setOpenDrawer}
       />
     </Box>
   );

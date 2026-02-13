@@ -13,6 +13,8 @@ const ButtonsContainer = ({
   openModal,
   isLogoutLoading,
   setOpenModal,
+  setOpenSignIn,
+  setOpenDrawer,
 }) => {
   return (
     <CustomStackFullWidth>
@@ -33,7 +35,10 @@ const ButtonsContainer = ({
             variant="contained"
             fullWidth
             sx={{ mt: 3, mb: 1 }}
-            onClick={() => handleRoute("/auth/sign-in")}
+            onClick={() => {
+              setOpenDrawer(false);
+              setOpenSignIn(true);
+            }}
           >
             {t("Sign In")}
           </Button>

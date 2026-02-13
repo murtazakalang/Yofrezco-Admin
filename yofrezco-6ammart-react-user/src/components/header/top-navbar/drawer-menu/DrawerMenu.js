@@ -13,7 +13,7 @@ import { logoutSuccessFull } from "utils/toasterMessages";
 import { clearWishList } from "redux/slices/wishList";
 import { setClearCart } from "redux/slices/cart";
 
-const DrawerMenu = ({ setToggled, openDrawer, setOpenDrawer }) => {
+const DrawerMenu = ({ setToggled, openDrawer, setOpenDrawer, setOpenSignIn }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -85,6 +85,7 @@ const DrawerMenu = ({ setToggled, openDrawer, setOpenDrawer }) => {
             openModal={openModal}
             isLogoutLoading={isLogoutLoading}
             setOpenModal={setOpenModal}
+            setOpenSignIn={setOpenSignIn}
             t={t}
           />
         </CustomDrawer>
