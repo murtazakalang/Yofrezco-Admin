@@ -85,6 +85,44 @@ class PaymentController extends Controller
 
         $order_amount = $order->order_amount - $order->partially_paid_amount;
 
+        // Add payment gateway fee if not yet calculated (first payment attempt only)
+        if ($order->payment_gateway_fee == 0 && in_array($request->payment_method, ['tilopay', 'cybersource'])) {
+            $payment_gateway_fee = 0;
+            $payment_gateway_fee_details = [];
+
+            if ($request->payment_method === 'tilopay') {
+                $yappy_fee = (1 / 100) * $order_amount;
+                $itbms_fee = (7 / 100) * $yappy_fee;
+                $payment_gateway_fee = round($yappy_fee + $itbms_fee, config('round_up_to_digit'));
+                $payment_gateway_fee_details = [
+                    'type' => 'tilopay',
+                    'yappy_fee' => round($yappy_fee, config('round_up_to_digit')),
+                    'itbms_fee' => round($itbms_fee, config('round_up_to_digit')),
+                    'yappy_receives' => $payment_gateway_fee,
+                ];
+            } elseif ($request->payment_method === 'cybersource') {
+                $card_fee = (3.5 / 100) * $order_amount;
+                $fees_before_itbms = $card_fee + 0.50;
+                $itbms_fee = (7 / 100) * $fees_before_itbms;
+                $payment_gateway_fee = round($card_fee + 0.50 + $itbms_fee + 0.10, config('round_up_to_digit'));
+                $payment_gateway_fee_details = [
+                    'type' => 'cybersource',
+                    'card_fee' => round($card_fee, config('round_up_to_digit')),
+                    'bank_fixed_fee' => 0.50,
+                    'itbms_fee' => round($itbms_fee, config('round_up_to_digit')),
+                    'fygaro_fixed_fee' => 0.10,
+                ];
+            }
+
+            if ($payment_gateway_fee > 0) {
+                $order->payment_gateway_fee = $payment_gateway_fee;
+                $order->payment_gateway_fee_details = json_encode($payment_gateway_fee_details);
+                $order->order_amount = $order->order_amount + $payment_gateway_fee;
+                $order->save();
+                $order_amount = $order_amount + $payment_gateway_fee;
+            }
+        }
+
         if (!isset($customer)) {
             return response()->json(['errors' => ['message' => 'Customer not found']], 403);
         }

@@ -416,26 +416,31 @@ trait PlaceNewOrder
                 $order->tax_percentage = 0;
                 $order->total_tax_amount = round($tax_amount, config('round_up_to_digit'));
 
-                // Calculate commission amounts from commission-inclusive prices
-                // Product commission: Since prices from frontend already include commission, reverse-calculate the commission portion
-                $product_commission_percentage = $store->comission ?? BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
+                // Product commission: reverse-extract from total_price (which already includes commission
+                // because makeOrderDetails now stores commission-inclusive prices)
+                $product_commission_percentage = BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
                 $base_product_total = $total_price / (1 + ($product_commission_percentage / 100));
                 $product_commission_amount = round($total_price - $base_product_total, config('round_up_to_digit'));
 
-                // Delivery commission: Calculate commission on original delivery charge
+                // Delivery commission: Calculate on original delivery charge
                 $delivery_commission_percentage = BusinessSetting::where('key', 'delivery_charge_comission')->first()->value ?? 0;
                 $delivery_commission_amount = ($request->order_type !== 'take_away')
                     ? round(($delivery_commission_percentage / 100) * $original_delivery_charge, config('round_up_to_digit'))
                     : 0;
 
-                // Delivery tax: Calculate tax on (delivery_charge + delivery_commission)
+                // Merge delivery commission into delivery_charge so the order summary shows
+                // the same fee the customer saw at checkout (delivery + commission combined)
+                if ($order->delivery_charge > 0) {
+                    $order->delivery_charge = round($order->delivery_charge + $delivery_commission_amount, config('round_up_to_digit'));
+                }
+
+                // Delivery tax: Calculate tax on the commission-inclusive delivery charge
                 $delivery_tax_percentage = BusinessSetting::where('key', 'delivery_tax_percentage')->first()->value ?? 0;
-                $delivery_fee_with_commission = $original_delivery_charge + $delivery_commission_amount;
                 $delivery_tax_amount = ($request->order_type !== 'take_away')
-                    ? round(($delivery_tax_percentage / 100) * $delivery_fee_with_commission, config('round_up_to_digit'))
+                    ? round(($delivery_tax_percentage / 100) * $order->delivery_charge, config('round_up_to_digit'))
                     : 0;
 
-                // Store commission and tax values in order
+                // Store commission and tax values in order (for reporting)
                 $order->product_commission_amount = $product_commission_amount;
                 $order->delivery_commission_amount = $delivery_commission_amount;
                 $order->product_commission_percentage = $product_commission_percentage;
@@ -443,8 +448,8 @@ trait PlaceNewOrder
                 $order->delivery_tax_percentage = $delivery_tax_percentage;
                 $order->delivery_tax_amount = $delivery_tax_amount;
 
-                // Order amount: total_price (includes product commission) + tax + delivery_charge + delivery_commission + delivery_tax
-                $order->order_amount = round($total_price + $tax_amount + $order->delivery_charge + $delivery_commission_amount + $delivery_tax_amount, config('round_up_to_digit'));
+                // Order amount: total_price (commission-inclusive) + tax + delivery_charge (commission-inclusive) + delivery_tax
+                $order->order_amount = round($total_price + $tax_amount + $order->delivery_charge + $delivery_tax_amount, config('round_up_to_digit'));
                 $order->free_delivery_by = $free_delivery_by;
             } else {
                 // Parcel order - only delivery commission applies, no product commission
@@ -506,58 +511,11 @@ trait PlaceNewOrder
             $order->flash_admin_discount_amount = round($flash_sale_admin_discount_amount, config('round_up_to_digit'));
             $order->flash_store_discount_amount = round($flash_sale_vendor_discount_amount, config('round_up_to_digit'));
 
-            // Calculate payment gateway fees based on payment method
-            // Base total for payment fee calculation (before dm_tips and additional charges)
-            $base_total_for_payment_fee = $order->order_amount;
-            $payment_gateway_fee = 0;
-            $payment_gateway_fee_details = [];
-
-            if ($request->payment_method === 'cybersource') {
-                // CyberSource (Visa/Mastercard via Fygaro)
-                // Card fee: 3.5%, Bank fixed fee: $0.50, ITBMS: 7% on fees, Fygaro: $0.10
-                $card_fee_percent = 3.5;
-                $bank_fixed_fee = 0.50;
-                $itbms_percent = 7;
-                $fygaro_fixed_fee = 0.10;
-
-                $card_fee = ($card_fee_percent / 100) * $base_total_for_payment_fee;
-                $fees_before_itbms = $card_fee + $bank_fixed_fee;
-                $itbms_fee = ($itbms_percent / 100) * $fees_before_itbms;
-                $payment_gateway_fee = round($card_fee + $bank_fixed_fee + $itbms_fee + $fygaro_fixed_fee, config('round_up_to_digit'));
-
-                $payment_gateway_fee_details = [
-                    'type' => 'cybersource',
-                    'card_fee' => round($card_fee, config('round_up_to_digit')),
-                    'bank_fixed_fee' => $bank_fixed_fee,
-                    'itbms_fee' => round($itbms_fee, config('round_up_to_digit')),
-                    'fygaro_fixed_fee' => $fygaro_fixed_fee,
-                    'banco_general_receives' => round($card_fee + $bank_fixed_fee + $itbms_fee, config('round_up_to_digit')),
-                    'fygaro_receives' => $fygaro_fixed_fee
-                ];
-            } elseif ($request->payment_method === 'tilopay') {
-                // Tilopay (Yappy)
-                // Yappy fee: 1%, ITBMS: 7% on yappy fee
-                $yappy_fee_percent = 1;
-                $itbms_percent = 7;
-
-                $yappy_fee = ($yappy_fee_percent / 100) * $base_total_for_payment_fee;
-                $itbms_fee = ($itbms_percent / 100) * $yappy_fee;
-                $payment_gateway_fee = round($yappy_fee + $itbms_fee, config('round_up_to_digit'));
-
-                $payment_gateway_fee_details = [
-                    'type' => 'tilopay',
-                    'yappy_fee' => round($yappy_fee, config('round_up_to_digit')),
-                    'itbms_fee' => round($itbms_fee, config('round_up_to_digit')),
-                    'yappy_receives' => $payment_gateway_fee
-                ];
-            }
-
-            // Store payment gateway fee in order
-            $order->payment_gateway_fee = $payment_gateway_fee;
-            $order->payment_gateway_fee_details = json_encode($payment_gateway_fee_details);
-
-            // Add payment gateway fee to order amount
-            $order->order_amount = $order->order_amount + $payment_gateway_fee;
+            // Payment gateway fees are calculated in PaymentController when the user initiates payment,
+            // since payment_method at order placement is always 'digital_payment' (gateway-specific
+            // method names like 'tilopay'/'cybersource' are only known at payment initiation time).
+            $order->payment_gateway_fee = 0;
+            $order->payment_gateway_fee_details = json_encode([]);
 
             //DM TIPS
             $order->order_amount = $order->order_amount + $order->dm_tips + $order->additional_charge + $order->extra_packaging_amount;
@@ -1105,6 +1063,7 @@ trait PlaceNewOrder
         $order_details = [];
         $discount_type = '';
         $discount_on_product_by = 'vendor';
+        $commission_percentage = BusinessSetting::where('key', 'admin_commission')->first()->value ?? 0;
         foreach ($carts as $c) {
             $variations = [];
             $isCampaign = false;
@@ -1180,6 +1139,10 @@ trait PlaceNewOrder
                         ];
                     }
                 }
+
+                // Apply commission to price so order_details stores commission-inclusive price
+                // (matches the price shown to the customer at checkout)
+                $price = $price + round(($commission_percentage / 100) * $price, config('round_up_to_digit'));
 
                 $product = Helpers::product_data_formatting($product, false, false, app()->getLocale());
                 $addon_data = Helpers::calculate_addon_price(AddOn::whereIn('id', $c['add_on_ids'])->get(), $c['add_on_qtys']);

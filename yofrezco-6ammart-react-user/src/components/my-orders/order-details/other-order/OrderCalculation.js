@@ -233,6 +233,36 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           {trackOrderData && getAmountWithSign(trackOrderData?.delivery_charge)}
         </Typography>
       </CustomStackFullWidth>
+      {trackOrderData?.delivery_tax_amount > 0 && (
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Typography fontSize="14px">{t("Delivery Tax/ITBMS")} (+)</Typography>
+          <Typography fontSize="14px">
+            {getAmountWithSign(trackOrderData?.delivery_tax_amount)}
+          </Typography>
+        </CustomStackFullWidth>
+      )}
+      {trackOrderData?.payment_gateway_fee > 0 && (
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Typography fontSize="14px">
+            {trackOrderData?.payment_gateway_fee_details?.type === "cybersource"
+              ? t("Visa/Mastercard Fee")
+              : t("Yappy Fee")} (+)
+          </Typography>
+          <Typography fontSize="14px">
+            {getAmountWithSign(trackOrderData?.payment_gateway_fee)}
+          </Typography>
+        </CustomStackFullWidth>
+      )}
       <Stack
         width="100%"
         sx={{

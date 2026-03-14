@@ -50,6 +50,10 @@ class Order extends Model
         'delivery_commission_amount' => 'float',
         'product_commission_percentage' => 'float',
         'delivery_commission_percentage' => 'float',
+        'delivery_tax_percentage' => 'float',
+        'delivery_tax_amount' => 'float',
+        'payment_gateway_fee' => 'float',
+        'payment_gateway_fee_details' => 'array',
     ];
 
     protected $appends = ['module_type','order_attachment_full_url','order_proof_full_url'];
