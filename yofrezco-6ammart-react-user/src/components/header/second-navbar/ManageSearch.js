@@ -198,6 +198,7 @@ const ManageSearch = ({
     <Box
       sx={{
         position: "relative",
+        zIndex: 9999,
         width: "100%",
         maxWidth: {
           xs: fullWidth ? "100%" : "300px",

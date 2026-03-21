@@ -8,7 +8,6 @@ import {
   Instragram,
   LinkedIn,
   Pinterest,
-  Twitter,
   TikTok,
   YouTube,
   Threads,
@@ -22,13 +21,11 @@ const SocialLinks = (props) => {
   };
   const theme = useTheme();
   const iconHandler = (name) => {
-    switch (name) {
+    switch (name?.toLowerCase()) {
       case "facebook":
         return <Facebook />;
       case "instagram":
         return <Instragram />;
-      case "twitter":
-        return <Twitter />;
       case "linkedin":
         return <LinkedIn />;
       case "pinterest":
@@ -40,7 +37,7 @@ const SocialLinks = (props) => {
       case "threads":
         return <Threads />;
       default:
-        return <Twitter />;
+        return null;
     }
   };
   // console.log({ landingPageData });
@@ -69,6 +66,8 @@ const SocialLinks = (props) => {
           configData?.social_media?.length > 0 &&
           configData?.social_media?.map((item, index) => {
             const { name, link } = item;
+            const icon = iconHandler(name);
+            if (!icon) return null;
             return (
               <IconButton
                 sx={{
@@ -83,7 +82,7 @@ const SocialLinks = (props) => {
                 key={index}
                 onClick={() => clickHandler(link)}
               >
-                {iconHandler(name)}
+                {icon}
               </IconButton>
             );
           })}

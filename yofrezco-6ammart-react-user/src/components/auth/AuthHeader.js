@@ -28,7 +28,7 @@ const AuthHeader = ({ title, configData }) => {
         <CustomImageContainer
           maxWidth="300px"
           height="50px"
-          objectfit="cover"
+          objectfit="contain"
           src={configData?.logo_full_url}
         />
       </Box>

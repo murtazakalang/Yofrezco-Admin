@@ -92,6 +92,7 @@ const HomeSearch = () => {
         alignItems: "center",
         gap: "10px",
         position: "relative",
+        zIndex: 9999,
         mb: "1rem",
       }}
       onFocus={() => handleOnFocus()}
