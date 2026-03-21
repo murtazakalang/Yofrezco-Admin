@@ -27,13 +27,19 @@ const TopBanner = ({ children }) => {
         // },
         backgroundColor: "#002bfe",
         position: "relative",
-        overflow: "hidden",
         padding: "16px 0",
       }}
     >
       {getCurrentModuleType() === "rental" && (
         <Box
           sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            overflow: "hidden",
+            zIndex: 0,
             svg: { position: "absolute" },
 
             ".left_img": (theme) => ({
@@ -70,7 +76,9 @@ const TopBanner = ({ children }) => {
           />
         </Box>
       )}
-      {children}
+      <Box sx={{ position: "relative", zIndex: 1 }}>
+        {children}
+      </Box>
     </CustomBoxFullWidth>
   );
 };
