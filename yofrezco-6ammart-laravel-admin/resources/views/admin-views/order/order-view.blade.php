@@ -337,8 +337,8 @@
                                                             <img  src="{{\App\CentralLogics\Helpers::get_full_url('order', $item['img'], $item['storage']??'public') }}"
                                                                   class="initial--22 w-100">
                                                         </div>
-                                                        @php($storage = $item['storage']??'public')
-                                                        @php($file = $storage == 's3'?base64_encode('order/' . $item['img']):base64_encode('public/order/' . $item['img']))
+                                                        <?php $storage = $item['storage']??'public'; ?>
+                                                        <?php $file = $storage == 's3'?base64_encode('order/' . $item['img']):base64_encode('public/order/' . $item['img']); ?>
                                                         <div class="modal-footer">
                                                             <a class="btn btn-primary"
                                                                href="{{ route('admin.file-manager.download', [$file,$storage]) }}"><i
@@ -647,23 +647,23 @@
                                                                             {{ \App\CentralLogics\Helpers::format_currency($addon['price']) }}
                                                                         </span>
                                                                 </div>
-                                                                @php($total_addon_price += $addon['price'] * $addon['quantity'])
+                                                                <?php $total_addon_price += $addon['price'] * $addon['quantity']; ?>
                                                             @endforeach
                                                         </div>
                                                     </td>
                                                 @endif
                                                 <td class="text-right">
                                                     <div>
-                                                        @php($amount = $detail['price'] * $detail['quantity'])
+                                                        <?php $amount = $detail['price'] * $detail['quantity']; ?>
                                                         <h5>{{ \App\CentralLogics\Helpers::format_currency($amount) }}
                                                         </h5>
                                                     </div>
                                                 </td>
                                             </tr>
 
-                                            @php($product_price += $amount)
+                                            <?php $product_price += $amount; ?>
 {{-- @dd($detail['discount_on_product_by']) --}}
-                                            @php($store_discount_amount += $detail['discount_on_item']  * ( $detail['discount_on_product_by'] == 'store_discount' ? 1 :$detail['quantity']  ))
+                                            <?php $store_discount_amount += $detail['discount_on_item']  * ( $detail['discount_on_product_by'] == 'store_discount' ? 1 :$detail['quantity']  ); ?>
                                             <!-- End Media -->
 
 
@@ -786,23 +786,22 @@
                                                                             {{ \App\CentralLogics\Helpers::format_currency($addon['price']) }}
                                                                         </span>
                                                                 </div>
-                                                                @php($total_addon_price += $addon['price'] * $addon['quantity'])
+                                                                <?php $total_addon_price += $addon['price'] * $addon['quantity']; ?>
                                                             @endforeach
                                                         </div>
                                                     </td>
                                                 @endif
                                                 <td class="text-right">
                                                     <div>
-                                                        @php($amount = $detail['price'] * $detail['quantity'])
+                                                        <?php $amount = $detail['price'] * $detail['quantity']; ?>
                                                         <h5>{{ \App\CentralLogics\Helpers::format_currency($amount) }}
                                                         </h5>
                                                     </div>
                                                 </td>
                                             </tr>
 
-                                            @php($product_price += $amount)
-
-                                            @php($store_discount_amount += $detail['discount_on_item'] *  ( $detail['discount_on_product_by'] == 'store_discount' ?  1:$detail['quantity'] ))
+                                            <?php $product_price += $amount; ?>
+                                            <?php $store_discount_amount += $detail['discount_on_item'] *  ( $detail['discount_on_product_by'] == 'store_discount' ?  1:$detail['quantity'] ); ?>
                                             <!-- End Media -->
 
                                         @endif
@@ -1060,7 +1059,7 @@
                                 </li>
                                 @if ($order->payment_status == 'paid' || $order->payment_status == 'partially_paid' )
                                     @if ( $order?->payments)
-                                        @php( $pay_infos =$order->payments()->where('payment_status','paid')->get())
+                                        <?php  $pay_infos =$order->payments()->where('payment_status','paid')->get(); ?>
                                         @foreach ($pay_infos as $pay_info)
                                             <li>
                                                 <span class="name">{{ translate('Amount_paid_by') }} {{ translate($pay_info->payment_method) }} </span>
@@ -1077,7 +1076,7 @@
 
                                 @if ($order->payment_status == 'paid' || $order->payment_status == 'partially_paid')
                                     @if ( $order?->payments)
-                                        @php( $amount =$order->payments()->where('payment_status','paid')->sum('amount'))
+                                        <?php  $amount =$order->payments()->where('payment_status','paid')->sum('amount'); ?>
                                         <li>
                                             <span class="name">{{ translate('Amount_Returned_To_Wallet') }} </span>
                                             <span class="info">  {{ \App\CentralLogics\Helpers::format_currency($amount)  }} </span>
@@ -1096,8 +1095,7 @@
                     </div>
 
                 @endif
-                @php($refund = \App\Models\BusinessSetting::where(['key' => 'refund_active_status'])->first())
-
+                <?php $refund = \App\Models\BusinessSetting::where(['key' => 'refund_active_status'])->first(); ?>
                 @if (!empty($order->refund))
                     @if (
                         $order->order_status == 'refund_requested' ||
@@ -1126,10 +1124,10 @@
                                 <label class="input-label"
                                        for="exampleFormControlInput1">{{ translate('messages.image') }} : </label>
                                 <div class="row g-3">
-                                    @php($data = isset($order->refund->image) ? json_decode($order->refund->image, true) : 0)
+                                    <?php $data = isset($order->refund->image) ? json_decode($order->refund->image, true) : 0; ?>
                                     @if ($data)
                                         @foreach ($data as $key => $img)
-                                            @php($img = is_array($img)?$img:['img'=>$img,'storage'=>'public'])
+                                            <?php $img = is_array($img)?$img:['img'=>$img,'storage'=>'public']; ?>
                                             <div class="col-3">
                                                 <img class="img__aspect-1 rounded border w-100 onerror-image" data-toggle="modal"
                                                      data-target="#imagemodal{{ $key }}"
@@ -1156,8 +1154,8 @@
 
                                                                 class="initial--22 w-100">
                                                         </div>
-                                                        @php($storage = $img['storage']??'public')
-                                                        @php($file = $storage == 's3'?base64_encode('refund/' . $img['img']):base64_encode('public/refund/' . $img['img']))
+                                                        <?php $storage = $img['storage']??'public'; ?>
+                                                        <?php $file = $storage == 's3'?base64_encode('refund/' . $img['img']):base64_encode('public/refund/' . $img['img']); ?>
                                                         <div class="modal-footer">
                                                             <a class="btn btn-primary"
                                                                href="{{ route('admin.file-manager.download', [$file,$storage]) }}"><i
@@ -1291,7 +1289,7 @@
                                                     ?>
                                                 {{ $message }}
                                             </button>
-                                            @php($order_delivery_verification = (bool) \App\Models\BusinessSetting::where(['key' => 'order_delivery_verification'])->first()->value)
+                                            <?php $order_delivery_verification = (bool) \App\Models\BusinessSetting::where(['key' => 'order_delivery_verification'])->first()->value; ?>
                                             <div class="dropdown-menu text-capitalize" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item {{ $order['order_status'] == 'pending' ? 'active' : '' }} route-alert"
                                                    data-url="{{ route('admin.order.status', ['id' => $order['id'], 'order_status' => 'pending']) }}" data-message="{{ translate('Change status to pending ?') }}"
@@ -1389,7 +1387,7 @@
                                     </div>
                                 </a>
                                 <hr>
-                                @php($address = $order->dm_last_location)
+                                <?php $address = $order->dm_last_location; ?>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5>{{ translate('messages.last_location') }}</h5>
                                 </div>
@@ -1455,7 +1453,7 @@
                             </span>
                         @endif
                         @if ($order->receiver_details)
-                            @php($receiver_details = $order->receiver_details)
+                            <?php $receiver_details = $order->receiver_details; ?>
                             <h5 class="card-title mt-3">
                                     <span class="card-header-icon">
                                         <i class="tio-user"></i>
@@ -1501,7 +1499,7 @@
                         @endif
 
                         @if ($order->delivery_address)
-                            @php($address = json_decode($order->delivery_address, true))
+                            <?php $address = json_decode($order->delivery_address, true); ?>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title">
@@ -1557,7 +1555,7 @@
                     </div>
                 </div>
                 <!-- Customer Card -->
-                @php($data = isset($order->order_proof) ? json_decode($order->order_proof, true) : [])
+                <?php $data = isset($order->order_proof) ? json_decode($order->order_proof, true) : []; ?>
                 @if ( in_array($order->order_status, [ 'handover', 'delivered', 'picked_up']) || ($data != null && count($data) > 0) )
 
                     <!-- order proof -->
@@ -1574,7 +1572,7 @@
                                        for="order_proof">{{ translate('messages.image') }} : </label>
                                 <div class="row g-3">
                                     @foreach ($data as $key => $img)
-                                        @php($img = is_array($img)?$img:['img'=>$img,'storage'=>'public'])
+                                        <?php $img = is_array($img)?$img:['img'=>$img,'storage'=>'public']; ?>
                                         <div class="col-3">
                                             <img class="img__aspect-1 rounded border w-100 onerror-image" data-toggle="modal"
                                                  data-target="#imagemodal{{ $key }}"
@@ -1599,8 +1597,8 @@
                                                         <img src="{{\App\CentralLogics\Helpers::get_full_url('order',$img['img'],$img['storage']) }}"
                                                              class="initial--22 w-100">
                                                     </div>
-                                                    @php($storage = $img['storage'] ?? 'public')
-                                                    @php($file = $storage == 's3'?base64_encode('order/' . $img['img']):base64_encode('public/order/' . $img['img']))
+                                                    <?php $storage = $img['storage'] ?? 'public'; ?>
+                                                    <?php $file = $storage == 's3'?base64_encode('order/' . $img['img']):base64_encode('public/order/' . $img['img']); ?>
                                                     <div class="modal-footer">
                                                         <a class="btn btn-primary"
                                                            href="{{ route('admin.file-manager.download', [$file,$storage]) }}"><i
@@ -1745,11 +1743,11 @@
                     <div class="modal-body">
                         <div class="flex-grow-1 mx-auto">
                             <div class="d-flex flex-wrap __gap-12px __new-coba" id="coba">
-                                @php($proof = isset($order->order_proof) ? json_decode($order->order_proof, true) : 0)
+                                <?php $proof = isset($order->order_proof) ? json_decode($order->order_proof, true) : 0; ?>
                                 @if ($proof)
 
                                     @foreach ($proof as $key => $photo)
-                                        @php($photo = is_array($photo)?$photo:['img'=>$photo,'storage'=>'public'])
+                                        <?php $photo = is_array($photo)?$photo:['img'=>$photo,'storage'=>'public']; ?>
                                         <div class="spartan_item_wrapper min-w-176px max-w-176px">
                                             <img class="img--square"
                                                  src="{{\App\CentralLogics\Helpers::get_full_url('order',$photo['img'],$photo['storage']) }}"
@@ -2006,8 +2004,7 @@
                                 <h4 class="mb-3">{{ translate('messages.customer_information') }}</h4>
                                 <div class="d-flex flex-column gap-2">
                                     @if($order->is_guest)
-                                        @php($customer_details = json_decode($order['delivery_address'],true))
-
+                                        <?php $customer_details = json_decode($order['delivery_address'],true); ?>
                                         <div class="d-flex align-items-center gap-2">
                                             <span>{{translate('Name')}}</span>:
                                             <span class="text-dark"> {{$customer_details['contact_person_name']}}</span>
@@ -2613,7 +2610,7 @@
         @if ($order->order_type == 'parcel')
         var myLatlng = new google.maps.LatLng({{ $address['latitude'] }}, {{ $address['longitude'] }});
         @else
-        @php($default_location = App\CentralLogics\Helpers::get_business_settings('default_location'))
+        <?php $default_location = App\CentralLogics\Helpers::get_business_settings('default_location'); ?>
         var myLatlng = new google.maps.LatLng(
             {{ isset($order->store) ? $order->store->latitude : (isset($default_location) ? $default_location['lat'] : 0) }},
             {{ isset($order->store) ? $order->store->longitude : (isset($default_location['lng']) ? $default_location['lng'] : 0) }}
