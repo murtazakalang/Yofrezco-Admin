@@ -309,7 +309,7 @@
                                     </h5>
                                     <div class="d-flex flex-wrap flex-md-row-reverse" style="gap:15px">
                                         @foreach ($order_images as $key => $item)
-                                            @php($item = is_array($item)?$item:['img'=>$item,'storage'=>'public'])
+                                            <?php $item = is_array($item) ? $item : ['img' => $item, 'storage' => 'public']; ?>
                                             <div>
                                                 <button class="btn w-100 px-0" data-toggle="modal"
                                                         data-target="#prescriptionimagemodal{{ $key }}"
