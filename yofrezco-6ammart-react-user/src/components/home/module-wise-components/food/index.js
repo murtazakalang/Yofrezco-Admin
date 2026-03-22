@@ -82,6 +82,7 @@ const FoodModule = (props) => {
           <RecommendedStore/>
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Visit Again Section
       <Grid item xs={12}>
         {IsSmallScreen() ? (
           <VisitAgain
@@ -101,6 +102,7 @@ const FoodModule = (props) => {
           </CustomContainer>
         )}
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <PaidAds />
@@ -122,11 +124,13 @@ const FoodModule = (props) => {
           <Banners />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Best Reviewed Section
       <Grid item xs={12}>
         <CustomContainer>
           <BestReviewedItems title="Best Reviewed Items" info={data} />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <LoveItem />

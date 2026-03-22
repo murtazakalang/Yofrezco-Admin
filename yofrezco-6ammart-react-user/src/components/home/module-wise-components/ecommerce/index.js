@@ -153,6 +153,7 @@ const Shop = ({ configData }) => {
         </CustomContainer>
       </Grid>
       */}
+      {/* TEMPORARILY HIDDEN - Best Reviewed Section
       <Grid item xs={12}>
         <CustomContainer>
           <BestReviewedItems
@@ -163,6 +164,7 @@ const Shop = ({ configData }) => {
           />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <NewArrivals bannerData={data} />

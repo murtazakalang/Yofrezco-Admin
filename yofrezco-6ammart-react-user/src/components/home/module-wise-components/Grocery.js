@@ -138,6 +138,7 @@ const Grocery = (props) => {
           <Banners />
         </CustomContainer>
       </Grid>
+      {/* TEMPORARILY HIDDEN - Best Reviewed Section
       <Grid item xs={12}>
         <CustomContainer>
           <BestReviewedItems
@@ -148,6 +149,7 @@ const Grocery = (props) => {
           />
         </CustomContainer>
       </Grid>
+      */}
 
       <Grid item xs={12} mt="10px">
         <CustomContainer>

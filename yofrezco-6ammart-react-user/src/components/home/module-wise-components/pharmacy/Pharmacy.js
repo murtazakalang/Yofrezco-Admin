@@ -80,6 +80,7 @@ const Pharmacy = ({ configData }) => {
         </CustomContainer>
       </Grid>
 
+      {/* TEMPORARILY HIDDEN - Visit Again Section
       <Grid item xs={12}>
         <CustomContainer>
           <VisitAgain
@@ -90,12 +91,14 @@ const Pharmacy = ({ configData }) => {
           />
         </CustomContainer>
       </Grid>
+      */}
       <Grid item xs={12}>
         <CustomContainer>
           <PaidAds />
         </CustomContainer>
       </Grid>
     
+      {/* TEMPORARILY HIDDEN - Best Reviewed Section
       <Grid item xs={12}>
         <CustomContainer>
           <BestReviewedItems
@@ -106,6 +109,7 @@ const Pharmacy = ({ configData }) => {
           />
         </CustomContainer>
       </Grid>
+      */}
       
       <Grid item xs={12}>
         <CustomContainer>
