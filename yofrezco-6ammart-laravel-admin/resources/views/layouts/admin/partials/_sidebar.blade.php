@@ -364,7 +364,19 @@
                     </li>
                     <!-- Order refund End-->
 
+                    <!-- HKA Invoices -->
+                    <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/hka/*') ? 'active' : '' }}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.hka.logs') }}" title="{{ translate('messages.hka_electronic_invoices') }}">
+                            <i class="tio-receipt nav-icon"></i>
+                            <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                {{ translate('messages.hka_electronic_invoices') }}
+                            </span>
+                        </a>
+                    </li>
+                    <!-- HKA Invoices End -->
+
                     <!-- Order dispachment -->
+
                     <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/dispatch/*') ? 'active' : '' }}">
                         <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:" title="{{ translate('messages.dispatch') }}">
                             <i class="tio-clock nav-icon"></i>

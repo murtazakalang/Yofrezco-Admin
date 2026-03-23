@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Mail\OrderVerificationMail;
+use App\Services\HkaService;
 use App\Mail\PlaceOrder;
 use App\Mail\UserOfflinePaymentMail;
 use App\Models\Item;
@@ -464,6 +465,16 @@ class OrderController extends Controller
             }
 
             OrderLogic::update_unpaid_order_payment(order_id:$order->id, payment_method:$order->payment_method);
+
+            // Auto-generate HKA electronic invoice on delivery
+            try {
+                $hkaService = app(HkaService::class);
+                if ($hkaService->isEnabled() && config('hka.auto_generate_on_delivery')) {
+                    $hkaService->sendInvoice($order);
+                }
+            } catch (\Exception $e) {
+                info('HKA auto-invoice failed for order #' . $order->id . ': ' . $e->getMessage());
+            }
 
         } else if ($request->order_status == 'refunded' && BusinessSetting::where('key', 'refund_active_status')->first()->value == 1) {
             if ($order->payment_status == "unpaid") {

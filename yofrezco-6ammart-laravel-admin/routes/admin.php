@@ -306,6 +306,18 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('parcel-return', 'OrderController@parcelReturn')->name('parcelReturn');
 
         });
+
+        // HKA Electronic Invoice (Factura Electrónica - Panama)
+        Route::group(['prefix' => 'hka', 'as' => 'hka.'], function () {
+            Route::post('generate/{order}', 'HkaInvoiceController@generate')->name('generate');
+            Route::get('status/{order}', 'HkaInvoiceController@status')->name('status');
+            Route::get('download-pdf/{order}', 'HkaInvoiceController@downloadPdf')->name('download-pdf');
+            Route::post('send-email/{order}', 'HkaInvoiceController@sendEmail')->name('send-email');
+            Route::post('void/{order}', 'HkaInvoiceController@void')->name('void');
+            Route::get('folios', 'HkaInvoiceController@folios')->name('folios');
+            Route::get('logs', 'HkaInvoiceController@logs')->name('logs');
+        });
+
         // Refund
         Route::group(['prefix' => 'refund', 'as' => 'refund.', 'middleware' => ['module:order']], function () {
             Route::get('settings', 'OrderController@refund_settings')->name('refund_settings');

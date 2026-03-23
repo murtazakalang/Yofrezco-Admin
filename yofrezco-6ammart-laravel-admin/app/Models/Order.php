@@ -197,6 +197,11 @@ class Order extends Model
         return $this->hasOne(OrderReference::class, 'order_id');
     }
 
+    public function hkaInvoice()
+    {
+        return $this->hasOne(HkaInvoice::class, 'order_id');
+    }
+
     public function getModuleTypeAttribute()
     {
         return $this->module ? $this->module->module_type : null;

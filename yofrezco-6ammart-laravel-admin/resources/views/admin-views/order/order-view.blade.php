@@ -1035,6 +1035,11 @@
                 <!-- End Card -->
             </div>
 
+            <!-- HKA Electronic Invoice Card -->
+            <div class="col-12 mt-3">
+                @include('admin-views.order.partials.hka-invoice-card')
+            </div>
+
             <div class="col-lg-4 order-print-area-right">
                 @if ($order->order_status == 'canceled')
 
