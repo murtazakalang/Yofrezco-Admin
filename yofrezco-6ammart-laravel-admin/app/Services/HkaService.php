@@ -50,11 +50,19 @@ class HkaService
             ]);
 
             if ($response->successful()) {
-                $token = $response->json('token') ?? $response->body();
-                // Clean up the token - remove any quotes
-                $token = trim($token, '"');
-                Cache::put($cacheKey, $token, now()->addMinutes(50));
-                return $token;
+                $token = $response->json('token');
+                
+                if ($token) {
+                    // Clean up the token - remove any quotes
+                    $token = trim($token, '"');
+                    Cache::put($cacheKey, $token, now()->addMinutes(50));
+                    return $token;
+                } else {
+                    Log::error('HKA Authentication rejected (HTTP 200 but no token)', [
+                        'body' => $response->body()
+                    ]);
+                    return null;
+                }
             }
 
             Log::error('HKA Authentication failed', [
