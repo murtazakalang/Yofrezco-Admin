@@ -1,4 +1,4 @@
-<?php return array (
+<?php return array(
   'attributes' => 'Attributes',
   'add_new_attribute' => 'Add new attribute',
   'default' => 'Default',
@@ -8503,7 +8503,8 @@ Smartly or Earn. ',
   'flash_sale_price' => 'Flash sale price',
   'product_is_required' => 'Product is required',
   'product_added_to_flash_sale_successfully' => 'Product added to flash sale successfully',
-  'whatsapp' => 'YOFCare Support',
-  'Whatsapp' => 'YOFCare Support',
+  'whatsapp' => 'Whatsapp',
+  'Whatsapp' => 'Whatsapp',
   'user_not_found!' => 'User not found!',
+  'YOFCare Support' => 'YOFCare Support',
 );

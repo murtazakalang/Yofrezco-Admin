@@ -744,10 +744,10 @@
                     @if (\App\CentralLogics\Helpers::employee_module_permission_check('chat'))
                         <li class="navbar-vertical-aside-has-menu">
                             <a class="js-navbar-vertical-aside-menu-link nav-link" href="https://wa.link/yofrezco"
-                                target="_blank" title="{{ translate('messages.whatsapp') }}">
+                                target="_blank" title="{{ translate('YOFCare Support') }}">
                                 <i class="tio-chat nav-icon"></i>
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                    {{ translate('messages.Whatsapp') }}
+                                    {{ translate('YOFCare Support') }}
                                 </span>
                             </a>
                         </li>

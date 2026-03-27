@@ -1,4 +1,4 @@
-<?php return array (
+<?php return array(
   'attributes' => 'Atributos',
   'add_new_attribute' => 'Agregar nuevo atributo',
   'default' => 'Predeterminado',
@@ -8564,4 +8564,5 @@ de forma inteligente y ganar. ',
   'El campo image es obligatorio.' => 'El campo image es obligatorio.',
   'whatsapp' => 'Soporte YOFCare',
   'Whatsapp' => 'Soporte YOFCare',
+  'YOFCare Support' => 'Soporte YOFCare',
 );
