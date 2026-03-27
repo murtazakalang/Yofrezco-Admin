@@ -250,11 +250,10 @@
                     @endif
 
 
-                    {{-- TEMPORARILY HIDDEN - ITEM MANAGEMENT SECTION
+                    <!-- ITEM MANAGEMENT SECTION -->
                     @if (
                     \App\CentralLogics\Helpers::employee_module_permission_check('addon') ||
-                    \App\CentralLogics\Helpers::employee_module_permission_check('item') ||
-                    \App\CentralLogics\Helpers::employee_module_permission_check('category'))
+                    \App\CentralLogics\Helpers::employee_module_permission_check('item'))
                     <li class="nav-item">
                         <small class="nav-subtitle">{{ translate('messages.item_management') }}</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
@@ -266,10 +265,10 @@
                     <!-- Food -->
                     <li class="navbar-vertical-aside-has-menu {{ Request::is('vendor-panel/item*') ? 'active' : '' }}">
                         <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
-                            title="{{ translate('messages.items') }}">
+                            title="{{ translate('Configure Items') }}">
                             <i class="tio-premium-outlined nav-icon"></i>
                             <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{
-                                translate('messages.items') }}</span>
+                                translate('Configure Items') }}</span>
                         </a>
                         <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                             style="display: {{ Request::is('vendor-panel/item*') ? 'block' : 'none' }}">
@@ -318,7 +317,6 @@
                                 </a>
                             </li>
                             @endif
-                            @if (\App\CentralLogics\Helpers::get_store_data()->item_section)
                             <li class="nav-item {{ Request::is('vendor-panel/item/bulk-import') ? 'active' : '' }}">
                                 <a class="nav-link " href="{{ route('vendor.item.bulk-import') }}"
                                     title="{{ translate('messages.bulk_import') }}">
@@ -335,7 +333,6 @@
                                         }}</span>
                                 </a>
                             </li>
-                            @endif
                         </ul>
                     </li>
                     <!-- End Food -->
@@ -353,37 +350,7 @@
                     </li>
                     @endif
                     <!-- End AddOn -->
-                    @if (\App\CentralLogics\Helpers::employee_module_permission_check('category'))
-                    <li
-                        class="navbar-vertical-aside-has-menu {{ Request::is('vendor-panel/category*') ? 'active' : '' }}">
-                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
-                            title="{{ translate('messages.categories') }}">
-                            <i class="tio-category nav-icon"></i>
-                            <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{
-                                translate('messages.categories') }}</span>
-                        </a>
-                        <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                            style="display: {{ Request::is('vendor-panel/category*') ? 'block' : 'none' }}">
-                            <li class="nav-item {{ Request::is('vendor-panel/category/list') ? 'active' : '' }}">
-                                <a class="nav-link " href="{{ route('vendor.category.add') }}"
-                                    title="{{ translate('messages.category') }}">
-                                    <span class="tio-circle nav-indicator-icon"></span>
-                                    <span class="text-truncate">{{ translate('messages.category') }}</span>
-                                </a>
-                            </li>
-
-                            <li
-                                class="nav-item {{ Request::is('vendor-panel/category/sub-category-list') ? 'active' : '' }}">
-                                <a class="nav-link " href="{{ route('vendor.category.add-sub-category') }}"
-                                    title="{{ translate('messages.sub_category') }}">
-                                    <span class="tio-circle nav-indicator-icon"></span>
-                                    <span class="text-truncate">{{ translate('messages.sub_category') }}</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    @endif
-                    END ITEM MANAGEMENT SECTION --}}
+                    <!-- END ITEM MANAGEMENT SECTION -->
 
 
                     {{-- TEMPORARILY HIDDEN - MARKETING SECTION
