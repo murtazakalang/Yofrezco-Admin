@@ -235,7 +235,6 @@
                                         <!-- End Order -->
                     @endif
 
-                    @if (in_array($store_data->module->module_type, ['grocery', 'ecommerce']))
                         <li
                             class="navbar-vertical-aside-has-menu {{ Request::is('vendor-panel/item/flash-sale*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
@@ -247,7 +246,6 @@
                                 </span>
                             </a>
                         </li>
-                    @endif
 
 
                     <!-- ITEM MANAGEMENT SECTION -->
@@ -353,7 +351,7 @@
                     <!-- END ITEM MANAGEMENT SECTION -->
 
 
-                    {{-- TEMPORARILY HIDDEN - MARKETING SECTION
+                    <!-- MARKETING SECTION -->
                     @if (
                     \App\CentralLogics\Helpers::employee_module_permission_check('campaign') ||
                     \App\CentralLogics\Helpers::employee_module_permission_check('coupon') ||
@@ -420,7 +418,7 @@
                     </li>
                     @endif
                     <!-- End banner -->
-                    END MARKETING SECTION --}}
+                    <!-- END MARKETING SECTION -->
 
 
                     {{-- TEMPORARILY HIDDEN - ADVERTISEMENT MANAGEMENT
