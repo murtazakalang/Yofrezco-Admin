@@ -8562,4 +8562,6 @@ de forma inteligente y ganar. ',
   'Item removed from favorites' => 'Item removed from favorites',
   'Item added to favorites' => 'Item added to favorites',
   'El campo image es obligatorio.' => 'El campo image es obligatorio.',
+  'whatsapp' => 'Soporte YOFCare',
+  'Whatsapp' => 'Soporte YOFCare',
 );
