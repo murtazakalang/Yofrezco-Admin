@@ -1,4 +1,4 @@
-<?php return array(
+<?php return array (
   'attributes' => 'Atributos',
   'add_new_attribute' => 'Agregar nuevo atributo',
   'default' => 'Predeterminado',
@@ -8565,4 +8565,14 @@ de forma inteligente y ganar. ',
   'whatsapp' => 'Soporte YOFCare',
   'Whatsapp' => 'Soporte YOFCare',
   'YOFCare Support' => 'Soporte YOFCare',
+  'attribute_deleted_successfully' => 'Attribute deleted successfully',
+  'attribute_added_successfully' => 'Attribute added successfully',
+  'El campo minimum order es obligatorio.' => 'El campo minimum order es obligatorio.',
+  'Tax_Rate_On_Delivery_Charge' => 'Tax Rate On Delivery Charge',
+  'Set_a_tax_rate_to_apply_on_delivery_charges._This_tax_is_added_on_top_of_the_delivery_fee_including_commission.' => 'Set a tax rate to apply on delivery charges. This tax is added on top of the delivery fee including commission.',
+  'Account Deletion Request' => 'Account Deletion Request',
+  'If you wish to delete your Yofrezco account, please provide your email and account details below and submit a request.' => 'If you wish to delete your Yofrezco account, please provide your email and account details below and submit a request.',
+  'Data Deletion Confirmation:' => 'Data Deletion Confirmation:',
+  'Upon receiving and verifying your request, we will permanently delete your account and all associated personal data stored in our database in accordance with our terms.' => 'Upon receiving and verifying your request, we will permanently delete your account and all associated personal data stored in our database in accordance with our terms.',
+  'You can also instantly and automatically delete your account inside the Yofrezco app by navigating to Profile > Delete Account.' => 'You can also instantly and automatically delete your account inside the Yofrezco app by navigating to Profile   Delete Account.',
 );
