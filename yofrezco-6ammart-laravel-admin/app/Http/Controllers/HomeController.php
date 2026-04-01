@@ -226,6 +226,27 @@ class HomeController extends Controller
         }
     }
 
+    public function account_deletion()
+    {
+        $config = Helpers::get_business_settings('landing_page');
+        $landing_integration_type = Helpers::get_business_data('landing_integration_type');
+        $redirect_url = Helpers::get_business_data('landing_page_custom_url');
+
+        $custome_recaptcha = new CaptchaBuilder;
+        $custome_recaptcha->build();
+        Session::put('six_captcha', $custome_recaptcha->getPhrase());
+
+        if (isset($config) && $config) {
+            return view('account-deletion', compact('custome_recaptcha'));
+        } elseif ($landing_integration_type == 'file_upload' && File::exists('resources/views/layouts/landing/custom/index.blade.php')) {
+            return view('layouts.landing.custom.index');
+        } elseif ($landing_integration_type == 'url') {
+            return redirect($redirect_url);
+        } else {
+            abort(404);
+        }
+    }
+
     public function send_message(Request $request)
     {
         $request->validate([

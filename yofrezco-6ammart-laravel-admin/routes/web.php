@@ -35,6 +35,7 @@ Route::get('lang/{locale}', 'HomeController@lang')->name('lang');
 Route::get('terms-and-conditions', 'HomeController@terms_and_conditions')->name('terms-and-conditions');
 Route::get('about-us', 'HomeController@about_us')->name('about-us');
 Route::get('contact-us', 'HomeController@contact_us')->name('contact-us');
+Route::get('account-deletion', 'HomeController@account_deletion')->name('account-deletion');
 Route::post('send-message', 'HomeController@send_message')->name('send-message');
 Route::get('privacy-policy', 'HomeController@privacy_policy')->name('privacy-policy');
 Route::get('cancelation', 'HomeController@cancelation')->name('cancelation');
