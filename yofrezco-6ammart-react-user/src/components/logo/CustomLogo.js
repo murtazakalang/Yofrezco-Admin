@@ -36,19 +36,18 @@ const CustomLogo = ({
     }
   };
 
-  // Fallback logo in case configData is delayed
-  const logoSrc = logoImg || '/logo.png';
-
   return (
     <Logo height={height} width={width} onClick={handleClick}>
-      <NextImage
-        src={logoSrc}
-        alt={atlText}
-        width={parseFloat(width)} // MUST be number ✔
-        height={parseFloat(height)} // MUST be number ✔
-        objectFit={objectFit || "contain"}
-        priority={true} // Load logo immediately - critical for first paint
-      />
+      {logoImg && (
+        <NextImage
+          src={logoImg}
+          alt={atlText}
+          width={parseFloat(width)} // MUST be number ✔
+          height={parseFloat(height)} // MUST be number ✔
+          objectFit={objectFit || "contain"}
+          priority={true} // Load logo immediately - critical for first paint
+        />
+      )}
     </Logo>
   );
 };

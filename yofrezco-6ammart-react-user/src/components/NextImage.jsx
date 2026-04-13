@@ -61,7 +61,8 @@ const NextImage = ({
       height={height}
       alt={alt}
       onError={handleError}
-      placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
+      placeholder="blur"
+      blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
       style={style}
 
       {...props}
