@@ -207,10 +207,16 @@ const ProductInformationBottomSection = ({
     </>
   );
 
+  const minQty = productDetailsData?.selectedOption?.length > 0
+    ? (productDetailsData.selectedOption[0]?.min_qty || productDetailsData?.minimum_cart_quantity || 1)
+    : (productDetailsData?.minimum_cart_quantity || 1);
+  const moqNotMet = minQty > 1 && cartItemQuantity < minQty;
+
   const actionsHandler = () => (
     <BottomStack direction="row" width="100%" gap={2.5}>
       {productDetailsData?.stock > 0 &&
-        isVariationAvailable(productDetailsData) ? (
+        isVariationAvailable(productDetailsData) &&
+        !moqNotMet ? (
         <PrimaryButton
           onClick={() => handleRedirectToCheckoutClick()}
           sx={{
@@ -229,28 +235,31 @@ const ProductInformationBottomSection = ({
           {productDetailsData?.isCampaignItem ? t("Order Now") : t("Buy Now")}
         </PrimaryButton>
       ) : (
-        <PrimaryButton
-          onClick={() => handleRedirectToCheckoutClick()}
-          sx={{
-            backgroundColor: theme.palette.customColor.buyButton,
-            color: "black",
-            width: "50%",
-          }}
-          disabled={
-            productDetailsData?.stock === 0 ||
-            !isVariationAvailable(productDetailsData)
-          }
-        >
-          <Typography color={alpha(theme.palette.error.main, 0.7)} variant="h7">
-            {t("Out of Stock")}
-          </Typography>
-        </PrimaryButton>
+        !moqNotMet && (
+          <PrimaryButton
+            onClick={() => handleRedirectToCheckoutClick()}
+            sx={{
+              backgroundColor: theme.palette.customColor.buyButton,
+              color: "black",
+              width: "50%",
+            }}
+            disabled={
+              productDetailsData?.stock === 0 ||
+              !isVariationAvailable(productDetailsData)
+            }
+          >
+            <Typography color={alpha(theme.palette.error.main, 0.7)} variant="h7">
+              {t("Out of Stock")}
+            </Typography>
+          </PrimaryButton>
+        )
       )}
       {!productDetailsData?.isCampaignItem && (
         <>
           {!isInCart(productDetailsData?.id) &&
             productDetailsData?.stock > 0 &&
-            isVariationAvailable(productDetailsData) && (
+            isVariationAvailable(productDetailsData) &&
+            !moqNotMet && (
               <PrimaryButton
                 onClick={() => handleVariationAvailability("add")}
                 sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}
@@ -293,6 +302,15 @@ const ProductInformationBottomSection = ({
 
   return (
     <>
+      {minQty > 1 && (
+        <Typography
+          color={theme.palette.error.main}
+          fontSize="13px"
+          mb={1}
+        >
+          {`${t("To place order Minimum Order Quantity of")} ${minQty} ${t("Pieces is required")}`}
+        </Typography>
+      )}
       {actionsHandler()}
       {productDetailsData?.is_prescription_required == 1 && (
         <Typography

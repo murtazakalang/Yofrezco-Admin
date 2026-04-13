@@ -332,6 +332,7 @@ class ItemController extends Controller
                 }
 
                 $item['stock'] = abs($request['stock_' . str_replace('.', '_', $str)]);
+                $item['min_qty'] = abs($request['min_qty_' . str_replace('.', '_', $str)] ?? 0);
                 array_push($variations, $item);
             }
         }
@@ -709,6 +710,7 @@ class ItemController extends Controller
                 }
 
                 $item['stock'] = abs($request['stock_' . str_replace('.', '_', $str)]);
+                $item['min_qty'] = abs($request['min_qty_' . str_replace('.', '_', $str)] ?? 0);
                 array_push($variations, $item);
             }
         }
@@ -1535,18 +1537,22 @@ class ItemController extends Controller
     {
         $variations = [];
         $stock_count = $request['current_stock'];
+        $product = Item::find($request['product_id']);
+        $existing_variations = json_decode($product->variations ?? '[]', true) ?? [];
+        $existing_min_qty = [];
+        foreach ($existing_variations as $ev) {
+            $existing_min_qty[$ev['type']] = $ev['min_qty'] ?? 0;
+        }
         if ($request->has('type')) {
             foreach ($request['type'] as $key => $str) {
                 $item = [];
                 $item['type'] = $str;
                 $item['price'] = abs($request['price_' . $key . '_' . str_replace('.', '_', $str)]);
                 $item['stock'] = abs($request['stock_' . $key . '_' . str_replace('.', '_', $str)]);
+                $item['min_qty'] = $existing_min_qty[$str] ?? 0;
                 array_push($variations, $item);
             }
         }
-
-
-        $product = Item::find($request['product_id']);
 
         $product->stock = $stock_count ?? 0;
         $product->variations = json_encode($variations);

@@ -13,6 +13,9 @@
                     <span class="control-label text-capitalize">{{translate('messages.stock')}}</span>
                 </th>
                 @endif
+                <th class="text-center border-0">
+                    <span class="control-label text-capitalize">{{translate('messages.Minimum Order Qty')}}</span>
+                </th>
             </tr>
         </thead>
             @foreach ($data as $key => $combination)
@@ -29,6 +32,8 @@
                             <td><input type="number" name="stock_{{ $combination['name'] }}" value="{{ $combination['stock'] }}" min="0"
                                        class="form-control" required></td>
                         @endif
+                        <td><input type="number" name="min_qty_{{ $combination['name'] }}" value="{{ $combination['min_qty'] ?? 0 }}" min="0"
+                                   class="form-control"></td>
 
                     </tr>
                     @endif

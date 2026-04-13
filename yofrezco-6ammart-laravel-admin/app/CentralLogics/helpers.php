@@ -236,6 +236,7 @@ class Helpers
                     'price' => (float) ($var_base_price + $var_commission),
                     'stock' => $var['stock'],
                     'base_price' => $var_base_price,
+                    'min_qty' => $var['min_qty'] ?? 0,
                 ];
             }
             $data['variations'] = $variations_with_commission;
@@ -377,7 +378,8 @@ class Helpers
                     array_push($variations, [
                         'type' => $var['type'],
                         'price' => (float) $var['price'],
-                        'stock' => (int) ($var['stock'] ?? 0)
+                        'stock' => (int) ($var['stock'] ?? 0),
+                        'min_qty' => (int) ($var['min_qty'] ?? 0),
                     ]);
                 }
                 $item['variations'] = $variations;
@@ -404,6 +406,7 @@ class Helpers
                             'price' => (float) ($var_base_price + $var_commission),
                             'stock' => $var['stock'],
                             'base_price' => $var_base_price,
+                            'min_qty' => $var['min_qty'] ?? 0,
                         ];
                     }
                     $item['variations'] = $variations_with_commission;
@@ -479,7 +482,8 @@ class Helpers
                 array_push($variations, [
                     'type' => $var['type'],
                     'price' => (float) $var['price'],
-                    'stock' => (int) ($var['stock'] ?? 0)
+                    'stock' => (int) ($var['stock'] ?? 0),
+                    'min_qty' => (int) ($var['min_qty'] ?? 0),
                 ]);
             }
             if ($data->title) {
@@ -632,7 +636,8 @@ class Helpers
                     array_push($variations, [
                         'type' => $var['type'],
                         'price' => (float) $var['price'],
-                        'stock' => (int) ($var['stock'] ?? 0)
+                        'stock' => (int) ($var['stock'] ?? 0),
+                        'min_qty' => (int) ($var['min_qty'] ?? 0),
                     ]);
                 }
                 $item['variations'] = $variations;
@@ -732,7 +737,8 @@ class Helpers
                 array_push($variations, [
                     'type' => $var['type'],
                     'price' => (float) $var['price'],
-                    'stock' => (int) ($var['stock'] ?? 0)
+                    'stock' => (int) ($var['stock'] ?? 0),
+                    'min_qty' => (int) ($var['min_qty'] ?? 0),
                 ]);
             }
             if ($data->title) {
