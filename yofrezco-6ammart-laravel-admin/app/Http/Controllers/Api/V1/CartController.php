@@ -144,7 +144,7 @@ class CartController extends Controller
         $is_guest = $request->user ? 0 : 1;
         $cart = Cart::find($request->cart_id);
         $item = $cart->item_type === 'App\Models\Item' ? Item::find($cart->item_id) : ItemCampaign::find($cart->item_id);
-        if ($item->maximum_cart_quantity && ($request->quantity > $item->maximum_cart_quantity)) {
+        if ($item->maximum_cart_quantity && ($request->quantity > $item->maximum_cart_quantity) && ($request->quantity > $cart->quantity)) {
             return response()->json([
                 'errors' => [
                     ['code' => 'cart_item_limit', 'message' => translate('messages.maximum_cart_quantity_exceeded')]
