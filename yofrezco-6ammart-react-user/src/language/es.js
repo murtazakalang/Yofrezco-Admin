@@ -1,4 +1,6 @@
 export const spain = {
+  "To place order Minimum Order Quantity of": "Para realizar el pedido, se requiere una cantidad mínima de",
+  "Pieces is required": "piezas",
   "Valid till": "Válido hasta",
   get: "obtener",
   Sold: "Vendido",

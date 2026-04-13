@@ -33,14 +33,6 @@ const CustomSettings = (props) => {
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <CustomPaper elevation={8}>
             <Stack alignItems="center" justifyContent="center" spacing={1}>
-              <Typography fontWeight="bold">{t("Theme Settings")}</Typography>
-              <ThemeSwitches />
-            </Stack>
-          </CustomPaper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <CustomPaper elevation={8}>
-            <Stack alignItems="center" justifyContent="center" spacing={1}>
               <Typography fontWeight="bold">{t("Change language")}</Typography>
               <CustomLanguage countryCode={countryCode} language={language} />
             </Stack>

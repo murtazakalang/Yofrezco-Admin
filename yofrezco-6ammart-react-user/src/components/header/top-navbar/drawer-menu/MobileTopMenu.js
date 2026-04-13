@@ -132,12 +132,6 @@ const MobileTopMenu = ({
               <ListItemButton
                 sx={{ color: (theme) => theme.palette.primary.main }}
               >
-                <ListItemText>{t("Theme Mode")}</ListItemText>
-                <ThemeSwitches noText />
-              </ListItemButton>
-              <ListItemButton
-                sx={{ color: (theme) => theme.palette.primary.main }}
-              >
                 <ListItemText>{t("Language")}</ListItemText>
                 <CustomLanguage
                   countryCode={countryCode}

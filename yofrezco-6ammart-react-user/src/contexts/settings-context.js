@@ -17,13 +17,12 @@ export const restoreSettings = () => {
     const storedData = window.localStorage.getItem("settings");
     if (storedData) {
       settings = JSON.parse(storedData);
+      settings.theme = "light";
     } else {
       settings = {
         direction: "ltr",
         responsiveFontSizes: true,
-        theme: window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light",
+        theme: "light",
       };
     }
   } catch (err) {

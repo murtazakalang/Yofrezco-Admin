@@ -8575,4 +8575,6 @@ de forma inteligente y ganar. ',
   'Data Deletion Confirmation:' => 'Data Deletion Confirmation:',
   'Upon receiving and verifying your request, we will permanently delete your account and all associated personal data stored in our database in accordance with our terms.' => 'Upon receiving and verifying your request, we will permanently delete your account and all associated personal data stored in our database in accordance with our terms.',
   'You can also instantly and automatically delete your account inside the Yofrezco app by navigating to Profile > Delete Account.' => 'You can also instantly and automatically delete your account inside the Yofrezco app by navigating to Profile   Delete Account.',
+  'minimum_cart_quantity_exceeded' => 'Para realizar el pedido se requiere una Cantidad Mínima de Pedido de :quantity unidades.',
+  'Minimum_Order_Quantity' => 'Cantidad Mínima de Pedido',
 );

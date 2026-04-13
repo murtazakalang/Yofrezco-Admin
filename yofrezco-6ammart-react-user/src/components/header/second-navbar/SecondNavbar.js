@@ -538,7 +538,6 @@ const SecondNavBar = ({ configData }) => {
                   justifyContent="end"
                   alignItems="center"
                 >
-                  <ThemeSwitches />
                   <Box
                     sx={{
                       backgroundColor: (theme) => theme.palette.neutral[300],

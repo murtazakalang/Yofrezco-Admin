@@ -61,6 +61,11 @@ const ProductInformationBottomSection = ({
       )
     );
 
+  const moqErrorToast = (min) =>
+    toast.error(
+      `${t("To place order Minimum Order Quantity of")} ${min} ${t("Pieces is required")}`
+    );
+
   const isInCart = (id) => {
     if (cartList?.length > 0) {
       const isInCart = cartList?.find(
@@ -108,15 +113,28 @@ const ProductInformationBottomSection = ({
   };
 
   const handleRedirectToCheckoutClick = () => {
+    let minQty = 1;
+    if (productDetailsData?.selectedOption?.length > 0) {
+      minQty = productDetailsData?.selectedOption?.[0]?.min_qty || productDetailsData?.minimum_cart_quantity || 1;
+    } else {
+      minQty = productDetailsData?.minimum_cart_quantity || 1;
+    }
+
+    if (cartItemQuantity < minQty) {
+      moqErrorToast(minQty);
+      return;
+    }
+
     if (productDetailsData?.selectedOption?.length > 0) {
       if (productDetailsData?.selectedOption?.[0]?.stock === 0) {
         variationErrorToast();
       } else {
         handleRedirect();
-        handleModalClose();
+        handleModalClose?.();
       }
     } else {
       handleRedirect();
+      handleModalClose?.();
     }
   };
   const isInWishList = (id) => {
@@ -142,6 +160,18 @@ const ProductInformationBottomSection = ({
   useEffect(() => { }, [wishListCount]);
 
   const handleVariationAvailability = (checkFor, cartItem) => {
+    let minQty = 1;
+    if (productDetailsData?.selectedOption?.length > 0) {
+      minQty = productDetailsData?.selectedOption?.[0]?.min_qty || productDetailsData?.minimum_cart_quantity || 1;
+    } else {
+      minQty = productDetailsData?.minimum_cart_quantity || 1;
+    }
+
+    if (cartItemQuantity < minQty) {
+      moqErrorToast(minQty);
+      return;
+    }
+
     if (productDetailsData?.selectedOption?.length > 0) {
       if (productDetailsData?.selectedOption?.[0]?.stock === 0) {
         variationErrorToast();
