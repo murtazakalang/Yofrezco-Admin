@@ -54,7 +54,7 @@ const LocalizedNewArrivalsTitle = () => {
 const NewArrivals = ({ bannerData }) => {
   const [menu, setMenu] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const bannerCount = bannerData?.new_arrival_section_banner ? 8 : 10;
+  const bannerCount = 40;
   const [selectedMenuIndex, setSelectedMenuIndex] = useState(0);
   const { data, refetch, isLoading } = useNewArrivals();
   const theme = useTheme();
@@ -87,11 +87,7 @@ const NewArrivals = ({ bannerData }) => {
   }, [selectedMenuIndex]);
 
   const itemArrayManage = (itemArray) => {
-    if (isMedium) {
-      return itemArray?.slice?.(0, 6);
-    } else {
-      return itemArray?.slice?.(0, 8);
-    }
+    return itemArray?.slice?.(0, 40);
   };
 
   const layoutManage = () => {
@@ -135,7 +131,7 @@ const NewArrivals = ({ bannerData }) => {
             </Grid>
             <Grid item xs={12} container spacing={2}>
               {filteredData?.length > 0 &&
-                filteredData?.slice(0, 4).map((product, index) => (
+                filteredData?.slice(0, 40).map((product, index) => (
                   <Grid item xs={6} key={product?.id}>
                     <ProductCard
                       item={product}

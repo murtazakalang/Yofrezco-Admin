@@ -4,7 +4,7 @@ import MainApi from "../../../MainApi";
 import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponses";
 
 const getNewArrivals = async () => {
-  const { data } = await MainApi.get(new_arrivals);
+  const { data } = await MainApi.get(`${new_arrivals}?limit=40`);
   return data;
 };
 
